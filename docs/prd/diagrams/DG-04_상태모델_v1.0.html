@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>DG-04 상태 모델</title>
+<style>html,body{margin:0;background:#fff}body{width:1400px;height:900px;overflow:hidden;font-family:"Malgun Gothic",sans-serif}</style></head>
+<body>
+<svg width="1400" height="900" viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg" font-family="Malgun Gothic, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0L10,5L0,10z" fill="#455A64"/></marker></defs>
+<text x="40" y="52" font-size="30" font-weight="700" fill="#212121">DG-04 상태 모델</text>
+<text x="40" y="88" font-size="20" fill="#455A64">카고는 정차에서 싣고, 주행 중엔 손대지 않고, 목적지 정차에서 연다</text>
+
+<!-- 상태 -->
+<g font-size="26" font-weight="700" text-anchor="middle">
+<rect x="60" y="300" width="200" height="120" rx="60" fill="#ECEFF1" stroke="#607D8B" stroke-width="3"/><text x="160" y="370">대기</text>
+<rect x="360" y="300" width="200" height="120" rx="60" fill="#E3F2FD" stroke="#1565C0" stroke-width="3"/><text x="460" y="358">적재됨</text>
+<rect x="660" y="300" width="200" height="120" rx="60" fill="#FFF3E0" stroke="#E65100" stroke-width="3"/><text x="760" y="358">호위 중</text>
+<rect x="660" y="560" width="200" height="120" rx="60" fill="#FFF3E0" stroke="#E65100" stroke-width="3" stroke-dasharray="10 6"/><text x="760" y="630">일시 정차</text>
+<rect x="960" y="300" width="200" height="120" rx="60" fill="#E8F5E9" stroke="#2E7D32" stroke-width="3"/><text x="1060" y="358">개봉</text>
+<rect x="1180" y="560" width="180" height="120" rx="60" fill="#ECEFF1" stroke="#607D8B" stroke-width="3"/><text x="1270" y="630">완료</text>
+</g>
+<g font-size="16" fill="#455A64" text-anchor="middle">
+<text x="460" y="392">터치 가능</text><text x="760" y="392" font-size="14">터치 잠금 · 게이지 · 음성</text><text x="1060" y="392" font-size="14">언박싱 · 앰비언트 · 리워드</text>
+</g>
+
+<!-- 전이 -->
+<g stroke="#455A64" stroke-width="3" fill="none" marker-end="url(#a)">
+<line x1="262" y1="360" x2="356" y2="360"/>
+<line x1="562" y1="360" x2="656" y2="360"/>
+<line x1="862" y1="360" x2="956" y2="360"/>
+<path d="M730,422 L730,556"/>
+<path d="M790,556 L790,422"/>
+<path d="M1100,422 C1150,500 1200,520 1230,556"/>
+<path d="M1270,682 C1270,800 160,800 160,424"/>
+</g>
+<g font-size="17" font-weight="700" fill="#263238">
+<text x="309" y="250" text-anchor="middle">목적지 선택</text><text x="309" y="272" text-anchor="middle" font-weight="400" font-size="15">내비 수신 · 데일리</text>
+<text x="609" y="335" text-anchor="middle">주행 전환</text>
+<text x="909" y="300" text-anchor="middle">정차 +</text><text x="909" y="322" text-anchor="middle">도착 확인</text>
+<text x="640" y="495" text-anchor="end">정차 · 미도착</text>
+<text x="810" y="495">주행 재개</text>
+<text x="1190" y="500">화면 닫기</text>
+<text x="700" y="790" text-anchor="middle" font-weight="400" fill="#455A64">결과 저장 후 대기로</text>
+</g>
+
+<!-- 미결 뱃지 -->
+<rect x="574" y="250" width="70" height="26" rx="13" fill="#B71C1C"/><text x="609" y="269" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">AG-03</text>
+<rect x="874" y="250" width="70" height="26" rx="13" fill="#B71C1C"/><text x="909" y="269" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">AG-03</text>
+<rect x="790" y="285" width="70" height="26" rx="13" fill="#B71C1C"/><text x="825" y="304" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">U-01</text>
+<rect x="800" y="548" width="66" height="26" rx="13" fill="#455A64"/><text x="833" y="567" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">EX-06</text>
+
+<g font-size="17" fill="#37474F">
+<rect x="40" y="840" width="40" height="24" rx="12" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/><text x="90" y="858">정차 중 상태</text>
+<rect x="230" y="840" width="40" height="24" rx="12" fill="#FFF3E0" stroke="#E65100" stroke-width="2"/><text x="280" y="858">주행 중 상태</text>
+<rect x="420" y="840" width="40" height="24" rx="12" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/><text x="470" y="858">보상</text>
+<rect x="560" y="840" width="64" height="24" rx="12" fill="#B71C1C"/><text x="592" y="858" fill="#fff" text-anchor="middle" font-size="14" font-weight="700">ID</text><text x="634" y="858">미결 항목</text>
+<rect x="760" y="840" width="64" height="24" rx="12" fill="#455A64"/><text x="792" y="858" fill="#fff" text-anchor="middle" font-size="14" font-weight="700">EX</text><text x="834" y="858">예외 처리 (PRD 8장)</text>
+</g>
+</svg>
+</body></html>

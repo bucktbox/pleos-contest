@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>DG-01 시스템 구성도</title>
+<style>html,body{margin:0;background:#fff}body{width:1400px;height:900px;overflow:hidden;font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif}</style></head>
+<body>
+<svg width="1400" height="900" viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg" font-family="Malgun Gothic, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0L10,5L0,10z" fill="#455A64"/></marker></defs>
+<text x="40" y="52" font-size="30" font-weight="700" fill="#212121">DG-01 시스템 구성도</text>
+<text x="40" y="88" font-size="20" fill="#455A64">앱은 서버 없이 차 안에서만 돈다 · 차량 신호는 Pleos SDK 를 거쳐 들어온다</text>
+
+<!-- 차량 -->
+<rect x="40" y="115" width="1010" height="640" rx="28" fill="#FAFAFA" stroke="#90A4AE" stroke-width="3"/>
+<text x="70" y="152" font-size="22" font-weight="700" fill="#546E7A">🚗 차량 안 (Pleos Connect)</text>
+
+<!-- 앱 -->
+<rect x="80" y="175" width="420" height="550" rx="20" fill="#E3F2FD" stroke="#1565C0" stroke-width="3"/>
+<text x="105" y="210" font-size="20" font-weight="700" fill="#0D47A1">세이프 카고 앱</text>
+<rect x="115" y="230" width="350" height="120" rx="14" fill="#fff" stroke="#1565C0" stroke-width="2"/>
+<text x="290" y="282" font-size="24" font-weight="700" text-anchor="middle">세이프 카고 앱 (UI)</text>
+<text x="290" y="318" font-size="17" text-anchor="middle" fill="#455A64">로비 · 게이지 · 언박싱 · 랭킹</text>
+
+<rect x="115" y="390" width="350" height="120" rx="14" fill="#fff" stroke="#1565C0" stroke-width="2"/>
+<text x="290" y="442" font-size="24" font-weight="700" text-anchor="middle">카고 판정 엔진</text>
+<text x="290" y="478" font-size="17" text-anchor="middle" fill="#455A64">열쇠 · HP · 등급</text>
+<rect x="395" y="378" width="70" height="28" rx="14" fill="#B71C1C"/><text x="430" y="398" font-size="15" font-weight="700" fill="#fff" text-anchor="middle">U-01</text>
+
+<rect x="115" y="550" width="350" height="140" rx="14" fill="#fff" stroke="#1565C0" stroke-width="2"/>
+<text x="290" y="605" font-size="24" font-weight="700" text-anchor="middle">로컬 데이터</text>
+<text x="290" y="640" font-size="17" text-anchor="middle" fill="#455A64">Mock · 판정 기준값 · 카고 결과</text>
+<text x="290" y="668" font-size="15" text-anchor="middle" fill="#B71C1C">좌표 · 원시 신호 저장 안 함</text>
+
+<line x1="290" y1="350" x2="290" y2="388" stroke="#455A64" stroke-width="3" marker-end="url(#a)"/>
+<line x1="290" y1="510" x2="290" y2="548" stroke="#455A64" stroke-width="3" marker-end="url(#a)"/>
+
+<!-- SDK -->
+<text x="620" y="165" font-size="18" font-weight="700" fill="#2E7D32">Pleos SDK</text>
+<rect x="620" y="175" width="400" height="140" rx="14" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+<text x="640" y="215" font-size="23" font-weight="700">Vehicle SDK 2.3.2</text>
+<text x="640" y="250" font-size="16" fill="#455A64">방향지시등 · 조향각 · 브레이크</text>
+<text x="640" y="276" font-size="16" fill="#455A64">좌석 · 주행거리 · 앰비언트</text>
+<rect x="860" y="285" width="70" height="26" rx="13" fill="#B71C1C"/><text x="895" y="304" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">AG-04</text>
+<rect x="938" y="285" width="70" height="26" rx="13" fill="#B71C1C"/><text x="973" y="304" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">AG-05</text>
+
+<rect x="620" y="330" width="400" height="70" rx="14" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+<text x="640" y="374" font-size="22" font-weight="700">NaviHelper 3.0.5</text>
+<rect x="620" y="415" width="400" height="70" rx="14" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+<text x="640" y="459" font-size="22" font-weight="700">FusedLocation 1.1.3</text>
+<rect x="620" y="500" width="400" height="70" rx="14" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+<text x="640" y="544" font-size="22" font-weight="700">TextToSpeech 3.3.1</text>
+<rect x="920" y="490" width="88" height="26" rx="13" fill="#B71C1C"/><text x="964" y="509" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">ISSUE-06</text>
+
+<rect x="620" y="600" width="400" height="110" rx="14" fill="#F5F5F5" stroke="#B71C1C" stroke-width="2.5" stroke-dasharray="10 7"/>
+<text x="640" y="645" font-size="22" font-weight="700">주행 상태 소스</text>
+<text x="640" y="680" font-size="16" fill="#455A64">AAOS CarUxRestrictionsManager (잠정)</text>
+<rect x="938" y="590" width="70" height="26" rx="13" fill="#B71C1C"/><text x="973" y="609" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">AG-03</text>
+
+<!-- SDK → 엔진 -->
+<g stroke="#455A64" stroke-width="2.5" fill="none" marker-end="url(#a)">
+<path d="M620,245 C540,245 540,430 467,440"/>
+<path d="M620,365 C545,365 545,440 467,445"/>
+<path d="M620,450 L467,450"/>
+<path d="M620,535 C545,535 545,460 467,455"/>
+<path d="M620,655 C540,655 540,470 467,462"/>
+</g>
+
+<!-- 밖 -->
+<rect x="1110" y="175" width="250" height="200" rx="18" fill="#fff" stroke="#BDBDBD" stroke-width="2.5" stroke-dasharray="8 6"/>
+<text x="1235" y="235" font-size="22" font-weight="700" text-anchor="middle" fill="#9E9E9E">서버 · 제휴</text>
+<line x1="1165" y1="265" x2="1305" y2="340" stroke="#E53935" stroke-width="5"/><line x1="1305" y1="265" x2="1165" y2="340" stroke="#E53935" stroke-width="5"/>
+<text x="1235" y="400" font-size="17" text-anchor="middle" fill="#757575">없음 — 출시 단계</text>
+<line x1="1050" y1="275" x2="1108" y2="275" stroke="#BDBDBD" stroke-width="3" stroke-dasharray="6 6"/>
+
+<rect x="1110" y="520" width="250" height="190" rx="18" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+<text x="1235" y="575" font-size="20" font-weight="700" text-anchor="middle">Pleos Connect</text>
+<text x="1235" y="603" font-size="20" font-weight="700" text-anchor="middle">Emulator + VC 2.1.0</text>
+<text x="1235" y="645" font-size="17" text-anchor="middle" fill="#455A64">개발 · 시연 환경</text>
+<text x="1235" y="675" font-size="15" text-anchor="middle" fill="#B71C1C">cold boot 필수</text>
+
+<!-- 범례 -->
+<g font-size="17" fill="#37474F">
+<rect x="40" y="800" width="34" height="24" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/><text x="84" y="819">팀이 만드는 것</text>
+<rect x="250" y="800" width="34" height="24" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/><text x="294" y="819">Pleos 가 주는 것</text>
+<rect x="480" y="800" width="34" height="24" rx="6" fill="#F5F5F5" stroke="#B71C1C" stroke-width="2" stroke-dasharray="6 4"/><text x="524" y="819">미정 (잠정안)</text>
+<rect x="680" y="800" width="64" height="24" rx="12" fill="#B71C1C"/><text x="712" y="818" fill="#fff" text-anchor="middle" font-size="14" font-weight="700">ID</text><text x="754" y="819">미결 항목 (PRD 9 · 10장)</text>
+<line x1="1000" y1="812" x2="1050" y2="812" stroke="#455A64" stroke-width="3" marker-end="url(#a)"/><text x="1062" y="819">신호 · 데이터</text>
+</g>
+</svg>
+</body></html>
