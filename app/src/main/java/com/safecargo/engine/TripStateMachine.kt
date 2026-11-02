@@ -55,10 +55,13 @@ class TripStateMachine(
             if (s0.phase == Phase.PAUSED && s0.checkingArrival) {
                 val fix = e.fix
                 val dest = s0.cargo?.destination
-                val ok = fix != null && dest != null &&
-                    fix.ageMs <= config.locationMaxAgeSec * 1000L &&
-                    distanceM(fix.lat, fix.lng, dest.lat, dest.lng) <= config.arrivalRadiusM
-                val n = s0.copy(checkingArrival = false, arrivalVerified = ok, openAfterLocation = false)
+                val check = when {
+                    fix == null || dest == null || fix.ageMs > config.locationMaxAgeSec * 1000L -> ArrivalCheck.NO_FIX
+                    distanceM(fix.lat, fix.lng, dest.lat, dest.lng) <= config.arrivalRadiusM -> ArrivalCheck.VERIFIED
+                    else -> ArrivalCheck.OUT_OF_RANGE
+                }
+                val ok = check == ArrivalCheck.VERIFIED
+                val n = s0.copy(checkingArrival = false, arrivalVerified = ok, arrivalCheck = check, openAfterLocation = false)
                 // 개봉은 reduce 의 autoOpen 검사가 gear==PARK && !ux 일 때만 수행
                 Step(if (ok || s0.openAfterLocation) n.copy(autoOpenPending = true) else n)
             } else Step(s0)
@@ -66,7 +69,7 @@ class TripStateMachine(
         TripEvent.ArriveConfirmed -> {
             if (!s0.canArrive) Step(s0)
             else if (s0.cargo?.kind == CargoKind.SPONSOR) {
-                Step(s0.copy(checkingArrival = true, openAfterLocation = true), listOf(RequestLocation))
+                Step(s0.copy(checkingArrival = true, arrivalCheck = ArrivalCheck.NONE, openAfterLocation = true), listOf(RequestLocation))
             } else open(s0)
         }
         TripEvent.RevealFinished -> {
@@ -126,7 +129,7 @@ class TripStateMachine(
                 Phase.OPENING -> {
                     val n = s.copy(
                         cargo = dailyCargo, judge = JudgeState(), lastResult = s.result, result = null,
-                        revealed = false, arrivalVerified = false, checkingArrival = false,
+                        revealed = false, arrivalVerified = false, arrivalCheck = ArrivalCheck.NONE, checkingArrival = false,
                         openAfterLocation = false, autoOpenPending = false,
                     ).copy(phase = Phase.ESCORTING)
                     Step(n, listOf(RestoreLights, StopSpeech, PersistActive(n)))
@@ -136,7 +139,7 @@ class TripStateMachine(
         }
         if (g == Gear.PARK && s.phase == Phase.ESCORTING) {
             return if (s.cargo?.kind == CargoKind.SPONSOR) {
-                val n = s.copy(phase = Phase.PAUSED, checkingArrival = true)
+                val n = s.copy(phase = Phase.PAUSED, checkingArrival = true, arrivalCheck = ArrivalCheck.NONE)
                 Step(n, listOf(RequestLocation, PersistActive(n)))
             } else {
                 val n = s.copy(phase = Phase.PAUSED)

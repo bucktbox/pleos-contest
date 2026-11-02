@@ -27,7 +27,7 @@ class SafeCargoApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        config = ConfigLoader.parse(asset("config/judge.json"))
+        config = ConfigLoader.parse(asset("config/judge.json")) { android.util.Log.w("SAFECARGO", it) }
         catalog = MockCatalogLoader.parse(asset("mock/catalog.json"))
         val machine = TripStateMachine(
             config = config,

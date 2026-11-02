@@ -16,6 +16,12 @@ data class Cargo(val id: String, val name: String, val kind: CargoKind, val dest
 
 enum class Phase { IDLE, LOADED, ESCORTING, PAUSED, OPENING }
 
+/**
+ * 마지막 도착 확인 결과. 화면이 「반경 밖」 과 「위치 없음(권한 거부 · 시간 초과 · 오래된 값)」 을 구분하는 데 쓴다.
+ * NONE = 아직 확인하지 않음(또는 확인 중).
+ */
+enum class ArrivalCheck { NONE, NO_FIX, OUT_OF_RANGE, VERIFIED }
+
 @Serializable
 data class TripSummary(
     val signalFirst: Int, val noSignalTurns: Int, val perfect: Int, val smoothTurns: Int,
@@ -38,6 +44,7 @@ data class TripState(
     val checkingArrival: Boolean = false,
     val openAfterLocation: Boolean = false,
     val arrivalVerified: Boolean = false,
+    val arrivalCheck: ArrivalCheck = ArrivalCheck.NONE,
     val autoOpenPending: Boolean = false,
     val result: TripResult? = null,
     val revealed: Boolean = false,

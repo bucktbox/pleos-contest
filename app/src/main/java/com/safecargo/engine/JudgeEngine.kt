@@ -108,7 +108,8 @@ object JudgeEngine {
     /** 패밀리 버프 판정 — 결과 계산(finalize)과 화면(로비 · 앱 바)이 함께 쓰는 단 하나의 규칙. */
     fun familyBuff(seats: SeatSnapshot, c: JudgeConfig): FamilyBuff {
         val passengers = seats.occupied.filter { (seat, occ) -> seat != Seat.DRIVER && occ == true }.keys
-        val beltVerified = c.beltSignalTrusted && passengers.all { seats.belted[it] == true }
+        // 동승자가 없으면 「벨트 확인」 도 없다 (빈 목록의 all{} 은 true 라 막아 둔다).
+        val beltVerified = c.beltSignalTrusted && passengers.isNotEmpty() && passengers.all { seats.belted[it] == true }
         val active = passengers.size >= c.familyBuffMinPassengers && (!c.beltSignalTrusted || beltVerified)
         return FamilyBuff(passengers.size, beltVerified, active)
     }
@@ -122,9 +123,13 @@ object JudgeEngine {
         return JudgeOutcome(base, final, fb.active, fb.beltVerified, gradeOf(final, c))
     }
 
-    fun gradeOf(keys: Int, c: JudgeConfig): Grade = when {
-        keys >= c.gradeThresholds[1] -> Grade.LEGENDARY
-        keys >= c.gradeThresholds[0] -> Grade.EPIC
-        else -> Grade.RARE
+    /** 경계 [gradeThresholds] = [에픽 하한, 레전더리 하한]. 설정이 모자라도 던지지 않는다 (없는 경계는 건너뜀). */
+    fun gradeOf(keys: Int, c: JudgeConfig): Grade {
+        val t = c.gradeThresholds
+        return when {
+            t.size > 1 && keys >= t[1] -> Grade.LEGENDARY
+            t.isNotEmpty() && keys >= t[0] -> Grade.EPIC
+            else -> Grade.RARE
+        }
     }
 }

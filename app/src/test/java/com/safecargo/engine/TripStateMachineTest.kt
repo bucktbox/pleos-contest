@@ -209,4 +209,22 @@ class TripStateMachineTest {
         val c = m.reduce(b.state, ux(false))
         assertTrue(c.effects.none { it is PersistActive })
     }
+
+    @Test fun arrival_check_distinguishes_no_fix_from_out_of_range() {
+        val parked = TripState().on(select(), gear(Gear.DRIVE), gear(Gear.PARK)).state
+        assertEquals(ArrivalCheck.NONE, parked.arrivalCheck)
+        assertEquals(ArrivalCheck.OUT_OF_RANGE, parked.on(TripEvent.LocationResolved(far)).state.arrivalCheck)
+        assertEquals(ArrivalCheck.NO_FIX, parked.on(TripEvent.LocationResolved(null)).state.arrivalCheck)
+        assertEquals(ArrivalCheck.NO_FIX, parked.on(TripEvent.LocationResolved(GeoFix(37.0, 127.0, 61_000))).state.arrivalCheck)
+        assertEquals(ArrivalCheck.VERIFIED, parked.on(TripEvent.LocationResolved(near)).state.arrivalCheck)
+    }
+
+    @Test fun arrival_check_resets_on_new_check_and_is_persisted() {
+        val out = TripState().on(select(), gear(Gear.DRIVE), gear(Gear.PARK), TripEvent.LocationResolved(far))
+        assertTrue(out.effects.any { it is PersistActive && it.state.arrivalCheck == ArrivalCheck.OUT_OF_RANGE })
+        // 다시 달렸다 세우면 새 확인 — 이전 결과는 지운다
+        assertEquals(ArrivalCheck.NONE, out.state.on(gear(Gear.DRIVE), gear(Gear.PARK)).state.arrivalCheck)
+        // [도착 · 개봉] 의 재확인도 NONE 에서 시작
+        assertEquals(ArrivalCheck.NONE, out.state.on(ux(false), TripEvent.ArriveConfirmed).state.arrivalCheck)
+    }
 }

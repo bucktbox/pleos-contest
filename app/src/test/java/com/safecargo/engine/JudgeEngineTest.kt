@@ -94,4 +94,18 @@ class JudgeEngineTest {
     @Test fun grade_thresholds() {
         assertEquals(RARE, JudgeEngine.gradeOf(59, c)); assertEquals(EPIC, JudgeEngine.gradeOf(60, c)); assertEquals(LEGENDARY, JudgeEngine.gradeOf(120, c))
     }
+    @Test fun belt_not_verified_without_passengers() {
+        val alone = SeatSnapshot(occupied = mapOf(DRIVER to true), belted = mapOf(DRIVER to true))
+        val fb = JudgeEngine.familyBuff(alone, c.copy(beltSignalTrusted = true))
+        assertEquals(0, fb.passengers); assertFalse(fb.beltVerified); assertFalse(fb.active)
+        assertFalse(JudgeEngine.familyBuff(SeatSnapshot(), c.copy(beltSignalTrusted = true)).beltVerified)
+        // 동승자 전원 착용이면 확인됨
+        val buckled = SeatSnapshot(occupied = mapOf(DRIVER to true, REAR_LEFT to true), belted = mapOf(REAR_LEFT to true))
+        assertTrue(JudgeEngine.familyBuff(buckled, c.copy(beltSignalTrusted = true)).beltVerified)
+    }
+    @Test fun grade_of_is_bounds_safe() {
+        assertEquals(RARE, JudgeEngine.gradeOf(500, c.copy(gradeThresholds = emptyList())))
+        assertEquals(EPIC, JudgeEngine.gradeOf(500, c.copy(gradeThresholds = listOf(60))))
+        assertEquals(RARE, JudgeEngine.gradeOf(10, c.copy(gradeThresholds = listOf(60))))
+    }
 }
