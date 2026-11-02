@@ -27,7 +27,7 @@ class NaviSource(private val context: Context) {
         override fun onRouteStarted(info: RouteStartInfo) = Unit
         override fun onRouteEnded() = Unit
         override fun onRouteCancelled() { _destinationName.value = null }
-        override fun onDestinationChanged() { runCatching { navi?.getDestinationInfo() } }
+        override fun onDestinationChanged() { runCatching { navi?.getDestinationInfo() }.onFailure { fail("navi.destInfo", it) } }
         override fun onDestinationInfo(info: DestinationInfo) { _destinationName.value = info.name?.takeIf { it.isNotBlank() } }
         override fun onDestinationArrived(info: DestinationArrivedInfo) = Unit
         override fun onError(code: NaviErrorCode) { Log.w(TAG, "navi.error $code") }
@@ -47,7 +47,7 @@ class NaviSource(private val context: Context) {
                     }.onFailure { fail("navi.listener", it) }
                     Log.i(TAG, "navi ok")
                 },
-                { fail("navi.init", it) },
+                { fail("navi.init", it); navi = null },
             )
         }.onFailure { fail("navi.start", it); navi = null }
     }

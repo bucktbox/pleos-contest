@@ -34,7 +34,7 @@ class TtsPlayer(private val context: Context) {
                     ready = true
                     Log.i(TAG, "tts ok")
                 }
-                override fun onFailure(type: ErrorType) { Log.w(TAG, "tts init FAILED $type") }
+                override fun onFailure(type: ErrorType) { Log.w(TAG, "tts init FAILED $type"); tts = null }
             })
         }.onFailure { fail("tts.start", it); tts = null }
     }
