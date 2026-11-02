@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.safecargo.app.BuildConfig
 import com.safecargo.app.TripController
 import com.safecargo.data.MockCatalog
+import com.safecargo.engine.Gear
 import com.safecargo.engine.JudgeConfig
 import com.safecargo.engine.JudgeEngine
 import com.safecargo.engine.Phase
@@ -48,7 +49,8 @@ fun CargoApp(
     val wc = windowClassOf(cfg.screenWidthDp, cfg.screenHeightDp)
 
     // 패밀리 버프는 엔진과 같은 규칙 하나로 판정한다.
-    val buffActive = JudgeEngine.familyBuffActive(state.seats, config)
+    val family = JudgeEngine.familyBuff(state.seats, config)
+    val buffActive = family.active
     val borderLight by controller.borderLight.collectAsStateWithLifecycle()
     Box(Modifier.fillMaxSize()) {
         AppShell(
@@ -65,7 +67,12 @@ fun CargoApp(
                     val r = state.result
                     when {
                         r == null -> Box(Modifier.fillMaxSize())
-                        !state.revealed -> UnboxingScreen(r, wc, onFinished = { controller.dispatch(TripEvent.RevealFinished) })
+                        // 복구 직후엔 기어를 모른다(UNKNOWN) — 정차 · UX 해제가 확인되기 전엔 닫힌 상자만 (애니메이션 · 타이머 없음).
+                        !state.revealed -> UnboxingScreen(
+                            r, wc,
+                            playable = state.gear == Gear.PARK && !state.uxRestricted,
+                            onFinished = { controller.dispatch(TripEvent.RevealFinished) },
+                        )
                         else -> RewardScreen(
                             r, catalog.reward(r.rewardId), wc,
                             onClose = { controller.dispatch(TripEvent.CloseResult) },
@@ -106,6 +113,7 @@ fun CargoApp(
                                 support = support,
                                 buffActive = buffActive,
                                 buffMultiplier = config.familyBuffMultiplier,
+                                beltVerified = family.beltVerified,
                             ),
                         )
                     }

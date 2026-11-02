@@ -76,6 +76,8 @@ data class LobbyInfo(
     /** [com.safecargo.engine.JudgeEngine.familyBuffActive] 결과 — 화면에서 다시 판정하지 않는다. */
     val buffActive: Boolean = false,
     val buffMultiplier: Double = 1.5,
+    /** [com.safecargo.engine.FamilyBuff.beltVerified] — 동승자가 있고 모두 벨트를 맸다고 엔진이 판정. */
+    val beltVerified: Boolean = false,
 )
 
 private const val NAVI_FAILED = "내비 안내를 보내지 못했어요 — 목적지는 앱에 저장돼 있어요"
@@ -118,13 +120,13 @@ private class LobbyModel(val state: TripState, val info: LobbyInfo) {
     val riders = state.seats.occupied.count { it.value == true }
     val buff = info.buffActive
     val mult = multiplierLabel(info.buffMultiplier)
-    val allBelted = info.beltTrusted && riders > 0 &&
-        state.seats.occupied.filter { it.value == true }.keys.all { state.seats.belted[it] == true }
+    // 엔진 판정(동승자 기준)을 그대로 쓴다 — 화면에서 다시 세지 않는다.
+    val allBelted = info.beltVerified && passengers > 0
 
     fun seatsSummary(short: Boolean): String = when {
         info.support.seats == false -> if (short) "좌석 감지 미지원" else "이 차량은 좌석 감지를 지원하지 않아요"
         riders == 0 -> if (short) "좌석 확인 중" else "좌석 정보를 기다리고 있어요"
-        allBelted -> if (short) "${riders}명 모두 벨트 OK" else "탄 사람 ${riders}명 모두 벨트를 맸어요"
+        allBelted -> if (short) "동승 ${passengers}명 벨트 OK" else "동승자 ${passengers}명 모두 벨트를 맸어요"
         buff -> if (short) "${riders}명 탑승" else "탄 사람 ${riders}명 — 패밀리 버프가 붙어요"
         passengers > 0 && info.beltTrusted -> if (short) "벨트를 매면 $mult" else "동승자가 모두 벨트를 매면 버프가 붙어요"
         passengers > 0 -> if (short) "${riders}명 탑승" else "탄 사람 ${riders}명 — 버프 조건을 아직 못 채웠어요"
@@ -195,9 +197,11 @@ private fun cargoLine(m: LobbyModel) =
 private fun SponsorLine(m: LobbyModel, style: androidx.compose.ui.text.TextStyle) {
     val label = m.info.sponsorLabel ?: return
     if (!m.sponsor) return
+    // 제휴명 바로 오른쪽에 「예시」, 「제공」 은 그 뒤 (SD-08 — RewardScreen.RewardCard 와 같은 순서).
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SC.gapSm)) {
-        Text("$label 제공", style = style, color = SC.textDim)
+        Text(label, style = style, color = SC.textDim, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
         ExampleBadge()
+        Text("제공", style = style, color = SC.textDim)
     }
 }
 
@@ -404,7 +408,7 @@ private fun GuideCard() {
             ScIcon(R.drawable.ic_car, SC.accent, 32.dp)
             Text("출발하면 호위가 시작돼요", style = ScType.title, color = SC.text)
         }
-        Text("달리는 동안엔 화면을 만지지 않아도 돼요. 도착하면 소리로 알려줄게요.", style = ScType.body, color = SC.textDim)
+        Text("달리는 동안엔 화면을 만지지 않아도 돼요. 상자를 열면 소리로 알려줄게요.", style = ScType.body, color = SC.textDim)
     }
 }
 
@@ -494,7 +498,7 @@ private fun GuideBar() {
             IconCircle(R.drawable.ic_car, SC.accentOn, 56.dp, 28.dp, background = SC.accent)
             Column(verticalArrangement = Arrangement.spacedBy(SC.gap2xs)) {
                 Text("출발하면 호위가 시작돼요", style = ScType.title, color = SC.text)
-                Text("달리는 동안엔 만지지 않아도 돼요. 도착하면 소리로 알려줄게요", style = ScType.body, color = SC.textDim)
+                Text("달리는 동안엔 만지지 않아도 돼요. 상자를 열면 소리로 알려줄게요", style = ScType.body, color = SC.textDim)
             }
         }
     }
@@ -522,7 +526,7 @@ private fun LobbyPreview() {
         AppShell(previewState, streak = 3, support = SupportStatus(), wc = wc, buffActive = true) {
             LobbyScreen(
                 previewState, wc, locationGranted = true, onPickDestination = {}, onRequestLocation = {}, onDebugReset = null,
-                info = LobbyInfo(streak = 3, sponsorLabel = "베이커리 카페 예시", beltTrusted = true, buffActive = true),
+                info = LobbyInfo(streak = 3, sponsorLabel = "베이커리 카페 예시", beltTrusted = true, buffActive = true, beltVerified = true),
             )
         }
     }

@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.dp
 
 /**
  * 디자인 토큰. 피그마 「01 시스템 가이드」 변수에서 가져온 값(bg/surface/elevated/pressed/border/text/accent,
- * size-touch-min, spacing-md)과, 피그마에 아직 확정되지 않은 게임 색(등급 3종 — AG-02 확정 전)으로 나뉜다.
+ * size-touch-min, spacing-md)과, 피그마에 아직 확정되지 않은 게임 색(등급 3종 — 실내 조명색과 일치)으로 나뉜다.
  */
 object SC {
     val bg = Color(0xFF090B0F)
@@ -24,10 +24,11 @@ object SC {
     val textDim = Color(0xFFA3A9B4)
     val textDisabled = Color(0xFF3F4550)
 
-    // 등급 색: 피그마 미확정(AG-02). 임시값.
-    val rare = Color(0xFF4C8DFF)
-    val epic = Color(0xFFA06BFF)
-    val legendary = Color(0xFFFFC247)
+    // 등급 색: 실내 조명과 같은 색 — config/judge.json `gradeLightColors` (JudgeConfig 기본값) 를 그대로 따른다.
+    // 한쪽을 바꾸면 다른 쪽도 같이 바꾼다 (화면 테두리 대체 연출 · 언박싱 · 배지가 조명과 같은 색이어야 한다).
+    val rare = Color(0xFF00E5FF)
+    val epic = Color(0xFFAA00FF)
+    val legendary = Color(0xFFFFC400)
 
     /** 열쇠 · 스트릭 노랑 (피그마 color/game/key). */
     val gameKey = Color(0xFFFFD36B)

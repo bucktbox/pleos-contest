@@ -56,7 +56,7 @@ fun AppShell(
     }
     Column(Modifier.fillMaxSize().background(SC.bg)) {
         AppBar(state, streak, wc.orientation, buffActive, buffMultiplier)
-        supportMessage(support)?.let { SupportBanner(it) }
+        supportBannerText(state.phase, support)?.let { SupportBanner(it) }
         if (wc.orientation == Orientation.P && navVisible) Segments(items)
         Row(Modifier.weight(1f).fillMaxWidth()) {
             if (wc.orientation == Orientation.L && navVisible) Rail(items)
@@ -144,6 +144,10 @@ private fun StreakBadge(streak: Int, wide: Boolean) {
         Text(if (wide) "무사 배송 ${streak}일" else "${streak}일", style = ScType.label, color = if (on) SC.text else SC.textDim)
     }
 }
+
+/** 지원 배너 문구. ESCORTING 에서는 null — 주행 중 화면에 문장 0개 (NFR-SAF-001). */
+fun supportBannerText(phase: Phase, support: SupportStatus): String? =
+    if (phase == Phase.ESCORTING) null else supportMessage(support)
 
 private fun supportMessage(s: SupportStatus): String? = when {
     s.belts == false -> "이 차량은 벨트를 감지하지 못해요 — 버프는 착석 기준"

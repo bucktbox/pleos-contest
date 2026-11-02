@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.safecargo.app.R
+import com.safecargo.engine.ArrivalCheck
 import com.safecargo.engine.CargoKind
 import com.safecargo.engine.Gear
 import com.safecargo.engine.JudgeState
@@ -42,6 +44,7 @@ import com.safecargo.ui.theme.ScType
 import kotlin.math.floor
 
 private const val OUT_OF_RANGE = "목적지 근처가 아니에요 — 지금 열면 일반 리워드"
+private const val NO_FIX = "도착 인증 없음 — 지금 열면 일반 리워드"
 private const val NEED_STOP = "차를 완전히 세우면 열 수 있어요"
 
 /**
@@ -121,11 +124,11 @@ private fun KeysRow(keys: Int, buffActive: Boolean, mult: Double) {
 @Composable
 private fun ArrivePanel(state: TripState, onArrive: () -> Unit) {
     var confirm by rememberSaveable { mutableStateOf(false) }
-    val sponsor = state.cargo?.kind == CargoKind.SPONSOR
-    // 스폰서 PAUSED 는 항상 확인 중으로 시작하므로, 확인이 끝났는데(!checking) 인증이 안 됐다면 반경 밖이다.
-    val outOfRange = sponsor && !state.checkingArrival && !state.arrivalVerified
+    // 열 수 없게 되면(다시 출발 · UX 제한 · 확인 시작) 열려 있던 확인 창을 닫는다.
+    LaunchedEffect(state.canArrive) { if (!state.canArrive) confirm = false }
+    val note = arrivalNote(state)
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(SC.gap), horizontalAlignment = Alignment.CenterHorizontally) {
-        if (outOfRange) Text(OUT_OF_RANGE, style = ScType.body, color = SC.gameKey, textAlign = TextAlign.Center)
+        if (note != null) Text(note, style = ScType.body, color = SC.gameKey, textAlign = TextAlign.Center)
         ArriveButton(state.canArrive, state.checkingArrival) { confirm = true }
         if (!state.canArrive && !state.checkingArrival) Text(NEED_STOP, style = ScType.body, color = SC.textDim, textAlign = TextAlign.Center)
     }
@@ -137,6 +140,20 @@ private fun ArrivePanel(state: TripState, onArrive: () -> Unit) {
             confirmButton = { ScButton("열기", { confirm = false; onArrive() }, primary = true) },
             dismissButton = { ScButton("취소", { confirm = false }) },
         )
+    }
+}
+
+/**
+ * 스폰서 카고의 도착 확인이 끝났는데 인증이 안 됐을 때의 안내.
+ * 위치를 받았고 반경 밖일 때만 「근처가 아니에요」, 위치를 못 받았으면(권한 거부 · 시간 초과 · 오래된 값) 「인증 없음」.
+ */
+internal fun arrivalNote(state: TripState): String? {
+    if (state.cargo?.kind != CargoKind.SPONSOR || state.checkingArrival || state.arrivalVerified) return null
+    return when (state.arrivalCheck) {
+        ArrivalCheck.OUT_OF_RANGE -> OUT_OF_RANGE
+        ArrivalCheck.VERIFIED -> null
+        // NO_FIX, 그리고 이 필드가 없던 옛 저장본(NONE) — 위치를 받았는지 모르므로 「반경 밖」 이라 말하지 않는다.
+        ArrivalCheck.NO_FIX, ArrivalCheck.NONE -> NO_FIX
     }
 }
 

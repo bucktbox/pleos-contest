@@ -74,45 +74,48 @@ private const val NAME_MS = 400f
  * SC-05 언박싱. 상자 흔들림 → 뚜껑 열림 → 등급 빛, 총 [UNBOX_TOTAL_MS] 뒤 [onFinished] 한 번.
  * 탭하면 바로 건너뛴다. 진행 상태는 저장하지 않는다 — 창 크기 변경 · 재시작이면 처음부터 다시 재생 (허용).
  * Lottie 는 디자이너 에셋이 오면 이 화면만 교체한다.
+ *
+ * [playable]=false (복구 직후 기어 UNKNOWN 등 — 정차 · UX 해제 미확인) 면 닫힌 상자만 정지 그림으로 그린다:
+ * 애니메이션 · 타이머 · 탭 건너뛰기 모두 없음. true 가 되면 처음부터 재생한다.
  */
 @Composable
-fun UnboxingScreen(result: TripResult, wc: WindowClass, onFinished: () -> Unit) {
+fun UnboxingScreen(result: TripResult, wc: WindowClass, playable: Boolean = true, onFinished: () -> Unit) {
     val finish by rememberUpdatedState(onFinished)
     // 타이머와 탭이 겹쳐도 onFinished 는 한 번만.
     var done by remember(result.id) { mutableStateOf(false) }
     val fire: () -> Unit = remember(result.id) { { if (!done) { done = true; finish() } } }
 
     val t = remember(result.id) { Animatable(0f) }
-    LaunchedEffect(result.id) {
+    LaunchedEffect(result.id, playable) {
+        if (!playable) return@LaunchedEffect
+        t.snapTo(0f)
         t.animateTo(UNBOX_TOTAL_MS.toFloat(), tween(UNBOX_TOTAL_MS, easing = LinearEasing))
         fire()
     }
 
-    val ms = t.value
+    // 정지 그림 = 0ms 프레임 (흔들림 0 · 뚜껑 닫힘 · 빛 없음).
+    val ms = if (playable) t.value else 0f
     val color = gradeColor(result.grade)
     val nameAlpha = ((ms - NAME_START) / NAME_MS).coerceIn(0f, 1f)
     val compact = wc.height == HeightClass.S
 
-    Box(
-        Modifier.fillMaxSize()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() }, indication = null,
-                role = Role.Button, onClick = fire,
-            )
-            .semantics { contentDescription = "상자 여는 중 — 누르면 건너뛰어요" },
-    ) {
+    val tap = if (playable) Modifier.clickable(
+        interactionSource = remember { MutableInteractionSource() }, indication = null,
+        role = Role.Button, onClick = fire,
+    ).semantics { contentDescription = "상자 여는 중 — 누르면 건너뛰어요" } else Modifier
+    Box(Modifier.fillMaxSize().then(tap)) {
         Column(
             Modifier.fillMaxSize().padding(vertical = if (compact) SC.gapLg else SC.gapXl, horizontal = SC.gapXl),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(if (compact) SC.gapSm else SC.gap),
         ) {
-            Text("배송 완료! 상자를 여는 중", style = ScType.title, color = SC.text, textAlign = TextAlign.Center)
+            Text(if (playable) "배송 완료! 상자를 여는 중" else "배송 완료!", style = ScType.title, color = SC.text, textAlign = TextAlign.Center)
             Canvas(Modifier.fillMaxWidth().weight(1f).clipToBounds()) { drawUnboxing(result.grade, color, ms) }
             Text(
                 "${gradeName(result.grade)} 상자", style = ScType.headline, color = color,
                 modifier = Modifier.alpha(nameAlpha),
             )
-            Text("화면을 누르면 바로 열려요", style = ScType.caption, color = SC.textDim)
+            if (playable) Text("화면을 누르면 바로 열려요", style = ScType.caption, color = SC.textDim)
         }
     }
 }
