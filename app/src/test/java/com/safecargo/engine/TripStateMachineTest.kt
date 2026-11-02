@@ -54,7 +54,8 @@ class TripStateMachineTest {
         assertEquals(Phase.OPENING, b.state.phase)
         assertTrue(b.state.result!!.arrivalVerified)
         assertEquals("coupon-cafe", b.state.result!!.rewardId)
-        assertTrue(b.effects.first() is SaveResult)
+        assertTrue(b.effects.first() is PersistActive)
+        assertTrue(b.effects[1] is SaveResult)
         assertTrue(b.effects.any { it is FlashLights })
     }
 
@@ -181,5 +182,31 @@ class TripStateMachineTest {
         assertFalse(a.state.uxRestricted)
         assertTrue(a.state.connected)
         assertEquals(listOf<TripEffect>(RestoreLights, ClearActive), a.effects)
+    }
+
+    private fun steer(deg: Float, at: Long) = TripEvent.Signal(VehicleSignal.SteerChanged(deg, at))
+    private fun turn(sig: TurnSignal, at: Long) = TripEvent.Signal(VehicleSignal.TurnChanged(sig, at))
+
+    @Test fun scoring_turn_during_escort_persists_judge_progress() {
+        val esc = TripState().on(select(), gear(Gear.DRIVE)).state
+        var step = Step(esc)
+        val evs = listOf(turn(TurnSignal.LEFT, 1000), steer(-30f, 2500), steer(-90f, 3000), steer(-180f, 4000), steer(0f, 5000))
+        val persisted = mutableListOf<TripState>()
+        for (ev in evs) {
+            step = m.reduce(step.state, ev)
+            step.effects.filterIsInstance<PersistActive>().forEach { persisted += it.state }
+        }
+        assertTrue(step.state.judge.keys > 0.0)
+        assertTrue(persisted.any { it.judge.keys > 0.0 })
+        assertEquals(step.state.judge.keys, persisted.last().judge.keys, 0.0)
+    }
+
+    @Test fun steer_sample_without_persisted_change_emits_no_persist() {
+        val esc = TripState().on(select(), gear(Gear.DRIVE)).state
+        val a = m.reduce(esc, steer(-5f, 1000))
+        val b = m.reduce(a.state, steer(-8f, 1100))
+        assertTrue(b.effects.none { it is PersistActive })
+        val c = m.reduce(b.state, ux(false))
+        assertTrue(c.effects.none { it is PersistActive })
     }
 }

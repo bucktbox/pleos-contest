@@ -12,12 +12,30 @@ class TripStateMachine(
         val base = step(s, e)
         // PAUSED 에서 자동 개봉 조건 (매 이벤트 뒤)
         val st = base.state
-        if (st.phase == Phase.PAUSED && st.autoOpenPending && st.gear == Gear.PARK && !st.uxRestricted) {
+        val out = if (st.phase == Phase.PAUSED && st.autoOpenPending && st.gear == Gear.PARK && !st.uxRestricted) {
             val o = open(st)
-            return Step(o.state, base.effects + o.effects)
-        }
-        return base
+            Step(o.state, base.effects + o.effects)
+        } else base
+        return withPersist(s, e, out)
     }
+
+    /**
+     * 활성 운행에서 저장 대상 상태가 바뀌었는데 그 상태의 PersistActive 가 없으면 덧붙인다
+     * (판정 진행 · 좌석 · 도착 확인 등). 일시값(기어 · UX · 연결 · 원시 조향 샘플)만 바뀐 경우는 저장하지 않는다.
+     * Restore 는 이미 디스크에 있는 상태라 제외한다.
+     */
+    private fun withPersist(old: TripState, e: TripEvent, out: Step): Step {
+        val n = out.state
+        if (e is TripEvent.Restore || n.phase == Phase.IDLE) return out
+        if (persisted(old) == persisted(n)) return out
+        if (out.effects.any { it is PersistActive && it.state == n }) return out
+        return Step(n, out.effects + PersistActive(n))
+    }
+
+    private fun persisted(s: TripState): TripState = s.copy(
+        gear = Gear.UNKNOWN, uxRestricted = true, connected = false,
+        judge = s.judge.copy(lastDeg = null, lastAt = null, peakRate = 0f),
+    )
 
     private fun isDrive(g: Gear) = g == Gear.DRIVE || g == Gear.REVERSE
 
@@ -155,6 +173,6 @@ class TripStateMachine(
             phase = Phase.OPENING, result = r, revealed = false,
             checkingArrival = false, openAfterLocation = false, autoOpenPending = false,
         )
-        return Step(n, listOf(SaveResult(r), PersistActive(n), FlashLights(o.grade), AnnounceArrival))
+        return Step(n, listOf(PersistActive(n), SaveResult(r), FlashLights(o.grade), AnnounceArrival))
     }
 }

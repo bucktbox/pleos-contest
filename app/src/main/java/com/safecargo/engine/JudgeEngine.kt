@@ -1,6 +1,7 @@
 package com.safecargo.engine
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
@@ -25,11 +26,12 @@ data class JudgeState(
     val signalDir: TurnSignal = TurnSignal.OFF,
     val signalOnAt: Long? = null,
     val signalOffAt: Long? = null,
-    val lastDeg: Float? = null,
-    val lastAt: Long? = null,
+    // 원시 조향 샘플 — 저장 금지. 복구 뒤엔 새 샘플부터 다시 잰다.
+    @Transient val lastDeg: Float? = null,
+    @Transient val lastAt: Long? = null,
     val inTurn: Boolean = false,
     val judged: Boolean = false,
-    val peakRate: Float = 0f,
+    @Transient val peakRate: Float = 0f,
 )
 
 data class JudgeOutcome(

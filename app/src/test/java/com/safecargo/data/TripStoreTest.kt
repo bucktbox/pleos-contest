@@ -22,7 +22,11 @@ class TripStoreTest {
             phase = Phase.PAUSED, cargo = cargo, judge = JudgeState(keys = 12.0, signalFirst = 2),
             gear = Gear.PARK, uxRestricted = false, connected = true,
         )
-        store.saveActive(s)
+        store.saveActive(s.copy(judge = s.judge.copy(lastDeg = -12.5f, lastAt = 99L, peakRate = 40f)))
+        val json = java.io.File(tmp.root, "active_trip.json").readText()
+        assertFalse(json.contains("lastDeg"))
+        assertFalse(json.contains("lastAt"))
+        assertFalse(json.contains("peakRate"))
         val l = store.loadActive()!!
         assertEquals(Phase.PAUSED, l.phase)
         assertEquals(cargo, l.cargo)

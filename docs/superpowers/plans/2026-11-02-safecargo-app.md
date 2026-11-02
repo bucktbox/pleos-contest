@@ -435,7 +435,7 @@ class TripController(machine: TripStateMachine, store: TripStore, vehicle: Vehic
 - `MainActivity`: `onStart` 에서 `appVisible=true`, `onStop` 에서 `appVisible=false` + `onAppHidden()`. `FUSED_LOCATION` 미허용이면 요청 (Task 9 의 권한 카드가 생기면 그쪽으로 옮김).
 
 - [ ] **Step 1: 구현**
-- [ ] **Step 2: S1 로그 확인** — `poc/scripts/vc-scenario.sh` 를 돌리기 전 디버그 인텐트로 목적지 선택: `MainActivity` 에 `intent.getStringExtra("dest")` 가 있으면 해당 Mock 목적지로 `SelectDestination` (디버그 빌드만). `adb -s emulator-5554 shell am start -n com.safecargo.app/.app.MainActivity --es dest cafe` → `adb -s emulator-5554 emu geo fix 126.7600 37.7130` → 스크립트 실행.
+- [ ] **Step 2: S1 로그 확인** — `poc/scripts/vc-scenario.sh` 를 돌리기 전 디버그 인텐트로 목적지 선택: `MainActivity` 에 `intent.getStringExtra("dest")` 가 있으면 해당 Mock 목적지로 `SelectDestination` (디버그 빌드만). `adb -s emulator-5554 shell am start --user 10 -n com.safecargo.app/.MainActivity --es dest cafe` → `adb -s emulator-5554 emu geo fix 126.7600 37.7130` → 스크립트 실행.
   Expected 로그 순서: `LOADED` → `ESCORTING` (keys 증가: 깜빡이 좌회전 30 이상) → `PAUSED` → `LocationResolved` → `OPENING` (rewardId coupon-cafe), 조명 3초 후 원복.
 - [ ] **Step 3: 복구 확인 (EX-08)** — 호위 중 `adb -s emulator-5554 shell am force-stop com.safecargo.app` → 재실행 → 로그 `Restore : -> ESCORTING`. 개봉 중 force-stop → 재실행 → `trips.json` 항목 1개(`adb -s emulator-5554 shell run-as com.safecargo.app cat files/trips.json`).
 - [ ] **Step 4: Commit + push** — `feat(app): 운행 컨트롤러 — SDK 신호와 엔진 연결`, `GIT_TERMINAL_PROMPT=0 git push`
