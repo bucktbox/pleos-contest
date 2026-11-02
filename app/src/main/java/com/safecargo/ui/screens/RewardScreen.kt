@@ -96,14 +96,22 @@ fun RewardScreen(
     Column(Modifier.fillMaxSize().padding(horizontal = pad, vertical = if (compact) SC.gap else SC.gapLg)) {
         if (wc.orientation == Orientation.L) {
             Row(Modifier.weight(1f).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(SC.gapXl)) {
-                Column(
-                    Modifier.weight(1f).fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(gap),
-                ) {
-                    ResultHeader(result, buffMultiplier, compact)
-                    // 히어로: 열린 상자 — 남는 높이를 채워 왼쪽 단의 빈 공간을 없앤다.
-                    GradeHero(result.grade, Modifier.weight(1f).fillMaxWidth().heightIn(min = 160.dp))
-                    RewardCard(result, reward, compact)
+                if (compact) {
+                    // S: 높이가 모자라 히어로 없이 스크롤 (긴 이름 · 도착 인증 없음 · 큰 글꼴에서도 잘리지 않게).
+                    Column(
+                        Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(gap),
+                    ) { ResultHeader(result, buffMultiplier, compact); RewardCard(result, reward, compact) }
+                } else {
+                    Column(
+                        Modifier.weight(1f).fillMaxHeight(),
+                        verticalArrangement = Arrangement.spacedBy(gap),
+                    ) {
+                        ResultHeader(result, buffMultiplier, compact)
+                        // 히어로: 열린 상자 — 남는 높이를 채워 왼쪽 단의 빈 공간을 없앤다.
+                        GradeHero(result.grade, Modifier.weight(1f).fillMaxWidth().heightIn(min = 160.dp))
+                        RewardCard(result, reward, compact)
+                    }
                 }
                 Column(
                     Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState()),
