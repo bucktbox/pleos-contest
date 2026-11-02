@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -75,7 +76,7 @@ fun RewardScreen(
     reward: Reward?,
     wc: WindowClass,
     onClose: () -> Unit,
-    buffMultiplier: Double = 1.5,
+    buffMultiplier: Double,
 ) {
     val compact = wc.height == HeightClass.S
     val pad = if (compact) SC.gapLg else SC.gapXl
@@ -96,9 +97,14 @@ fun RewardScreen(
         if (wc.orientation == Orientation.L) {
             Row(Modifier.weight(1f).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(SC.gapXl)) {
                 Column(
-                    Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState()),
+                    Modifier.weight(1f).fillMaxHeight(),
                     verticalArrangement = Arrangement.spacedBy(gap),
-                ) { ResultHeader(result, buffMultiplier, compact); RewardCard(result, reward, compact) }
+                ) {
+                    ResultHeader(result, buffMultiplier, compact)
+                    // 히어로: 열린 상자 — 남는 높이를 채워 왼쪽 단의 빈 공간을 없앤다.
+                    GradeHero(result.grade, Modifier.weight(1f).fillMaxWidth().heightIn(min = 160.dp))
+                    RewardCard(result, reward, compact)
+                }
                 Column(
                     Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(gap),
@@ -167,6 +173,15 @@ private fun ResultHeader(r: TripResult, mult: Double, compact: Boolean) {
     }
 }
 
+/** L 왼쪽 단 히어로 — 언박싱 마지막 장면(열린 상자 + 등급 빛). */
+@Composable
+private fun GradeHero(g: Grade, modifier: Modifier) {
+    Box(
+        modifier.clip(RoundedCornerShape(SC.radiusLg)).background(SC.surface),
+        contentAlignment = Alignment.Center,
+    ) { GradeBoxIcon(g, Modifier.fillMaxSize(), opened = true) }
+}
+
 /** 등급 3중 표기 — 상자 모양 + 색 + 이름. */
 @Composable
 private fun GradeBadge(g: Grade, compact: Boolean) {
@@ -208,7 +223,14 @@ private fun RewardCard(r: TripResult, reward: Reward?, compact: Boolean) {
         if (reward != null) {
             LabelWithBadge(reward.title, badge = true, style = ScType.title)
             LabelWithBadge(reward.amountLabel, badge = true, style = ScType.headline, color = gradeColor(r.grade))
-            reward.partnerLabel?.let { LabelWithBadge("$it 제공", badge = true, style = ScType.body, color = SC.textDim) }
+            // 제휴명 바로 오른쪽에 「예시」, 「제공」 은 그 뒤 (SD-08).
+            reward.partnerLabel?.let {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SC.gapSm)) {
+                    Text(it, style = ScType.body, color = SC.textDim, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+                    ExampleBadge()
+                    Text("제공", style = ScType.body, color = SC.textDim)
+                }
+            }
         } else {
             Text("보상 정보를 불러오지 못했어요", style = ScType.body, color = SC.textDim)
         }
@@ -353,6 +375,6 @@ private fun RewardSmallPreview() = RewardHost(previewResult(Grade.RARE), preview
 @Composable
 private fun RewardHost(r: TripResult, reward: Reward, w: Int, h: Int) {
     SafeCargoTheme {
-        Box(Modifier.fillMaxSize().background(SC.bg)) { RewardScreen(r, reward, windowClassOf(w, h), onClose = {}) }
+        Box(Modifier.fillMaxSize().background(SC.bg)) { RewardScreen(r, reward, windowClassOf(w, h), onClose = {}, buffMultiplier = 1.5) }
     }
 }

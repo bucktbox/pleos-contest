@@ -80,7 +80,7 @@ fun UnboxingScreen(result: TripResult, wc: WindowClass, onFinished: () -> Unit) 
     val finish by rememberUpdatedState(onFinished)
     // 타이머와 탭이 겹쳐도 onFinished 는 한 번만.
     var done by remember(result.id) { mutableStateOf(false) }
-    val fire = { if (!done) { done = true; finish() } }
+    val fire: () -> Unit = remember(result.id) { { if (!done) { done = true; finish() } } }
 
     val t = remember(result.id) { Animatable(0f) }
     LaunchedEffect(result.id) {
@@ -236,9 +236,13 @@ private fun DrawScope.drawCrown(cx: Float, top: Float, s: Float) {
 
 /** 리워드 화면 배지용 작은 상자 그림 — 같은 모양 규칙(사각 · 리본 · 왕관). */
 @Composable
-internal fun GradeBoxIcon(grade: Grade, modifier: Modifier = Modifier) {
+internal fun GradeBoxIcon(grade: Grade, modifier: Modifier = Modifier, opened: Boolean = false) {
     val color = gradeColor(grade)
-    Canvas(modifier) { drawUnboxing(grade, color, 0f, sizeFactor = 0.62f) }
+    Canvas(modifier.clipToBounds()) {
+        // opened: 언박싱 마지막 프레임(뚜껑 열림 + 등급 빛) 그대로.
+        if (opened) drawUnboxing(grade, color, UNBOX_TOTAL_MS.toFloat())
+        else drawUnboxing(grade, color, 0f, sizeFactor = 0.62f)
+    }
 }
 
 // ---------------------------------------------------------------- 프리뷰
