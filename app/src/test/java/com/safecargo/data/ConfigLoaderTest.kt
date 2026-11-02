@@ -9,7 +9,10 @@ import org.junit.Test
 
 class ConfigLoaderTest {
     @Test fun asset_matches_defaults() {
-        assertEquals(JudgeConfig(), ConfigLoader.parse(File("src/main/assets/config/judge.json").readText()))
+        val reasons = mutableListOf<String>()
+        val c = ConfigLoader.parse(File("src/main/assets/config/judge.json").readText()) { reasons += it }
+        assertEquals("shipped judge.json must be valid, not silently replaced by defaults", emptyList<String>(), reasons)
+        assertEquals(JudgeConfig(), c)
     }
 
     @Test fun unknown_and_missing_keys_tolerated() {
