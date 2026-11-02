@@ -184,7 +184,7 @@ private fun CargoCardLarge(m: LobbyModel, modifier: Modifier, fill: Boolean) {
 }
 
 @Composable
-private fun CargoBox(modifier: Modifier = Modifier) {
+internal fun CargoBox(modifier: Modifier = Modifier) {
     Image(painterResource(R.drawable.img_cargo_box), contentDescription = "카고 상자", modifier = modifier.padding(SC.gap))
 }
 

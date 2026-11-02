@@ -20,6 +20,7 @@ import com.safecargo.engine.JudgeEngine
 import com.safecargo.engine.Phase
 import com.safecargo.engine.TripEvent
 import com.safecargo.ui.screens.DestinationScreen
+import com.safecargo.ui.screens.EscortScreen
 import com.safecargo.ui.screens.LobbyInfo
 import com.safecargo.ui.screens.LobbyScreen
 import com.safecargo.ui.shell.AppShell
@@ -52,7 +53,11 @@ fun CargoApp(
         buffActive = buffActive, buffMultiplier = config.familyBuffMultiplier,
     ) {
         when (state.phase) {
-            Phase.ESCORTING, Phase.PAUSED -> Placeholder("EscortScreen") // Task 10
+            Phase.ESCORTING, Phase.PAUSED -> EscortScreen(
+                state, wc,
+                onArrive = { controller.dispatch(TripEvent.ArriveConfirmed) },
+                buffActive = buffActive, buffMultiplier = config.familyBuffMultiplier,
+            )
             Phase.OPENING -> Placeholder(if (state.revealed) "RewardScreen" else "UnboxingScreen") // Task 11
             Phase.IDLE, Phase.LOADED -> {
                 // 이 분기 안에서만 기억한다 — 호위로 넘어갔다 돌아오면 목적지 화면은 닫힌 상태.
