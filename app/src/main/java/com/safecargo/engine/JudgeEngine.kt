@@ -34,6 +34,8 @@ data class JudgeState(
     @Transient val peakRate: Float = 0f,
 )
 
+data class FamilyBuff(val passengers: Int, val beltVerified: Boolean, val active: Boolean)
+
 data class JudgeOutcome(
     val baseKeys: Int,
     val finalKeys: Int,
@@ -103,13 +105,21 @@ object JudgeEngine {
     private fun JudgeState.withMoment(atMs: Long, kind: MomentKind, c: JudgeConfig): JudgeState =
         copy(moments = (moments + JudgeMoment(atMs, kind)).takeLast(c.momentsMax))
 
-    fun finalize(s: JudgeState, seats: SeatSnapshot, c: JudgeConfig): JudgeOutcome {
+    /** 패밀리 버프 판정 — 결과 계산(finalize)과 화면(로비 · 앱 바)이 함께 쓰는 단 하나의 규칙. */
+    fun familyBuff(seats: SeatSnapshot, c: JudgeConfig): FamilyBuff {
         val passengers = seats.occupied.filter { (seat, occ) -> seat != Seat.DRIVER && occ == true }.keys
         val beltVerified = c.beltSignalTrusted && passengers.all { seats.belted[it] == true }
-        val buff = passengers.size >= c.familyBuffMinPassengers && (!c.beltSignalTrusted || beltVerified)
+        val active = passengers.size >= c.familyBuffMinPassengers && (!c.beltSignalTrusted || beltVerified)
+        return FamilyBuff(passengers.size, beltVerified, active)
+    }
+
+    fun familyBuffActive(seats: SeatSnapshot, c: JudgeConfig): Boolean = familyBuff(seats, c).active
+
+    fun finalize(s: JudgeState, seats: SeatSnapshot, c: JudgeConfig): JudgeOutcome {
+        val fb = familyBuff(seats, c)
         val base = floor(s.keys).toInt()
-        val final = floor(s.keys * (if (buff) c.familyBuffMultiplier else 1.0)).toInt()
-        return JudgeOutcome(base, final, buff, beltVerified, gradeOf(final, c))
+        val final = floor(s.keys * (if (fb.active) c.familyBuffMultiplier else 1.0)).toInt()
+        return JudgeOutcome(base, final, fb.active, fb.beltVerified, gradeOf(final, c))
     }
 
     fun gradeOf(keys: Int, c: JudgeConfig): Grade = when {

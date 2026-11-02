@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.dp
  */
 object SC {
     val bg = Color(0xFF090B0F)
+    /** 하단 고정 안내 바 (피그마 06 상태 안내 P) — bg 보다 한 단 어두움. */
+    val bgDeep = Color(0xFF000000)
     val surface = Color(0xFF12151B)
     val elevated = Color(0xFF1C2028)
     val pressed = Color(0xFF2A2F38)

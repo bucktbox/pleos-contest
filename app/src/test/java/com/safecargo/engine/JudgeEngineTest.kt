@@ -75,6 +75,22 @@ class JudgeEngineTest {
     @Test fun driver_alone_has_no_buff() {
         assertFalse(JudgeEngine.finalize(JudgeState(keys = 30.0), SeatSnapshot(occupied = mapOf(DRIVER to true)), c).familyBuff)
     }
+    @Test fun family_buff_active_follows_min_passengers_and_belts() {
+        val two = SeatSnapshot(
+            occupied = mapOf(DRIVER to true, REAR_LEFT to true, Seat.PASSENGER to true, Seat.REAR_RIGHT to null),
+            belted = mapOf(REAR_LEFT to true, Seat.PASSENGER to false),
+        )
+        assertTrue(JudgeEngine.familyBuffActive(two, c))
+        assertTrue(JudgeEngine.familyBuffActive(two, c.copy(familyBuffMinPassengers = 2)))
+        assertFalse(JudgeEngine.familyBuffActive(two, c.copy(familyBuffMinPassengers = 3)))
+        // 벨트 신뢰 시 동승자 전원 착용이어야 한다 (PASSENGER 미착용)
+        assertFalse(JudgeEngine.familyBuffActive(two, c.copy(beltSignalTrusted = true)))
+        val fb = JudgeEngine.familyBuff(two, c)
+        assertEquals(2, fb.passengers); assertFalse(fb.beltVerified)
+        // finalize 는 같은 판정을 쓴다
+        assertEquals(JudgeEngine.familyBuffActive(two, c.copy(familyBuffMinPassengers = 3)),
+            JudgeEngine.finalize(JudgeState(keys = 10.0), two, c.copy(familyBuffMinPassengers = 3)).familyBuff)
+    }
     @Test fun grade_thresholds() {
         assertEquals(RARE, JudgeEngine.gradeOf(59, c)); assertEquals(EPIC, JudgeEngine.gradeOf(60, c)); assertEquals(LEGENDARY, JudgeEngine.gradeOf(120, c))
     }

@@ -72,3 +72,7 @@ fun IconCircle(
 fun ScIcon(@DrawableRes icon: Int, tint: Color, size: Dp, modifier: Modifier = Modifier) {
     Icon(painterResource(icon), contentDescription = null, tint = tint, modifier = modifier.size(size))
 }
+
+/** 배수 표기: 1.5 → 「×1.5」, 2.0 → 「×2」. */
+fun multiplierLabel(m: Double): String =
+    "×" + if (m % 1.0 == 0.0) m.toInt().toString() else m.toString()

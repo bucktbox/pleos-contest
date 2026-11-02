@@ -16,6 +16,7 @@ import com.safecargo.app.BuildConfig
 import com.safecargo.app.TripController
 import com.safecargo.data.MockCatalog
 import com.safecargo.engine.JudgeConfig
+import com.safecargo.engine.JudgeEngine
 import com.safecargo.engine.Phase
 import com.safecargo.engine.TripEvent
 import com.safecargo.ui.screens.DestinationScreen
@@ -44,7 +45,12 @@ fun CargoApp(
     val cfg = LocalConfiguration.current
     val wc = windowClassOf(cfg.screenWidthDp, cfg.screenHeightDp)
 
-    AppShell(state, streak, support, wc, rankingEnabled = config.rankingEnabled) {
+    // 패밀리 버프는 엔진과 같은 규칙 하나로 판정한다.
+    val buffActive = JudgeEngine.familyBuffActive(state.seats, config)
+    AppShell(
+        state, streak, support, wc, rankingEnabled = config.rankingEnabled,
+        buffActive = buffActive, buffMultiplier = config.familyBuffMultiplier,
+    ) {
         when (state.phase) {
             Phase.ESCORTING, Phase.PAUSED -> Placeholder("EscortScreen") // Task 10
             Phase.OPENING -> Placeholder(if (state.revealed) "RewardScreen" else "UnboxingScreen") // Task 11
@@ -79,6 +85,8 @@ fun CargoApp(
                             sponsorLabel = cargo?.destination?.let { catalog.reward(it.rewardId)?.partnerLabel },
                             beltTrusted = config.beltSignalTrusted,
                             support = support,
+                            buffActive = buffActive,
+                            buffMultiplier = config.familyBuffMultiplier,
                         ),
                     )
                 }

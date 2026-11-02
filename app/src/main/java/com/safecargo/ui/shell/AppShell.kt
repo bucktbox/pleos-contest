@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,18 +24,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.safecargo.engine.Phase
-import com.safecargo.engine.Seat
 import com.safecargo.engine.TripState
 import com.safecargo.sdk.SupportStatus
 import com.safecargo.app.R
 import com.safecargo.ui.components.IconCircle
 import com.safecargo.ui.components.ScIcon
+import com.safecargo.ui.components.multiplierLabel
 import com.safecargo.ui.theme.SC
 import com.safecargo.ui.theme.ScType
 
@@ -50,6 +45,9 @@ fun AppShell(
     support: SupportStatus,
     wc: WindowClass,
     rankingEnabled: Boolean = false,
+    /** [com.safecargo.engine.JudgeEngine.familyBuffActive] 결과. */
+    buffActive: Boolean = false,
+    buffMultiplier: Double = 1.5,
     content: @Composable () -> Unit,
 ) {
     val navVisible = state.phase != Phase.ESCORTING
@@ -57,7 +55,7 @@ fun AppShell(
         add(NavEntry("로비", R.drawable.ic_lobby)); if (rankingEnabled) add(NavEntry("랭킹", null))
     }
     Column(Modifier.fillMaxSize().background(SC.bg)) {
-        AppBar(state, streak, wc.orientation)
+        AppBar(state, streak, wc.orientation, buffActive, buffMultiplier)
         supportMessage(support)?.let { SupportBanner(it) }
         if (wc.orientation == Orientation.P && navVisible) Segments(items)
         Row(Modifier.weight(1f).fillMaxWidth()) {
@@ -76,7 +74,7 @@ private data class NavEntry(val label: String, val icon: Int?)
 
 /** 피그마 01 앱 바 (16:111 / 17:180): 높이 96. L 은 마크 + 앱 이름, P 는 마크만. */
 @Composable
-private fun AppBar(state: TripState, streak: Int, orientation: Orientation) {
+private fun AppBar(state: TripState, streak: Int, orientation: Orientation, buffActive: Boolean, buffMultiplier: Double) {
     val wide = orientation == Orientation.L
     Row(
         Modifier.fillMaxWidth().height(96.dp).padding(horizontal = if (wide) SC.gapXl else SC.gapLg),
@@ -89,13 +87,10 @@ private fun AppBar(state: TripState, streak: Int, orientation: Orientation) {
         }
         Box(Modifier.weight(1f))
         StatusChip(state.phase)
-        if (hasPassenger(state)) BuffBadge(wide)
+        if (buffActive) BuffBadge(wide, multiplierLabel(buffMultiplier))
         StreakBadge(streak, wide)
     }
 }
-
-private fun hasPassenger(s: TripState) =
-    s.seats.occupied.any { (seat, occ) -> seat != Seat.DRIVER && occ == true }
 
 @Composable
 private fun Chip(content: @Composable () -> Unit) {
@@ -133,10 +128,10 @@ private fun StatusChip(phase: Phase) {
 }
 
 @Composable
-private fun BuffBadge(wide: Boolean) {
+private fun BuffBadge(wide: Boolean, mult: String) {
     Chip {
         ScIcon(R.drawable.ic_family, SC.accent, 24.dp)
-        Text(if (wide) "버프 ×1.5" else "×1.5", style = ScType.label, color = SC.text)
+        Text(if (wide) "버프 $mult" else mult, style = ScType.label, color = SC.text)
     }
 }
 

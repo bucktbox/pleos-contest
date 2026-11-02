@@ -52,6 +52,7 @@ import com.safecargo.ui.components.ExampleBadge
 import com.safecargo.ui.components.IconCircle
 import com.safecargo.ui.components.ScButton
 import com.safecargo.ui.components.ScIcon
+import com.safecargo.ui.components.multiplierLabel
 import com.safecargo.ui.preview.WindowPreviews
 import com.safecargo.ui.shell.AppShell
 import com.safecargo.ui.shell.HeightClass
@@ -72,6 +73,9 @@ data class LobbyInfo(
     val sponsorLabel: String? = null,
     val beltTrusted: Boolean = false,
     val support: SupportStatus = SupportStatus(),
+    /** [com.safecargo.engine.JudgeEngine.familyBuffActive] 결과 — 화면에서 다시 판정하지 않는다. */
+    val buffActive: Boolean = false,
+    val buffMultiplier: Double = 1.5,
 )
 
 private const val NAVI_FAILED = "내비 안내를 보내지 못했어요 — 목적지는 앱에 저장돼 있어요"
@@ -94,7 +98,9 @@ fun LobbyScreen(
     val m = LobbyModel(state, info)
     BoxWithConstraints(Modifier.fillMaxSize()) {
         if (wc.orientation == Orientation.L) {
-            val fill = locationGranted && maxHeight >= 960.dp && wc.height != HeightClass.S
+            // 보조 열이 기준: 좌석 카드 최소 ≈533 + 스트릭 ≈217(디버그 버튼 포함) + 안내 ≈183 + 간격 48 + 위아래 64
+            // ≈ 1045. 지원 배너(≈45)가 뜬 1700×1184 창(본문 ≈1043)은 스크롤 쪽으로 보낸다.
+            val fill = locationGranted && maxHeight >= 1060.dp && wc.height != HeightClass.S
             LobbyLandscape(m, fill, locationGranted, onPickDestination, onRequestLocation, onDebugReset)
         } else {
             val fill = locationGranted && maxHeight >= 900.dp && wc.height != HeightClass.S
@@ -110,7 +116,8 @@ private class LobbyModel(val state: TripState, val info: LobbyInfo) {
     val destination: Destination? = cargo?.destination
     val passengers = state.seats.occupied.count { (s, o) -> s != Seat.DRIVER && o == true }
     val riders = state.seats.occupied.count { it.value == true }
-    val buff = passengers > 0
+    val buff = info.buffActive
+    val mult = multiplierLabel(info.buffMultiplier)
     val allBelted = info.beltTrusted && riders > 0 &&
         state.seats.occupied.filter { it.value == true }.keys.all { state.seats.belted[it] == true }
 
@@ -119,7 +126,9 @@ private class LobbyModel(val state: TripState, val info: LobbyInfo) {
         riders == 0 -> if (short) "좌석 확인 중" else "좌석 정보를 기다리고 있어요"
         allBelted -> if (short) "${riders}명 모두 벨트 OK" else "탄 사람 ${riders}명 모두 벨트를 맸어요"
         buff -> if (short) "${riders}명 탑승" else "탄 사람 ${riders}명 — 패밀리 버프가 붙어요"
-        else -> if (short) "혼자 탑승" else "함께 타면 열쇠가 ×1.5 돼요"
+        passengers > 0 && info.beltTrusted -> if (short) "벨트를 매면 $mult" else "동승자가 모두 벨트를 매면 버프가 붙어요"
+        passengers > 0 -> if (short) "${riders}명 탑승" else "탄 사람 ${riders}명 — 버프 조건을 아직 못 채웠어요"
+        else -> if (short) "혼자 탑승" else "함께 타면 열쇠가 $mult 돼요"
     }
 }
 
@@ -138,7 +147,7 @@ private fun LobbyLandscape(
             CargoCardLarge(m, if (fill) Modifier.weight(1f) else Modifier, fill)
             DestinationCard(m, onPick, large = true)
             if (!locationGranted) LocationCard(onRequestLocation)
-            KeyCards(m.info.support, compact = false)
+            KeyCards(m.info.support, m.mult, compact = false)
         }
         Column(Modifier.weight(0.4f).let { if (fill) it.fillMaxHeight() else it }, verticalArrangement = Arrangement.spacedBy(SC.gapLg)) {
             SeatCard(m, if (fill) Modifier.weight(1f) else Modifier, fill)
@@ -247,17 +256,17 @@ private fun LocationCard(onRequest: () -> Unit) {
 
 private data class KeyInfo(@DrawableRes val icon: Int, val title: String, val desc: String, val supported: Boolean)
 
-private fun keyInfos(s: SupportStatus) = listOf(
+private fun keyInfos(s: SupportStatus, mult: String) = listOf(
     KeyInfo(R.drawable.ic_signal, "깜빡이 먼저", "켜고 나서 방향 바꾸기", s.turn != false),
     KeyInfo(R.drawable.ic_steering, "부드럽게", "핸들은 천천히 돌리기", s.steer != false),
-    KeyInfo(R.drawable.ic_family, "패밀리", "함께 타면 열쇠 ×1.5", s.seats != false),
+    KeyInfo(R.drawable.ic_family, "패밀리", "함께 타면 열쇠 $mult", s.seats != false),
 )
 
 /** 03 3대 열쇠 (16:199 / 17:297). 지원하지 않는 열쇠는 회색 + 사선 + 「미지원」 (EX-01). */
 @Composable
-private fun KeyCards(support: SupportStatus, compact: Boolean) {
+private fun KeyCards(support: SupportStatus, mult: String, compact: Boolean) {
     Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(if (compact) SC.gapSm else SC.gap)) {
-        keyInfos(support).forEach { k ->
+        keyInfos(support, mult).forEach { k ->
             val tint = if (k.supported) SC.gameKey else SC.textDisabled
             val text = if (k.supported) SC.text else SC.textDisabled
             Column(
@@ -288,7 +297,7 @@ private fun SeatCard(m: LobbyModel, modifier: Modifier, fill: Boolean) {
     Card(modifier, gap = SC.gapLg) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text("탑승", style = ScType.title, color = SC.text, modifier = Modifier.weight(1f))
-            BuffPill(m.buff)
+            BuffPill(m.buff, m.mult)
         }
         Box(Modifier.fillMaxWidth().let { if (fill) it.weight(1f) else it.padding(vertical = SC.gapLg) }, contentAlignment = Alignment.Center) {
             CarBody(m)
@@ -298,7 +307,7 @@ private fun SeatCard(m: LobbyModel, modifier: Modifier, fill: Boolean) {
 }
 
 @Composable
-private fun BuffPill(on: Boolean) {
+private fun BuffPill(on: Boolean, mult: String) {
     Row(
         Modifier.clip(RoundedCornerShape(50)).background(if (on) SC.accent else SC.elevated)
             .padding(horizontal = SC.gap, vertical = SC.gapXs),
@@ -306,7 +315,7 @@ private fun BuffPill(on: Boolean) {
         horizontalArrangement = Arrangement.spacedBy(SC.gapXs),
     ) {
         ScIcon(R.drawable.ic_family, if (on) SC.accentOn else SC.textDim, 24.dp)
-        Text("패밀리 버프 ×1.5", style = ScType.label, color = if (on) SC.accentOn else SC.textDim)
+        Text("패밀리 버프 $mult", style = ScType.label, color = if (on) SC.accentOn else SC.textDim)
     }
 }
 
@@ -420,7 +429,7 @@ private fun LobbyPortrait(
                 MiniSeatCard(m, Modifier.weight(1f).fillMaxHeight())
                 StreakCard(m.info, large = false, onDebugReset = null, modifier = Modifier.weight(1f).fillMaxHeight())
             }
-            KeyCards(m.info.support, compact = true)
+            KeyCards(m.info.support, m.mult, compact = true)
             onDebugReset?.let { ScButton("기록 초기화", it, Modifier.fillMaxWidth()) }
         }
         GuideBar()
@@ -442,15 +451,14 @@ private fun CargoCardPortrait(m: LobbyModel, modifier: Modifier, fill: Boolean) 
         ) { CargoBox(Modifier.width(212.dp)) }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(SC.gapXs)) {
             Text("오늘의 카고", style = ScType.label, color = SC.textDim)
-            Text(m.cargoName, style = ScType.headline, color = SC.text, maxLines = 3, overflow = TextOverflow.Ellipsis)
-            if (m.sponsor) ExampleBadge()
+            NameWithBadge(m.cargoName, m.sponsor, ScType.headline)
             Text(cargoLine(m), style = ScType.body, color = SC.textDim)
             SponsorLine(m, ScType.caption)
         }
     }
 }
 
-/** 04 좌석 P (17:263): 미니 좌석 2×2 + 패밀리 버프 ×1.5. */
+/** 04 좌석 P (17:263): 미니 좌석 2×2 + 패밀리 버프 배수. */
 @Composable
 private fun MiniSeatCard(m: LobbyModel, modifier: Modifier) {
     Row(
@@ -467,7 +475,7 @@ private fun MiniSeatCard(m: LobbyModel, modifier: Modifier) {
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(SC.gap2xs)) {
             Text("패밀리 버프", style = ScType.caption, color = SC.textDim)
-            Text("×1.5", style = ScType.headline, color = if (m.buff) SC.accent else SC.textDisabled)
+            Text(m.mult, style = ScType.headline, color = if (m.buff) SC.accent else SC.textDisabled)
             Text(m.seatsSummary(short = true), style = ScType.caption, color = SC.textDim)
         }
     }
@@ -479,7 +487,7 @@ private fun GuideBar() {
     Column(Modifier.fillMaxWidth()) {
         Spacer(Modifier.fillMaxWidth().height(1.dp).background(SC.border))
         Row(
-            Modifier.fillMaxWidth().background(Color.Black).padding(horizontal = SC.gapLg, vertical = 25.dp),
+            Modifier.fillMaxWidth().background(SC.bgDeep).padding(horizontal = SC.gapLg, vertical = 25.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(SC.gap),
         ) {
@@ -511,11 +519,24 @@ private fun LobbyPreview() {
     val c = androidx.compose.ui.platform.LocalConfiguration.current
     val wc = windowClassOf(c.screenWidthDp, c.screenHeightDp)
     SafeCargoTheme {
-        AppShell(previewState, streak = 3, support = SupportStatus(), wc = wc) {
+        AppShell(previewState, streak = 3, support = SupportStatus(), wc = wc, buffActive = true) {
             LobbyScreen(
                 previewState, wc, locationGranted = true, onPickDestination = {}, onRequestLocation = {}, onDebugReset = null,
-                info = LobbyInfo(streak = 3, sponsorLabel = "베이커리 카페 예시", beltTrusted = true),
+                info = LobbyInfo(streak = 3, sponsorLabel = "베이커리 카페 예시", beltTrusted = true, buffActive = true),
             )
+        }
+    }
+}
+
+@Preview(name = "지원 배너 1700x1184", widthDp = 1700, heightDp = 1184)
+@Composable
+private fun LobbyBannerPreview() {
+    val wc = windowClassOf(1700, 1184)
+    val sup = SupportStatus(belts = false)
+    SafeCargoTheme {
+        AppShell(previewState, streak = 3, support = sup, wc = wc, buffActive = true) {
+            LobbyScreen(previewState, wc, locationGranted = true, onPickDestination = {}, onRequestLocation = {}, onDebugReset = {},
+                info = LobbyInfo(streak = 3, sponsorLabel = "베이커리 카페 예시", support = sup, buffActive = true))
         }
     }
 }

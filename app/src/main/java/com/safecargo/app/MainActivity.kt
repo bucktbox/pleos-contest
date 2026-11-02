@@ -1,8 +1,11 @@
 package com.safecargo.app
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,8 +23,12 @@ class MainActivity : ComponentActivity() {
     /** 위치 권한 — 로비의 권한 카드가 보고, onResume · 요청 결과에서 다시 확인한다. */
     private var locationGranted by mutableStateOf(false)
 
-    private val locationRequest = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+    /** 「다시 묻지 않음」 으로 거부됐으면 다음 [허용] 탭은 앱 설정 화면으로 보낸다. */
+    private var openSettingsNext = false
+
+    private val locationRequest = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         locationGranted = hasLocation()
+        openSettingsNext = !granted && !shouldShowRequestPermissionRationale(FUSED_LOCATION)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +72,13 @@ class MainActivity : ComponentActivity() {
 
     /** 로비 권한 카드에서만 부른다 (앱 시작 때 자동 요청하지 않음). */
     private fun requestLocation() {
-        if (!hasLocation()) locationRequest.launch(FUSED_LOCATION)
+        if (hasLocation()) return
+        if (openSettingsNext) {
+            val i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null))
+            try { startActivity(i) } catch (e: ActivityNotFoundException) { locationRequest.launch(FUSED_LOCATION) }
+        } else {
+            locationRequest.launch(FUSED_LOCATION)
+        }
     }
 
     private fun hasLocation() =
