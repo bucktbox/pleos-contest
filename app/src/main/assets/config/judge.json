@@ -1,0 +1,34 @@
+{
+    "drivingAudio": false,
+    "drivingScreen": "static",
+    "penaltyNoSignalTurn": 0.0,
+    "penaltyHarshSteer": 0.0,
+    "signalBonusKey": 30.0,
+    "perfectSignalSec": 1.5,
+    "perfectMultiplier": 1.5,
+    "turnAngleDeg": 90.0,
+    "harshSteerDegPerSec": 300.0,
+    "smoothTurnKey": 5.0,
+    "maxSignalBonusPerTrip": 5,
+    "signalGraceSec": 2.0,
+    "familyBuffMinPassengers": 1,
+    "familyBuffMultiplier": 1.5,
+    "beltSignalTrusted": false,
+    "gradeThresholds": [
+        60,
+        120
+    ],
+    "gradeLightColors": {
+        "RARE": 58879,
+        "EPIC": 11141375,
+        "LEGENDARY": 16761856
+    },
+    "ambientFlashMs": 3000,
+    "rankingEnabled": false,
+    "streakDays": 5,
+    "streakName": "무사 배송",
+    "arrivalRadiusM": 300.0,
+    "locationMaxAgeSec": 60,
+    "steerSign": -1.0,
+    "momentsMax": 12
+}
