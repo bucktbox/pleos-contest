@@ -31,6 +31,12 @@ internal fun mapSeatName(name: String?): Seat? = when (name) {
     else -> null
 }
 
+/**
+ * SDK 착석 Boolean → 앱의 「착석」. [inverted] 면 뒤집는다(SDK 2.3.2 는 true = VACANT). null 은 그대로 null.
+ * 한계: SDK 가 UNKNOWN(0) 도 false 로 주므로, 뒤집으면 UNKNOWN 이 착석으로 읽힌다. → JudgeConfig.seatOccupancyInverted
+ */
+internal fun occupiedFromSdk(v: Boolean?, inverted: Boolean): Boolean? = if (inverted) v?.not() else v
+
 /** raw 가 null 이면 버린다(null 반환). */
 internal fun steerDeg(raw: Float?, steerSign: Float): Float? = raw?.let { it * steerSign }
 

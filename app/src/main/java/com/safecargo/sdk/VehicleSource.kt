@@ -41,6 +41,8 @@ data class SupportStatus(
 class VehicleSource(
     private val context: Context,
     private val steerSign: Float,
+    /** JudgeConfig.seatOccupancyInverted — SDK 착석 Boolean 을 뒤집을지. */
+    private val seatOccupancyInverted: Boolean,
     private val now: () -> Long = SystemClock::elapsedRealtime,
 ) {
     private val _signals = MutableSharedFlow<VehicleSignal>(extraBufferCapacity = 64)
@@ -124,7 +126,7 @@ class VehicleSource(
     private fun onOccupancy(sv: SeatValue, v: Boolean?) {
         val seat = mapSeat(sv) ?: return
         update { it.copy(seats = true) }
-        emitSeats { occupied[seat] = v }
+        emitSeats { occupied[seat] = occupiedFromSdk(v, seatOccupancyInverted) }
     }
 
     private fun onBelt(sv: SeatValue, v: Boolean?) {

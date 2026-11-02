@@ -35,7 +35,7 @@ class SafeCargoApp : Application() {
             newId = { UUID.randomUUID().toString() },
             todayEpochDay = { LocalDate.now().toEpochDay() },
         )
-        val vehicle = VehicleSource(this, config.steerSign)
+        val vehicle = VehicleSource(this, config.steerSign, config.seatOccupancyInverted)
         controller = TripController(
             machine = machine,
             store = TripStore(filesDir),

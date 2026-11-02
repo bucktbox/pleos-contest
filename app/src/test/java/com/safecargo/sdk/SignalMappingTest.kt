@@ -36,4 +36,16 @@ class SignalMappingTest {
         assertEquals(30f, steerDeg(30f, 1f)!!, 0f)
         assertNull(steerDeg(null, -1f))
     }
+
+    @Test fun occupancy_inverted() {
+        assertEquals(false, occupiedFromSdk(true, inverted = true))
+        assertEquals(true, occupiedFromSdk(false, inverted = true))
+        assertNull(occupiedFromSdk(null, inverted = true))
+    }
+
+    @Test fun occupancy_passthrough() {
+        assertEquals(true, occupiedFromSdk(true, inverted = false))
+        assertEquals(false, occupiedFromSdk(false, inverted = false))
+        assertNull(occupiedFromSdk(null, inverted = false))
+    }
 }

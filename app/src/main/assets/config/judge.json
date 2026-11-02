@@ -30,5 +30,6 @@
     "arrivalRadiusM": 300.0,
     "locationMaxAgeSec": 60,
     "steerSign": -1.0,
+    "seatOccupancyInverted": true,
     "momentsMax": 12
 }

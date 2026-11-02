@@ -28,5 +28,12 @@ data class JudgeConfig(
     val arrivalRadiusM: Double = 300.0,
     val locationMaxAgeSec: Int = 60,
     val steerSign: Float = -1f,
+    /**
+     * Vehicle SDK 2.3.2 의 착석 Boolean 은 raw `VehicleSeatOccupancyState` 를 `== 1` 로 바꾼다
+     * (UNKNOWN=0 · VACANT=1 · OCCUPIED=2) → true 가 「비어 있음」 이다. true 면 앱이 뒤집어 쓴다.
+     * 한계: SDK Boolean 으로는 UNKNOWN(0) 과 OCCUPIED(2) 를 구분할 수 없어, 뒤집으면 UNKNOWN 이 「착석」 으로 읽힌다.
+     * SDK 가 고쳐진 실차에서는 false 로 둔다.
+     */
+    val seatOccupancyInverted: Boolean = true,
     val momentsMax: Int = 12,
 )
