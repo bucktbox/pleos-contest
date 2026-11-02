@@ -158,4 +158,28 @@ class TripStateMachineTest {
         assertTrue(a.effects.contains(RestoreLights))
         assertTrue(a.effects.contains(ClearActive))
     }
+
+    @Test fun arrive_then_neutral_before_location_does_not_open() {
+        val a = TripState().on(select(), gear(Gear.DRIVE), gear(Gear.PARK), TripEvent.LocationResolved(far), ux(false),
+            TripEvent.ArriveConfirmed, gear(Gear.NEUTRAL), TripEvent.LocationResolved(null))
+        assertEquals(Phase.PAUSED, a.state.phase)
+        val b = a.state.on(gear(Gear.PARK))
+        assertEquals(Phase.OPENING, b.state.phase)
+        assertEquals("general", b.state.result!!.rewardId)
+    }
+
+    @Test fun restore_paused_checking_requests_location_again() {
+        val sponsor = Cargo("cargo-d1", "x", CargoKind.SPONSOR, dest)
+        val b = TripState().on(TripEvent.Restore(TripState(phase = Phase.PAUSED, cargo = sponsor, checkingArrival = true)))
+        assertEquals(listOf<TripEffect>(RequestLocation), b.effects)
+    }
+
+    @Test fun reset_keeps_live_vehicle_fields() {
+        val a = TripState().on(gear(Gear.PARK), ux(false), TripEvent.Reset)
+        assertEquals(Phase.IDLE, a.state.phase)
+        assertEquals(Gear.PARK, a.state.gear)
+        assertFalse(a.state.uxRestricted)
+        assertTrue(a.state.connected)
+        assertEquals(listOf<TripEffect>(RestoreLights, ClearActive), a.effects)
+    }
 }

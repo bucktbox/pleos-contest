@@ -40,9 +40,9 @@ class TripStateMachine(
                 val ok = fix != null && dest != null &&
                     fix.ageMs <= config.locationMaxAgeSec * 1000L &&
                     distanceM(fix.lat, fix.lng, dest.lat, dest.lng) <= config.arrivalRadiusM
-                val n = s0.copy(checkingArrival = false, arrivalVerified = ok)
-                if (s0.openAfterLocation) open(n)
-                else Step(if (ok) n.copy(autoOpenPending = true) else n)
+                val n = s0.copy(checkingArrival = false, arrivalVerified = ok, openAfterLocation = false)
+                // 개봉은 reduce 의 autoOpen 검사가 gear==PARK && !ux 일 때만 수행
+                Step(if (ok || s0.openAfterLocation) n.copy(autoOpenPending = true) else n)
             } else Step(s0)
         }
         TripEvent.ArriveConfirmed -> {
@@ -69,9 +69,15 @@ class TripStateMachine(
         is TripEvent.Restore -> {
             val n = e.saved.copy(gear = Gear.UNKNOWN, uxRestricted = true, connected = false)
             val r = n.result
-            Step(n, if (n.phase == Phase.OPENING && r != null) listOf(SaveResult(r)) else emptyList())
+            Step(n, when {
+                n.phase == Phase.OPENING && r != null -> listOf(SaveResult(r))
+                n.phase == Phase.PAUSED && n.checkingArrival -> listOf(RequestLocation)
+                else -> emptyList()
+            })
         }
-        TripEvent.Reset -> Step(TripState(), listOf(RestoreLights, ClearActive))
+        TripEvent.Reset -> Step(
+            TripState(gear = s0.gear, uxRestricted = s0.uxRestricted, seats = s0.seats, connected = s0.connected),
+            listOf(RestoreLights, ClearActive))
     }
 
     private fun onSignal(s0: TripState, sig: VehicleSignal): Step {
