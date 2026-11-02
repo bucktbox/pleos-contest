@@ -10,6 +10,7 @@
     <uses-permission android:name="pleos.car.permission.NAVI_ROUTE" />     <!-- 목적지 조회 · 내비 이벤트 -->
     <uses-permission android:name="pleos.car.permission.NAVI_ROUTE_SEARCH" /> <!-- 경로 요청 (앱 → 내비 목적지 전달) -->
     <uses-permission android:name="pleos.car.permission.TTS_SERVICE" />    <!-- TTS -->
+    <uses-permission android:name="pleos.car.permission.FUSED_LOCATION" /> <!-- 정차 시 위치 1회 (dangerous) -->
     <!-- CarUxRestrictionsManager -->
     <uses-permission android:name="android.car.permission.CAR_DRIVING_STATE" />
     <!-- 참고 확인용: 표준 AAOS 차속. 본 앱 채택 여부는 심사 허용 범위 확인 후 결정 -->

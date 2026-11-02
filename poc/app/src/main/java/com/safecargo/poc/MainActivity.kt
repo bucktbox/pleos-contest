@@ -8,6 +8,9 @@ import ai.pleos.playground.navi.data.DestinationInfo
 import ai.pleos.playground.navi.data.RouteInfo
 import ai.pleos.playground.navi.data.RouteStartInfo
 import ai.pleos.playground.navi.constants.RouteOption
+import ai.pleos.playground.location.fused.FusedLocation
+import ai.pleos.playground.location.fused.listener.FusedLocationListener
+import ai.pleos.playground.location.fused.model.LocationData
 import ai.pleos.playground.tts.TextToSpeech
 import ai.pleos.playground.tts.constant.ErrorType
 import ai.pleos.playground.tts.constant.Mode
@@ -68,6 +71,7 @@ class MainActivity : Activity() {
     private var vehicle: Vehicle? = null
     private var navi: NaviHelper? = null
     private var tts: TextToSpeech? = null
+    private var location: FusedLocation? = null
     private var car: Car? = null
     private var uxManager: CarUxRestrictionsManager? = null
     private var propertyManager: CarPropertyManager? = null
@@ -100,6 +104,7 @@ class MainActivity : Activity() {
                 main.post {
                     log("scenario", "D→P 감지: 조명·TTS 시험")
                     ambientTest(0xFFAA00FF.toInt(), "Purple(VC #aa00ff)")
+                    locationOnce()
                     runCatching { tts?.speak("배송 완료! 상자를 열어볼까요?", true) }.onFailure { fail("tts.speak", it) }
                 }
             }
@@ -167,6 +172,7 @@ class MainActivity : Activity() {
         startCarApi()
         startNavi()
         startTts()
+        startLocation()
     }
 
     override fun onDestroy() {
@@ -174,6 +180,7 @@ class MainActivity : Activity() {
         runCatching { vehicle?.release() }
         runCatching { navi?.removeListener(naviListener); navi?.release() }
         runCatching { tts?.release() }
+        runCatching { location?.release() }
         runCatching { uxManager?.unregisterListener() }
         runCatching { propertyManager?.unregisterCallback(speedCallback) }
         runCatching { car?.disconnect() }
@@ -309,6 +316,32 @@ class MainActivity : Activity() {
             )
             log("navi.requestRoute", "서울시청")
         }.onFailure { fail("navi.requestRoute", it) }
+    }
+
+    // ---------- 위치 1회 (FR-LOC-001) ----------
+    private fun startLocation() {
+        runCatching {
+            val l = FusedLocation(this)
+            location = l
+            l.initialize()
+            log("location.init", "called")
+        }.onFailure { fail("location.init", it) }
+    }
+
+    private fun locationOnce() {
+        val l = location ?: return
+        runCatching {
+            log("location.isSupported", l.isSupported().toString())
+            l.getLastKnownLocation(object : FusedLocationListener {
+                override fun onChanged(data: LocationData?) {
+                    val d = data ?: return log("location.once", "null")
+                    val ageMs = System.currentTimeMillis() - d.timestampMillis
+                    // 좌표는 로그에 남기지 않는다 (본 앱 원칙 시험) — 유효성 · 신선도만
+                    log("location.once", "valid=${d.latitude != 0.0 || d.longitude != 0.0} confidence=${d.confidence} ageMs=$ageMs")
+                }
+                override fun onError(e: Exception) = fail("location.once", e)
+            })
+        }.onFailure { fail("location.once", it) }
     }
 
     // ---------- TTS (ISSUE-06) ----------
