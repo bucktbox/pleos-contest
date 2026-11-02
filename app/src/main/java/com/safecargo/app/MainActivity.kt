@@ -6,6 +6,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.safecargo.ui.shell.AppShell
+import com.safecargo.ui.shell.windowClassOf
+import com.safecargo.ui.theme.SafeCargoTheme
 import androidx.core.content.ContextCompat
 import com.safecargo.engine.TripEvent
 
@@ -14,7 +20,17 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { Text("세이프 카고") }
+        setContent {
+            val state by app.controller.state.collectAsStateWithLifecycle()
+            val streak by app.controller.streak.collectAsStateWithLifecycle()
+            val support by app.controller.support.collectAsStateWithLifecycle()
+            val cfg = LocalConfiguration.current
+            SafeCargoTheme {
+                AppShell(state, streak, support, windowClassOf(cfg.screenWidthDp, cfg.screenHeightDp)) {
+                    Text("세이프 카고") // Task 9 에서 로비로 교체
+                }
+            }
+        }
         // Task 9 의 권한 카드가 생기면 그쪽으로 옮긴다.
         if (ContextCompat.checkSelfPermission(this, FUSED_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(FUSED_LOCATION), REQ_LOCATION)

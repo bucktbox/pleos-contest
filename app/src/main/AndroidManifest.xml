@@ -16,7 +16,7 @@
     <application
         android:name=".SafeCargoApp"
         android:label="세이프 카고"
-        android:theme="@android:style/Theme.DeviceDefault">
+        android:theme="@style/Theme.SafeCargo">
         <activity
             android:name=".MainActivity"
             android:exported="true"
