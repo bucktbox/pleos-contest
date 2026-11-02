@@ -126,7 +126,7 @@ Tesla Safety Score는 급제동·급선회·차간거리·벨트 등 차량 측�
 
 **④ 서버 범위와 WBS: 명백히 불일치**
 
-[현재 WBS](/Users/kyeongilhan/Desktop/Source/pleos-contest/docs/report/pleos_v4_7.md:217)에는 Mock JSON 정의와 화면 바인딩이 있지만, 다음 작업은 없습니다.
+[현재 WBS](docs/report/pleos_v4_7.md:217)에는 Mock JSON 정의와 화면 바인딩이 있지만, 다음 작업은 없습니다.
 
 | 제품 약속 | 필요한 서버·운영 작업 |
 |---|---|
@@ -179,7 +179,7 @@ Firebase를 선택해도 이 업무가 없어지지는 않습니다. **랭킹은
 
 **6. v4.5 대비 되살린 요소의 타당성**
 
-[개발자 측 v4.5 PART 6](/Users/kyeongilhan/Desktop/Source/pleos-contest/docs/report/마스터리포트_v4.5.md:268)의 제한을 되돌릴 새 근거가 v4.7에 없습니다.
+[개발자 측 v4.5 PART 6](docs/report/마스터리포트_v4.5.md:268)의 제한을 되돌릴 새 근거가 v4.7에 없습니다.
 
 | 되살린 요소 | v4.5 판단 | v4.7 평가 |
 |---|---|---|
