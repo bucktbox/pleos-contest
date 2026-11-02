@@ -1,40 +1,54 @@
 package com.safecargo.app
 
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.safecargo.sdk.UxGate
-import com.safecargo.sdk.VehicleSource
-import kotlinx.coroutines.awaitCancellation
-import kotlinx.coroutines.launch
+import androidx.core.content.ContextCompat
+import com.safecargo.engine.TripEvent
 
 class MainActivity : ComponentActivity() {
-    // TEMP(Task 7): remove when TripController lands
-    private lateinit var vehicleSource: VehicleSource
-    private lateinit var uxGate: UxGate
+    private val app get() = application as SafeCargoApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { Text("세이프 카고") }
-
-        // TEMP(Task 7): remove when TripController lands
-        vehicleSource = VehicleSource(applicationContext, steerSign = -1f)
-        uxGate = UxGate(applicationContext)
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { vehicleSource.signals.collect { Log.i("SAFECARGO", it.toString()) } }
-                launch { uxGate.signals.collect { Log.i("SAFECARGO", it.toString()) } }
-                launch { vehicleSource.support.collect { Log.i("SAFECARGO", it.toString()) } }
-                vehicleSource.start()
-                uxGate.start()
-                try { awaitCancellation() } finally { vehicleSource.stop(); uxGate.stop() }
-            }
+        // Task 9 의 권한 카드가 생기면 그쪽으로 옮긴다.
+        if (ContextCompat.checkSelfPermission(this, FUSED_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(FUSED_LOCATION), REQ_LOCATION)
         }
+        if (savedInstanceState == null) handleDebugIntent(intent)
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleDebugIntent(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        app.controller.appVisible = true
+    }
+
+    override fun onStop() {
+        super.onStop()
+        app.controller.appVisible = false
+        app.controller.onAppHidden()
+    }
+
+    /** 디버그 빌드 전용: `--es dest <id>` 로 Mock 목적지를 고른다. */
+    private fun handleDebugIntent(intent: Intent?) {
+        if (!BuildConfig.DEBUG) return
+        val id = intent?.getStringExtra("dest") ?: return
+        val d = app.catalog.destinations.firstOrNull { it.id == id } ?: return
+        app.controller.dispatch(TripEvent.SelectDestination(d))
+    }
+
+    private companion object {
+        const val FUSED_LOCATION = "pleos.car.permission.FUSED_LOCATION"
+        const val REQ_LOCATION = 1
+    }
 }

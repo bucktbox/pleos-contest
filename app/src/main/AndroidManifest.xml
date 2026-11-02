@@ -14,6 +14,7 @@
     <uses-feature android:name="android.hardware.type.automotive" android:required="true" />
 
     <application
+        android:name=".SafeCargoApp"
         android:label="세이프 카고"
         android:theme="@android:style/Theme.DeviceDefault">
         <activity
