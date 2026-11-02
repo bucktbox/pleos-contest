@@ -20,7 +20,10 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:resizeableActivity="true">
+            <!-- singleTop: 이미 떠 있을 때 다시 온 인텐트(디버그 dest 엑스트라)를 onNewIntent 로 받는다.
+                 standard 모드에서는 같은 루트 인텐트면 태스크만 앞으로 오고 새 인텐트는 버려진다. -->
             <!-- 주행 중에도 화면을 보여주기 위해 필요. 대신 주행 화면은 조작 0개. -->
             <meta-data android:name="distractionOptimized" android:value="true" />
             <intent-filter>
