@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- POC: 확인 대상 API 별 권한 (AAR @RequiresPermission 기준) -->
+    <uses-permission android:name="pleos.car.permission.CAR_DRIVE" />      <!-- 기어 · 조향각 · 브레이크 · 트립거리 -->
+    <uses-permission android:name="pleos.car.permission.CAR_LIGHTS" />     <!-- 방향지시등 · 앰비언트 조명 get/set -->
+    <!-- AG-05 확인: AAR 주석은 set 도 CAR_LIGHTS 인데, 1차 실행에서 SecurityException → CONTROL 권한 시험 -->
+    <uses-permission android:name="pleos.car.permission.CONTROL_CAR_LIGHTS" />
+    <uses-permission android:name="pleos.car.permission.CAR_SEATS" />      <!-- 착석 · 벨트 -->
+    <uses-permission android:name="pleos.car.permission.NAVI_ROUTE" />     <!-- 목적지 조회 · 내비 이벤트 -->
+    <uses-permission android:name="pleos.car.permission.NAVI_ROUTE_SEARCH" /> <!-- 경로 요청 (앱 → 내비 목적지 전달) -->
+    <uses-permission android:name="pleos.car.permission.TTS_SERVICE" />    <!-- TTS -->
+    <!-- CarUxRestrictionsManager -->
+    <uses-permission android:name="android.car.permission.CAR_DRIVING_STATE" />
+    <!-- 참고 확인용: 표준 AAOS 차속. 본 앱 채택 여부는 심사 허용 범위 확인 후 결정 -->
+    <uses-permission android:name="android.car.permission.CAR_SPEED" />
+
+    <uses-feature android:name="android.hardware.type.automotive" android:required="true" />
+
+    <application
+        android:label="SafeCargo POC"
+        android:theme="@android:style/Theme.DeviceDefault">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <!-- 주행 중에도 화면이 가려지지 않게 (로그 관찰용). 본 앱에서는 정차 전용 화면 정책을 별도 결정 -->
+            <meta-data android:name="distractionOptimized" android:value="true" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
