@@ -9,6 +9,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.LocalContentColor
 import com.safecargo.app.R
@@ -27,7 +28,22 @@ private val colors = darkColorScheme(
     outline = SC.borderStrong, outlineVariant = SC.border,
 )
 
-private fun ts(size: Int, w: FontWeight) = TextStyle(fontFamily = Pretendard, fontWeight = w, fontSize = size.sp, letterSpacing = (-0.5).sp)
+// 피그마 글자 간격 -0.5% (Headline -1.5%). sp 가 아니라 em.
+private fun ts(size: Int, w: FontWeight, lh: Float = 1.3f, ls: Float = -0.005f) = TextStyle(
+    fontFamily = Pretendard, fontWeight = w, fontSize = size.sp, lineHeight = (size * lh).sp, letterSpacing = ls.em,
+)
+
+/**
+ * 피그마 「01 시스템 가이드」 글자 스타일. SemiBold(600) 파일이 없어 Bold 로 대신한다.
+ */
+object ScType {
+    val headline = ts(40, FontWeight.Bold, 1.3f, -0.015f)
+    val title = ts(30, FontWeight.Bold, 1.35f)
+    val label = ts(22, FontWeight.Bold, 1.3f)
+    val bodyLarge = ts(26, FontWeight.Normal, 1.45f)
+    val body = ts(22, FontWeight.Normal, 1.5f)
+    val caption = ts(18, FontWeight.Medium, 1.4f)
+}
 
 private val typography = Typography(
     displayLarge = ts(56, FontWeight.Bold),

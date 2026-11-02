@@ -27,8 +27,21 @@ object SC {
     val epic = Color(0xFFA06BFF)
     val legendary = Color(0xFFFFC247)
 
+    /** 열쇠 · 스트릭 노랑 (피그마 color/game/key). */
+    val gameKey = Color(0xFFFFD36B)
+
     val touchMin: Dp = 76.dp
+
+    // 피그마 spacing-* (2xs 4 · xs 8 · sm 12 · md 16 · lg 24 · xl 32)
+    val gap2xs: Dp = 4.dp
+    val gapXs: Dp = 8.dp
+    val gapSm: Dp = 12.dp
     val gap: Dp = 16.dp
     val gapLg: Dp = 24.dp
+    val gapXl: Dp = 32.dp
+
+    // 피그마 radius-* (sm 8 · md 16 · lg 24)
+    val radiusSm: Dp = 8.dp
     val radius: Dp = 16.dp
+    val radiusLg: Dp = 24.dp
 }

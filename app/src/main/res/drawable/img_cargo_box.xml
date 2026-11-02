@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 「02 SC-01 로비」 카고 그림 (임시) 16:173. 디자이너 Lottie 가 오기 전 임시 상자. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="260dp" android:height="200dp" android:viewportWidth="260" android:viewportHeight="200">
+    <path android:fillColor="#FFC98A4B" android:pathData="M226 80H34C22.9543 80 14 88.9543 14 100V170C14 181.046 22.9543 190 34 190H226C237.046 190 246 181.046 246 170V100C246 88.9543 237.046 80 226 80Z"/>
+    <path android:fillColor="#FFE3A866" android:pathData="M14 98C14 63 42 36 76 36H184C218 36 246 63 246 98V106H14V98Z"/>
+    <path android:fillColor="#FF9C6534" android:pathData="M246 102H14V114H246V102Z"/>
+    <path android:fillColor="#FFFFD36B" android:pathData="M138 88H122C116.477 88 112 92.4771 112 98V126C112 131.523 116.477 136 122 136H138C143.523 136 148 131.523 148 126V98C148 92.4771 143.523 88 138 88Z"/>
+    <path android:fillColor="#FF9C6534" android:pathData="M130 116C133.314 116 136 113.314 136 110C136 106.686 133.314 104 130 104C126.686 104 124 106.686 124 110C124 113.314 126.686 116 130 116Z"/>
+</vector>

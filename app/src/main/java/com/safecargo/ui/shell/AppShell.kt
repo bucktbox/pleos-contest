@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,7 +34,11 @@ import com.safecargo.engine.Phase
 import com.safecargo.engine.Seat
 import com.safecargo.engine.TripState
 import com.safecargo.sdk.SupportStatus
+import com.safecargo.app.R
+import com.safecargo.ui.components.IconCircle
+import com.safecargo.ui.components.ScIcon
 import com.safecargo.ui.theme.SC
+import com.safecargo.ui.theme.ScType
 
 private const val T_MAX_BODY_DP = 1184
 
@@ -49,15 +54,17 @@ fun AppShell(
 ) {
     val navVisible = state.phase != Phase.ESCORTING
     val items = buildList {
-        add("로비"); if (rankingEnabled) add("랭킹")
+        add(NavEntry("로비", R.drawable.ic_lobby)); if (rankingEnabled) add(NavEntry("랭킹", null))
     }
     Column(Modifier.fillMaxSize().background(SC.bg)) {
-        AppBar(state, streak)
+        AppBar(state, streak, wc.orientation)
         supportMessage(support)?.let { SupportBanner(it) }
         if (wc.orientation == Orientation.P && navVisible) Segments(items)
         Row(Modifier.weight(1f).fillMaxWidth()) {
             if (wc.orientation == Orientation.L && navVisible) Rail(items)
-            Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.TopCenter) {
+            // T: 본문을 1184 로 막고 가운데 둔다 (RL-05) — 위아래 여백이 고르게.
+            val align = if (wc.height == HeightClass.T) Alignment.Center else Alignment.TopCenter
+            Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = align) {
                 val bodyMod = if (wc.height == HeightClass.T) Modifier.heightIn(max = T_MAX_BODY_DP.dp) else Modifier
                 Box(bodyMod.fillMaxWidth().fillMaxHeight()) { content() }
             }
@@ -65,24 +72,41 @@ fun AppShell(
     }
 }
 
+private data class NavEntry(val label: String, val icon: Int?)
+
+/** 피그마 01 앱 바 (16:111 / 17:180): 높이 96. L 은 마크 + 앱 이름, P 는 마크만. */
 @Composable
-private fun AppBar(state: TripState, streak: Int) {
+private fun AppBar(state: TripState, streak: Int, orientation: Orientation) {
+    val wide = orientation == Orientation.L
     Row(
-        Modifier.fillMaxWidth().background(SC.surface).padding(horizontal = SC.gapLg, vertical = 12.dp),
+        Modifier.fillMaxWidth().height(96.dp).padding(horizontal = if (wide) SC.gapXl else SC.gapLg),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(SC.gap),
+        horizontalArrangement = Arrangement.spacedBy(SC.gapSm),
     ) {
-        Text("세이프 카고", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = SC.text)
-        StatusChip(state.phase)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SC.gapSm)) {
+            IconCircle(R.drawable.ic_key, SC.accentOn, 48.dp, 26.dp, background = SC.accent)
+            if (wide) Text("세이프 카고", style = ScType.title, color = SC.text)
+        }
         Box(Modifier.weight(1f))
-        if (hasPassenger(state)) BuffBadge()
-        StreakBadge(streak)
+        StatusChip(state.phase)
+        if (hasPassenger(state)) BuffBadge(wide)
+        StreakBadge(streak, wide)
     }
 }
 
 private fun hasPassenger(s: TripState) =
     s.seats.occupied.any { (seat, occ) -> seat != Seat.DRIVER && occ == true }
 
+@Composable
+private fun Chip(content: @Composable () -> Unit) {
+    Row(
+        Modifier.clip(RoundedCornerShape(50)).background(SC.elevated).padding(horizontal = SC.gap, vertical = SC.gapXs),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(SC.gapXs),
+    ) { content() }
+}
+
+/** 피그마 Status Chip (15:168): 아이콘 모양 + 글자. 「P단 · D단」 대신 「정차 · 주행」. */
 @Composable
 private fun StatusChip(phase: Phase) {
     val label = when (phase) {
@@ -91,61 +115,38 @@ private fun StatusChip(phase: Phase) {
         else -> "정차"
     }
     val tint = if (phase == Phase.ESCORTING) SC.accent else SC.text
-    Row(
-        Modifier.clip(RoundedCornerShape(50)).background(SC.elevated).padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Canvas(Modifier.size(22.dp)) {
-            val w = size.width; val h = size.height
-            when (phase) {
-                Phase.ESCORTING -> drawPath(Path().apply {
-                    moveTo(w * .2f, h * .1f); lineTo(w * .9f, h * .5f); lineTo(w * .2f, h * .9f); close()
-                }, tint)
-                Phase.PAUSED -> {
-                    drawRect(tint, Offset(w * .2f, h * .15f), Size(w * .2f, h * .7f))
-                    drawRect(tint, Offset(w * .6f, h * .15f), Size(w * .2f, h * .7f))
+    Chip {
+        when (phase) {
+            Phase.ESCORTING, Phase.PAUSED -> Canvas(Modifier.size(24.dp)) {
+                val w = size.width; val h = size.height
+                if (phase == Phase.ESCORTING) drawPath(Path().apply {
+                    moveTo(w * .25f, h * .15f); lineTo(w * .85f, h * .5f); lineTo(w * .25f, h * .85f); close()
+                }, tint) else {
+                    drawRect(tint, Offset(w * .25f, h * .2f), Size(w * .18f, h * .6f))
+                    drawRect(tint, Offset(w * .57f, h * .2f), Size(w * .18f, h * .6f))
                 }
-                else -> drawRect(tint, Offset(w * .2f, h * .2f), Size(w * .6f, h * .6f))
             }
+            else -> ScIcon(R.drawable.ic_parking, tint, 24.dp)
         }
-        Text(label, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = tint)
+        Text(label, style = ScType.label, color = tint)
     }
 }
 
 @Composable
-private fun BuffBadge() {
-    Row(
-        Modifier.clip(RoundedCornerShape(50)).background(SC.accent.copy(alpha = .2f)).padding(horizontal = 14.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        Canvas(Modifier.size(20.dp)) { // 위쪽 화살표 = 버프
-            drawPath(Path().apply {
-                moveTo(size.width / 2, 0f); lineTo(size.width, size.height * .6f)
-                lineTo(size.width * .65f, size.height * .6f); lineTo(size.width * .65f, size.height)
-                lineTo(size.width * .35f, size.height); lineTo(size.width * .35f, size.height * .6f)
-                lineTo(0f, size.height * .6f); close()
-            }, SC.accent)
-        }
-        Text("×1.5", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = SC.accent)
+private fun BuffBadge(wide: Boolean) {
+    Chip {
+        ScIcon(R.drawable.ic_family, SC.accent, 24.dp)
+        Text(if (wide) "버프 ×1.5" else "×1.5", style = ScType.label, color = SC.text)
     }
 }
 
+/** 스트릭 칩. 이름은 「무사 배송」 — 좁은 P 창에서는 「N일」 만. */
 @Composable
-private fun StreakBadge(streak: Int) {
+private fun StreakBadge(streak: Int, wide: Boolean) {
     val on = streak > 0
-    val c = if (on) SC.legendary else SC.textDisabled
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Canvas(Modifier.size(24.dp)) { // 방패
-            val w = size.width; val h = size.height
-            val p = Path().apply {
-                moveTo(w / 2, 0f); lineTo(w, h * .2f); lineTo(w * .9f, h * .6f)
-                lineTo(w / 2, h); lineTo(w * .1f, h * .6f); lineTo(0f, h * .2f); close()
-            }
-            if (on) drawPath(p, c) else drawPath(p, c, style = Stroke(width = 3f))
-        }
-        if (on) Text("무사 배송 ${streak}일", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = SC.text)
+    Chip {
+        ScIcon(R.drawable.ic_flame, if (on) SC.gameKey else SC.textDisabled, 24.dp)
+        Text(if (wide) "무사 배송 ${streak}일" else "${streak}일", style = ScType.label, color = if (on) SC.text else SC.textDim)
     }
 }
 
@@ -163,34 +164,42 @@ private fun supportMessage(s: SupportStatus): String? = when {
 @Composable
 private fun SupportBanner(msg: String) {
     Text(
-        msg, fontSize = 18.sp, fontWeight = FontWeight.Medium, color = SC.textDim,
+        msg, style = ScType.caption, color = SC.textDim,
         modifier = Modifier.fillMaxWidth().background(SC.elevated).padding(horizontal = SC.gapLg, vertical = 10.dp),
     )
 }
 
+/** 피그마 02 레일 (16:140): 폭 136, 칸 104×96 (아이콘 + 글자). */
 @Composable
-private fun Rail(items: List<String>) {
+private fun Rail(items: List<NavEntry>) {
     Column(
-        Modifier.width(160.dp).fillMaxHeight().background(SC.surface).padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) { items.forEachIndexed { i, t -> NavItem(t, selected = i == 0, Modifier.fillMaxWidth()) } }
+        Modifier.width(136.dp).fillMaxHeight().padding(SC.gap),
+        verticalArrangement = Arrangement.spacedBy(SC.gapXs),
+    ) { items.forEachIndexed { i, t -> NavItem(t, selected = i == 0, vertical = true, Modifier.size(104.dp, 96.dp)) } }
 }
 
+/** 피그마 02 세그먼트 (17:205): 트랙 안 칸 높이 76. */
 @Composable
-private fun Segments(items: List<String>) {
+private fun Segments(items: List<NavEntry>) {
     Row(
-        Modifier.fillMaxWidth().background(SC.surface).padding(horizontal = 12.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) { items.forEachIndexed { i, t -> NavItem(t, selected = i == 0, Modifier.weight(1f)) } }
+        Modifier.fillMaxWidth().padding(horizontal = SC.gapLg, vertical = SC.gap2xs)
+            .clip(RoundedCornerShape(SC.radiusLg)).background(SC.surface).padding(SC.gap2xs),
+        horizontalArrangement = Arrangement.spacedBy(SC.gap2xs),
+    ) { items.forEachIndexed { i, t -> NavItem(t, selected = i == 0, vertical = false, Modifier.weight(1f).height(SC.touchMin)) } }
 }
 
 @Composable
-private fun NavItem(label: String, selected: Boolean, modifier: Modifier) {
+private fun NavItem(entry: NavEntry, selected: Boolean, vertical: Boolean, modifier: Modifier) {
+    val c = if (selected) SC.text else SC.textDim
     Box(
-        modifier.heightIn(min = SC.touchMin).clip(RoundedCornerShape(SC.radius))
-            .background(if (selected) SC.accent else SC.elevated),
+        modifier.clip(RoundedCornerShape(SC.radius)).background(if (selected) SC.elevated else Color.Transparent),
         contentAlignment = Alignment.Center,
     ) {
-        Text(label, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = if (selected) SC.accentOn else SC.textDim)
+        val inner: @Composable () -> Unit = {
+            entry.icon?.let { ScIcon(it, c, 28.dp) }
+            Text(entry.label, style = ScType.label, color = c)
+        }
+        if (vertical) Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(SC.gap2xs)) { inner() }
+        else Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SC.gapXs)) { inner() }
     }
 }

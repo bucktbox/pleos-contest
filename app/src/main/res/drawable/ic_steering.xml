@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 「02 SC-01 로비」 _Icons icon/steering 에서 변환. 흰색 선 — Icon(tint) 로 색을 입힌다. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp" android:height="28dp" android:viewportWidth="28" android:viewportHeight="28">
+    <group android:translateX="2.5" android:translateY="2.5">
+        <path android:pathData="M22 11.5C22 17.299 17.299 22 11.5 22C5.70101 22 1 17.299 1 11.5C1 5.70101 5.70101 1 11.5 1C17.299 1 22 5.70101 22 11.5Z" android:strokeWidth="2" android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+        <path android:pathData="M14.4167 11.5C14.4167 13.1108 13.1108 14.4167 11.5 14.4167C9.88917 14.4167 8.58333 13.1108 8.58333 11.5C8.58333 9.88917 9.88917 8.58333 11.5 8.58333C13.1108 8.58333 14.4167 9.88917 14.4167 11.5Z" android:strokeWidth="2" android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+        <path android:pathData="M1.58333 9.75H8.58333M14.4167 9.75H21.4167M11.5 14.4167V22" android:strokeWidth="2" android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+    </group>
+</vector>
