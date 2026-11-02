@@ -34,8 +34,9 @@ class UxGate(
             car = c
             val m = c.getCarManager(Car.CAR_UX_RESTRICTION_SERVICE) as CarUxRestrictionsManager
             manager = m
-            emit(m.currentCarUxRestrictions)
             m.registerListener(listener)
+            val initial = m.currentCarUxRestrictions
+            if (initial != null) emit(initial) else _signals.tryEmit(VehicleSignal.UxChanged(true, now()))
         }.onFailure {
             Log.w("SAFECARGO", "uxGate FAILED ${it.javaClass.simpleName}")
             _signals.tryEmit(VehicleSignal.UxChanged(true, now()))

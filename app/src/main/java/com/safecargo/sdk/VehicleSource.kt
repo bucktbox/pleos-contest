@@ -55,6 +55,8 @@ class VehicleSource(
 
     private val main = Handler(Looper.getMainLooper())
     @Volatile private var running = false
+    /** start() 마다 증가. 이전 세션의 지연 콜백이 다음 세션에서 동작하지 않도록 비교한다. */
+    @Volatile private var gen = 0
 
     private val seatValues = listOf(SeatValue.ROW_1_LEFT, SeatValue.ROW_1_RIGHT, SeatValue.ROW_2_LEFT, SeatValue.ROW_2_RIGHT)
     private val lock = Any()
@@ -63,7 +65,7 @@ class VehicleSource(
     private var lastTurn: TurnSignal? = null
     private var lastSteer: Float? = null
 
-    private fun emit(s: VehicleSignal) { _signals.tryEmit(s) }
+    private fun emit(s: VehicleSignal) { if (running) _signals.tryEmit(s) }
     private fun update(f: (SupportStatus) -> SupportStatus) { _support.update(f) }
     private fun fail(src: String, e: Throwable) = Log.w(TAG, "$src FAILED ${e.javaClass.simpleName}")
 
@@ -105,8 +107,8 @@ class VehicleSource(
         synchronized(lock) {
             if (mapped == lastTurn) return
             lastTurn = mapped
+            emit(VehicleSignal.TurnChanged(mapped, now()))
         }
-        emit(VehicleSignal.TurnChanged(mapped, now()))
     }
 
     private fun onSteer(raw: Float?) {
@@ -115,8 +117,8 @@ class VehicleSource(
         synchronized(lock) {
             if (deg == lastSteer) return
             lastSteer = deg
+            emit(VehicleSignal.SteerChanged(deg, now()))
         }
-        emit(VehicleSignal.SteerChanged(deg, now()))
     }
 
     private fun onOccupancy(sv: SeatValue, v: Boolean?) {
@@ -132,17 +134,17 @@ class VehicleSource(
     }
 
     private fun emitSeats(mutate: () -> Unit) {
-        val snap = synchronized(lock) {
+        synchronized(lock) {
             mutate()
-            SeatSnapshot(occupied.toMap(), belted.toMap())
+            emit(VehicleSignal.SeatsChanged(SeatSnapshot(occupied.toMap(), belted.toMap()), now()))
         }
-        emit(VehicleSignal.SeatsChanged(snap, now()))
     }
 
     // ---------- 생명주기 ----------
     fun start() {
         if (running) return
         running = true
+        val g = ++gen
         val v = Vehicle(context)
         vehicle = v
         runCatching { v.initialize() }.onFailure {
@@ -150,22 +152,22 @@ class VehicleSource(
             giveUp()
             return
         }
-        probe(1)
+        probe(1, g)
     }
 
     /** initialize 는 비동기 바인딩이라 첫 get 이 성공할 때까지 500ms 간격 최대 10회 재시도한다. */
-    private fun probe(attempt: Int) {
-        if (!running) return
+    private fun probe(attempt: Int, g: Int) {
+        if (!running || g != gen) return
         val v = vehicle ?: return
         v.getGear().getCurrentGearSelectionState(
             { gear ->
-                if (!running) return@getCurrentGearSelectionState
-                main.post { if (running) { register(); readInitial(); onGear(gear) } }
+                if (!running || g != gen) return@getCurrentGearSelectionState
+                main.post { if (running && g == gen) { register(); readInitial(g); onGear(gear) } }
             },
             { e ->
-                if (!running) return@getCurrentGearSelectionState
+                if (!running || g != gen) return@getCurrentGearSelectionState
                 fail("gear.initial(attempt=$attempt)", e)
-                if (attempt < MAX_PROBE) main.postDelayed({ probe(attempt + 1) }, PROBE_INTERVAL_MS) else giveUp()
+                if (attempt < MAX_PROBE) main.postDelayed({ probe(attempt + 1, g) }, PROBE_INTERVAL_MS) else giveUp()
             },
         )
     }
@@ -186,19 +188,20 @@ class VehicleSource(
         }
     }
 
-    private fun readInitial() {
+    private fun readInitial(g: Int) {
         val v = vehicle ?: return
-        v.getTurnSignal().getCurrentTurnSignalState({ onTurn(it) }, { fail("turn.initial", it); update { s -> s.copy(turn = false) } })
-        v.getSteeringWheel().getCurrentSteeringWheelAngle({ onSteer(it) }, { fail("steer.initial", it); update { s -> s.copy(steer = false) } })
+        v.getTurnSignal().getCurrentTurnSignalState({ if (g == gen) onTurn(it) }, { fail("turn.initial", it); update { s -> s.copy(turn = false) } })
+        v.getSteeringWheel().getCurrentSteeringWheelAngle({ if (g == gen) onSteer(it) }, { fail("steer.initial", it); update { s -> s.copy(steer = false) } })
         refreshSeats()
     }
 
     /** 좌석 착석 · 벨트 현재값을 다시 읽는다. */
     fun refreshSeats() {
         val v = vehicle ?: return
+        val g = gen
         seatValues.forEach { sv ->
-            v.getSeat().getCurrentSeatOccupancy(SeatArea(sv), { onOccupancy(sv, it) }, { fail("occupied.initial/${sv.name}", it); update { s -> s.copy(seats = false) } })
-            v.getSeat().getCurrentSeatBeltBuckledState(SeatArea(sv), { onBelt(sv, it) }, { fail("belt.initial/${sv.name}", it); update { s -> s.copy(belts = false) } })
+            v.getSeat().getCurrentSeatOccupancy(SeatArea(sv), { if (g == gen) onOccupancy(sv, it) }, { fail("occupied.initial/${sv.name}", it); update { s -> s.copy(seats = false) } })
+            v.getSeat().getCurrentSeatBeltBuckledState(SeatArea(sv), { if (g == gen) onBelt(sv, it) }, { fail("belt.initial/${sv.name}", it); update { s -> s.copy(belts = false) } })
         }
     }
 
@@ -206,20 +209,20 @@ class VehicleSource(
         if (!running) return
         running = false
         main.removeCallbacksAndMessages(null)
+        gen++
         val v = vehicle
         if (v != null) {
-            runCatching {
-                v.getGear().unregisterGearSelection(gearListener)
-                v.getTurnSignal().unregisterTurnSignalState(turnListener)
-                v.getSteeringWheel().unregisterSteeringWheelAngle(steerListener)
-                seatValues.forEach { sv ->
-                    v.getSeat().unregisterSeatOccupancy(SeatArea(sv), occupancyListeners.getValue(sv))
-                    v.getSeat().unregisterSeatBeltBuckledState(SeatArea(sv), beltListeners.getValue(sv))
-                }
-            }.onFailure { fail("vehicle.unregister", it) }
+            runCatching { v.getGear().unregisterGearSelection(gearListener) }.onFailure { fail("gear.unregister", it) }
+            runCatching { v.getTurnSignal().unregisterTurnSignalState(turnListener) }.onFailure { fail("turn.unregister", it) }
+            runCatching { v.getSteeringWheel().unregisterSteeringWheelAngle(steerListener) }.onFailure { fail("steer.unregister", it) }
+            seatValues.forEach { sv ->
+                runCatching { v.getSeat().unregisterSeatOccupancy(SeatArea(sv), occupancyListeners.getValue(sv)) }.onFailure { fail("occupied.unregister/${sv.name}", it) }
+                runCatching { v.getSeat().unregisterSeatBeltBuckledState(SeatArea(sv), beltListeners.getValue(sv)) }.onFailure { fail("belt.unregister/${sv.name}", it) }
+            }
+            runCatching { v.release() }.onFailure { fail("vehicle.release", it) }
         }
         vehicle = null
-        synchronized(lock) { lastTurn = null; lastSteer = null }
+        synchronized(lock) { lastTurn = null; lastSteer = null; occupied.clear(); belted.clear() }
     }
 
     private companion object {
