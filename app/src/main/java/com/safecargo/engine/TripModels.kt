@@ -9,7 +9,14 @@ enum class CargoKind { SPONSOR, DAILY }
 data class Destination(
     val id: String, val name: String, val address: String,
     val lat: Double, val lng: Double, val rewardId: String,
+    /** 목적지 화면 유형 필터 (피그마 SC-02 01 유형 필터). 없으면 「전체」 에만 보인다. */
+    val category: DestCategory? = null,
+    /** 실리는 카고 이름 · 한 줄 설명 (예: 「바리스타의 수제 타르트 상자」). 없으면 「<목적지> 카고」. */
+    val cargoName: String? = null,
+    val cargoDesc: String? = null,
 )
+
+enum class DestCategory(val label: String) { MUNI("지자체"), REST("휴게소"), CAFE("카페") }
 
 @Serializable
 data class Cargo(val id: String, val name: String, val kind: CargoKind, val destination: Destination? = null)

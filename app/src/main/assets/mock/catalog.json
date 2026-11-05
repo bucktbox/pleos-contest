@@ -1,14 +1,20 @@
 {
   "destinations": [
-    {"id": "muni", "name": "시청 광장 예시", "address": "예시시 중앙로 1 (가상)", "lat": 37.5665, "lng": 126.9780, "rewardId": "coupon-muni"},
-    {"id": "rest", "name": "휴게소 예시", "address": "예시고속도로 하행 (가상)", "lat": 37.2636, "lng": 127.0286, "rewardId": "coupon-rest"},
-    {"id": "cafe", "name": "베이커리 카페 예시", "address": "예시동 한강로 7 (가상)", "lat": 37.7130, "lng": 126.7600, "rewardId": "coupon-cafe"}
+    {"id": "cafe", "name": "베이커리 카페 예시", "address": "예시동 한강로 7 (가상)", "lat": 37.7130, "lng": 126.7600, "rewardId": "coupon-cafe",
+     "category": "CAFE", "cargoName": "바리스타의 수제 타르트 상자", "cargoDesc": "갓 구운 타르트가 부서지지 않게 조심히 모셔 주세요."},
+    {"id": "rest", "name": "휴게소 예시", "address": "예시고속도로 하행 (가상)", "lat": 37.2636, "lng": 127.0286, "rewardId": "coupon-rest",
+     "category": "REST", "cargoName": "갓 구운 호두과자 상자", "cargoDesc": "따끈한 호두과자가 식기 전에 조심히 모셔 주세요."},
+    {"id": "muni", "name": "시청 광장 예시", "address": "예시시 중앙로 1 (가상)", "lat": 37.5665, "lng": 126.9780, "rewardId": "coupon-muni",
+     "category": "MUNI", "cargoName": "어린 묘목 화분 상자", "cargoDesc": "흙이 쏟아지지 않게 천천히 모셔 주세요."},
+    {"id": "roast", "name": "로스터리 카페 예시", "address": "예시동 달빛길 3 (가상)", "lat": 37.5400, "lng": 127.0500, "rewardId": "coupon-roast",
+     "category": "CAFE", "cargoName": "막 볶은 원두 한 봉 상자", "cargoDesc": "향이 날아가지 않게 조심히 모셔 주세요."}
   ],
   "daily": {"id": "daily", "name": "오늘의 데일리 카고", "kind": "DAILY"},
   "rewards": [
     {"id": "coupon-muni", "title": "광장 매점 음료 쿠폰", "type": "COUPON", "amountLabel": "음료 1잔", "partnerLabel": "시청 광장 예시"},
     {"id": "coupon-rest", "title": "휴게소 간식 쿠폰", "type": "COUPON", "amountLabel": "간식 1개", "partnerLabel": "휴게소 예시"},
     {"id": "coupon-cafe", "title": "베이커리 카페 빵 쿠폰", "type": "COUPON", "amountLabel": "빵 1개", "partnerLabel": "베이커리 카페 예시"},
+    {"id": "coupon-roast", "title": "로스터리 음료 쿠폰", "type": "COUPON", "amountLabel": "음료 1잔", "partnerLabel": "로스터리 카페 예시"},
     {"id": "general", "title": "일반 배송 포인트", "type": "POINT", "amountLabel": "100P", "partnerLabel": null},
     {"id": "daily", "title": "데일리 카고 포인트", "type": "POINT", "amountLabel": "50P", "partnerLabel": null}
   ]

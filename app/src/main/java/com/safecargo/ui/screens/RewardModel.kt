@@ -19,17 +19,19 @@ fun gradeName(g: Grade): String = when (g) {
     Grade.LEGENDARY -> "레전더리"
 }
 
-/** 「이번 호위」 네 칸. 숫자는 판정 엔진 카운터([TripSummary]) 그대로 — moments 는 최대 개수로 잘릴 수 있어 쓰지 않는다. */
+/**
+ * 「이번 호위」 칸 — 잘한 것만 (11/03 디자인 요청 §2 · PRD 리뷰 H4 가점만). 실수 횟수(깜빡이 없이)는 보여주지 않는다.
+ * 숫자는 판정 엔진 카운터([TripSummary]) 그대로 — moments 는 최대 개수로 잘릴 수 있어 쓰지 않는다.
+ */
 data class SummaryItem(val label: String, val count: Int)
 
 fun summaryItems(s: TripSummary): List<SummaryItem> = listOf(
     SummaryItem("깜빡이 먼저", s.signalFirst),
-    SummaryItem("깜빡이 없이", s.noSignalTurns),
     SummaryItem("퍼펙트", s.perfect),
     SummaryItem("부드러운 회전", s.smoothTurns),
 )
 
-/** 「깜빡이 먼저 N회 · 깜빡이 없이 M회 · 퍼펙트 K회 · 부드러운 회전 J회」 */
+/** 「깜빡이 먼저 N회 · 퍼펙트 K회 · 부드러운 회전 J회」 */
 fun summaryLine(s: TripSummary): String = summaryItems(s).joinToString(" · ") { "${it.label} ${it.count}회" }
 
 /** 데일리 카고 결과 — 목적지가 없다. */
@@ -48,8 +50,14 @@ fun buffLabel(r: TripResult, multiplier: Double): String? {
     return if (r.beltVerified) "$base · 벨트 확인" else base
 }
 
-/** 리플레이 줄 — 시간순. */
-fun replayOrder(moments: List<JudgeMoment>): List<JudgeMoment> = moments.sortedBy { it.atMs }
+/** 리플레이에 보이는 순간 — 잘한 것만 ([summaryItems] 와 같은 이유). */
+fun isPositive(k: MomentKind): Boolean = when (k) {
+    MomentKind.SIGNAL_FIRST, MomentKind.PERFECT_SIGNAL, MomentKind.SMOOTH_TURN -> true
+    MomentKind.NO_SIGNAL_TURN, MomentKind.HARSH_TURN -> false
+}
+
+/** 리플레이 줄 — 잘한 순간만, 시간순. */
+fun replayOrder(moments: List<JudgeMoment>): List<JudgeMoment> = moments.filter { isPositive(it.kind) }.sortedBy { it.atMs }
 
 /** 리플레이 진행(0..1) → 하이라이트할 칸. 끝났거나 칸이 없으면 -1. */
 fun highlightIndex(progress: Float, count: Int): Int {

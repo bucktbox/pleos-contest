@@ -259,7 +259,7 @@ private fun rewardTypeLabel(t: RewardType?): String = when (t) {
     null -> "보상"
 }
 
-/** 「이번 호위」 — 깜빡이 먼저 N회 · 깜빡이 없이 M회 · 퍼펙트 K회 · 부드러운 회전 J회. */
+/** 「이번 호위」 — 잘한 것만: 깜빡이 먼저 N회 · 퍼펙트 K회 · 부드러운 회전 J회. */
 @Composable
 private fun SummaryCard(s: TripSummary, compact: Boolean) {
     val line = summaryLine(s)
@@ -283,14 +283,14 @@ private fun SummaryCard(s: TripSummary, compact: Boolean) {
     }
 }
 
-/** 리플레이 — 판정 순간을 시간순 아이콘으로, 3초 동안 하나씩 하이라이트. */
+/** 리플레이 — 잘한 판정 순간을 시간순 아이콘으로, 3초 동안 하나씩 하이라이트. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ReplayCard(moments: List<JudgeMoment>, hi: Int, playing: Boolean, compact: Boolean) {
     Card(compact) {
         Text("다시 보기 · 시간순", style = ScType.label, color = SC.text)
         if (moments.isEmpty()) {
-            Text("이번엔 판정된 회전이 없었어요", style = ScType.body, color = SC.textDim)
+            Text("이번엔 기록된 순간이 없었어요", style = ScType.body, color = SC.textDim)
             return@Card
         }
         FlowRow(

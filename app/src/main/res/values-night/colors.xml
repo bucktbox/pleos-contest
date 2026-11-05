@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 카고 그림 바닥 그림자 = 피그마 bg/elevated (다크) -->
+    <color name="cargo_shadow">#FF1C2028</color>
+</resources>
