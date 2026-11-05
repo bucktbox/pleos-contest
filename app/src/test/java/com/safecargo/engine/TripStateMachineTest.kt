@@ -39,6 +39,12 @@ class TripStateMachineTest {
         assertTrue(s.effects[1] is PersistActive)
     }
 
+    @Test fun sponsor_cargo_takes_destination_cargo_name() {
+        assertEquals("파주 베이커리 카페 예시 카고", TripState().on(select()).state.cargo?.name)
+        val named = dest.copy(cargoName = "바리스타의 수제 타르트 상자")
+        assertEquals("바리스타의 수제 타르트 상자", TripState().on(TripEvent.SelectDestination(named)).state.cargo?.name)
+    }
+
     @Test fun park_with_sponsor_requests_location() {
         val s = TripState().on(select(), gear(Gear.DRIVE), gear(Gear.PARK))
         assertEquals(Phase.PAUSED, s.state.phase)

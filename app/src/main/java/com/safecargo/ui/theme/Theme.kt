@@ -2,7 +2,10 @@ package com.safecargo.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.text.TextStyle
@@ -20,12 +23,12 @@ val Pretendard = FontFamily(
     Font(R.font.pretendard_bold, FontWeight.Bold),
 )
 
-private val colors = darkColorScheme(
-    primary = SC.accent, onPrimary = SC.accentOn,
-    background = SC.bg, onBackground = SC.text,
-    surface = SC.surface, onSurface = SC.text,
-    surfaceVariant = SC.elevated, onSurfaceVariant = SC.textDim,
-    outline = SC.borderStrong, outlineVariant = SC.border,
+private fun colorsOf(p: ScPalette) = (if (p.isDark) darkColorScheme() else lightColorScheme()).copy(
+    primary = p.accent, onPrimary = p.accentOn,
+    background = p.bg, onBackground = p.text,
+    surface = p.surface, onSurface = p.text,
+    surfaceVariant = p.elevated, onSurfaceVariant = p.textDim,
+    outline = p.borderStrong, outlineVariant = p.border,
 )
 
 // 피그마 글자 간격 -0.5% (Headline -1.5%). sp 가 아니라 em.
@@ -55,10 +58,17 @@ private val typography = Typography(
     labelMedium = ts(18, FontWeight.Medium),
 )
 
-/** 다크 하나만. 시스템 다크 설정과 무관하게 항상 다크. */
+/**
+ * 시스템 다크 / 라이트 설정을 따른다 (11/03 디자인 요청 §3 — 앱 안 전환 버튼은 없음).
+ * [dark] 를 주면 그 모드로 고정 (프리뷰용).
+ */
 @Composable
-fun SafeCargoTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = colors, typography = typography) {
-        CompositionLocalProvider(LocalContentColor provides SC.text, content = content)
+fun SafeCargoTheme(dark: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+    val p = if (dark) DarkPalette else LightPalette
+    // 전역 토큰([SC])을 이 컴포지션보다 먼저 바꾼다 — 같은 스냅샷 안이라 아래 화면이 바로 새 값을 읽는다.
+    if (SC.palette !== p) SC.palette = p
+    val scheme = remember(p) { colorsOf(p) }
+    MaterialTheme(colorScheme = scheme, typography = typography) {
+        CompositionLocalProvider(LocalContentColor provides p.text, content = content)
     }
 }

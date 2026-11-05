@@ -3,7 +3,6 @@ package com.safecargo.ui.screens
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -177,8 +176,8 @@ private fun CargoCardLarge(m: LobbyModel, modifier: Modifier, fill: Boolean) {
         Text(cargoLine(m), style = ScType.bodyLarge, color = SC.textDim)
         // 카고 Lottie 자리 (16:171). 디자이너 Lottie 가 오기 전엔 임시 상자 그림.
         Box(
-            Modifier.fillMaxWidth().let { if (fill) it.weight(1f) else it.height(240.dp) }
-                .clip(RoundedCornerShape(SC.radius)).background(SC.elevated),
+            // 회색 박스 없이 상자 그림의 바닥 그림자만 (11/03 디자인 요청 §3).
+            Modifier.fillMaxWidth().let { if (fill) it.weight(1f) else it.height(240.dp) },
             contentAlignment = Alignment.Center,
         ) { CargoBox(Modifier.fillMaxHeight(0.7f)) }
         SponsorLine(m, ScType.body)
@@ -190,8 +189,10 @@ internal fun CargoBox(modifier: Modifier = Modifier) {
     Image(painterResource(R.drawable.img_cargo_box), contentDescription = "카고 상자", modifier = modifier.padding(SC.gap))
 }
 
-private fun cargoLine(m: LobbyModel) =
-    if (m.sponsor) "도착할 때까지 부서지지 않게 조심히 모셔 주세요." else "목적지 없이 달려도 무사히 모시면 상자가 열려요."
+private fun cargoLine(m: LobbyModel) = when {
+    !m.sponsor -> "목적지 없이 달려도 무사히 모시면 상자가 열려요."
+    else -> m.destination?.cargoDesc ?: "도착할 때까지 부서지지 않게 조심히 모셔 주세요."
+}
 
 @Composable
 private fun SponsorLine(m: LobbyModel, style: androidx.compose.ui.text.TextStyle) {
@@ -323,15 +324,16 @@ private fun BuffPill(on: Boolean, mult: String) {
     }
 }
 
-/** 차체 (16:244): 위 96 · 아래 48 둥근 테두리 안 2×2 좌석. */
+/** 차체 (16:244): 테두리 없이 채운 차체(위 120 · 아래 48 둥근) + 앞유리 + 2×2 좌석 (11/03). */
 @Composable
 private fun CarBody(m: LobbyModel) {
     Column(
-        Modifier.border(2.dp, SC.borderStrong, RoundedCornerShape(96.dp, 96.dp, 48.dp, 48.dp))
+        Modifier.clip(RoundedCornerShape(120.dp, 120.dp, 48.dp, 48.dp)).background(SC.seatmapBody)
             .padding(start = 36.dp, end = 36.dp, top = 40.dp, bottom = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(SC.gap),
     ) {
+        Box(Modifier.size(150.dp, 12.dp).clip(RoundedCornerShape(6.dp)).background(SC.seatmapGlass))
         SEAT_ORDER.chunked(2).forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(SC.gapXl)) {
                 row.forEach { (seat, label) ->
@@ -449,8 +451,7 @@ private fun CargoCardPortrait(m: LobbyModel, modifier: Modifier, fill: Boolean) 
         horizontalArrangement = Arrangement.spacedBy(SC.gapLg),
     ) {
         Box(
-            Modifier.width(260.dp).let { if (fill) it.fillMaxHeight() else it.height(240.dp) }
-                .clip(RoundedCornerShape(SC.radius)).background(SC.elevated),
+            Modifier.width(260.dp).let { if (fill) it.fillMaxHeight() else it.height(240.dp) },
             contentAlignment = Alignment.Center,
         ) { CargoBox(Modifier.width(212.dp)) }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(SC.gapXs)) {
@@ -506,11 +507,14 @@ private fun GuideBar() {
 
 // ---------------------------------------------------------------- 프리뷰
 
-internal val previewDestination = Destination("cafe", "베이커리 카페 예시", "예시동 한강로 7 (가상)", 37.7, 126.7, "coupon-cafe")
+internal val previewDestination = Destination(
+    "cafe", "베이커리 카페 예시", "예시동 한강로 7 (가상)", 37.7, 126.7, "coupon-cafe",
+    com.safecargo.engine.DestCategory.CAFE, "바리스타의 수제 타르트 상자", "갓 구운 타르트가 부서지지 않게 조심히 모셔 주세요.",
+)
 
 internal val previewState = TripState(
     phase = Phase.LOADED,
-    cargo = Cargo("cargo-cafe", "베이커리 카페 예시 카고", CargoKind.SPONSOR, previewDestination),
+    cargo = Cargo("cargo-cafe", "바리스타의 수제 타르트 상자", CargoKind.SPONSOR, previewDestination),
     seats = SeatSnapshot(
         occupied = mapOf(Seat.DRIVER to true, Seat.PASSENGER to true, Seat.REAR_LEFT to true, Seat.REAR_RIGHT to false),
         belted = mapOf(Seat.DRIVER to true, Seat.PASSENGER to true, Seat.REAR_LEFT to true, Seat.REAR_RIGHT to false),

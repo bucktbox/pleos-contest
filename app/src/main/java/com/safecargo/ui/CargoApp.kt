@@ -62,6 +62,8 @@ fun CargoApp(
                     state, wc,
                     onArrive = { controller.dispatch(TripEvent.ArriveConfirmed) },
                     buffActive = buffActive, buffMultiplier = config.familyBuffMultiplier,
+                    keyGoal = config.gradeThresholds.last().toDouble(),
+                    idleLoop = config.drivingScreen != "static",
                 )
                 Phase.OPENING -> {
                     val r = state.result
@@ -93,6 +95,7 @@ fun CargoApp(
                                 picking = false
                             },
                             onBack = { picking = false },
+                            currentId = state.cargo?.destination?.id,
                         )
                     } else {
                         val cargo = state.cargo

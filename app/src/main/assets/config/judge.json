@@ -1,6 +1,6 @@
 {
     "drivingAudio": false,
-    "drivingScreen": "static",
+    "drivingScreen": "idle",
     "penaltyNoSignalTurn": 0.0,
     "penaltyHarshSteer": 0.0,
     "signalBonusKey": 30.0,
@@ -19,9 +19,9 @@
         120
     ],
     "gradeLightColors": {
-        "RARE": 58879,
-        "EPIC": 11141375,
-        "LEGENDARY": 16761856
+        "RARE": 4053488,
+        "EPIC": 5017087,
+        "LEGENDARY": 11566335
     },
     "ambientFlashMs": 3000,
     "rankingEnabled": false,

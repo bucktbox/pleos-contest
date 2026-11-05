@@ -5,7 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class JudgeConfig(
     val drivingAudio: Boolean = false,
-    val drivingScreen: String = "static",
+    /** 주행 화면: "idle" = 상자 대기 루프 하나만 (11/03), "static" = 완전 정지 그림. */
+    val drivingScreen: String = "idle",
     val penaltyNoSignalTurn: Double = 0.0,
     val penaltyHarshSteer: Double = 0.0,
     val signalBonusKey: Double = 30.0,
@@ -20,7 +21,7 @@ data class JudgeConfig(
     val familyBuffMultiplier: Double = 1.5,
     val beltSignalTrusted: Boolean = false,
     val gradeThresholds: List<Int> = listOf(60, 120),
-    val gradeLightColors: Map<Grade, Int> = mapOf(Grade.RARE to 0x00E5FF, Grade.EPIC to 0xAA00FF, Grade.LEGENDARY to 0xFFC400),
+    val gradeLightColors: Map<Grade, Int> = mapOf(Grade.RARE to 0x3DD9F0, Grade.EPIC to 0x4C8DFF, Grade.LEGENDARY to 0xB07CFF),
     val ambientFlashMs: Long = 3000L,
     val rankingEnabled: Boolean = false,
     val streakDays: Int = 5,

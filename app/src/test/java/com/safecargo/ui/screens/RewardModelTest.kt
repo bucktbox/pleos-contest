@@ -24,7 +24,7 @@ class RewardModelTest {
     )
 
     @Test fun summaryLineIsExact() {
-        assertEquals("깜빡이 먼저 3회 · 깜빡이 없이 1회 · 퍼펙트 2회 · 부드러운 회전 4회", summaryLine(summary))
+        assertEquals("깜빡이 먼저 3회 · 퍼펙트 2회 · 부드러운 회전 4회", summaryLine(summary))
     }
 
     @Test fun gradeNames() {
@@ -46,8 +46,17 @@ class RewardModelTest {
     }
 
     @Test fun replayIsChronological() {
-        val m = listOf(JudgeMoment(300, MomentKind.SMOOTH_TURN), JudgeMoment(100, MomentKind.SIGNAL_FIRST), JudgeMoment(200, MomentKind.NO_SIGNAL_TURN))
+        val m = listOf(JudgeMoment(300, MomentKind.SMOOTH_TURN), JudgeMoment(100, MomentKind.SIGNAL_FIRST), JudgeMoment(200, MomentKind.PERFECT_SIGNAL))
         assertEquals(listOf(100L, 200L, 300L), replayOrder(m).map { it.atMs })
+    }
+
+    @Test fun replayAndSummaryShowOnlyGoodMoves() {
+        val m = listOf(
+            JudgeMoment(100, MomentKind.NO_SIGNAL_TURN), JudgeMoment(200, MomentKind.SIGNAL_FIRST),
+            JudgeMoment(300, MomentKind.HARSH_TURN), JudgeMoment(400, MomentKind.SMOOTH_TURN),
+        )
+        assertEquals(listOf(MomentKind.SIGNAL_FIRST, MomentKind.SMOOTH_TURN), replayOrder(m).map { it.kind })
+        assertEquals(listOf("깜빡이 먼저", "퍼펙트", "부드러운 회전"), summaryItems(summary).map { it.label })
     }
 
     @Test fun highlightWalksEachMomentThenStops() {

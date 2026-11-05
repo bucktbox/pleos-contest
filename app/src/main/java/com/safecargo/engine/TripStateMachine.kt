@@ -46,7 +46,7 @@ class TripStateMachine(
                 val d = e.destination
                 val n = s0.copy(
                     phase = Phase.LOADED,
-                    cargo = Cargo("cargo-" + d.id, d.name + " 카고", CargoKind.SPONSOR, d),
+                    cargo = Cargo("cargo-" + d.id, d.cargoName ?: (d.name + " 카고"), CargoKind.SPONSOR, d),
                 )
                 Step(n, listOf(RequestRoute(d), PersistActive(n)))
             } else Step(s0)

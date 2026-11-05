@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 icon/lock (SC-03 호위 51:567 「07 터치 잠금」) 에서 변환. 흰색 선 — Icon(tint) 로 색을 입힌다. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp" android:height="40dp" android:viewportWidth="40" android:viewportHeight="40">
+    <path android:pathData="M11.6667 18.3333H28.3333C30.1667 18.3333 31.6667 19.8333 31.6667 21.6667V31.6667C31.6667 33.5 30.1667 35 28.3333 35H11.6667C9.83333 35 8.33333 33.5 8.33333 31.6667V21.6667C8.33333 19.8333 9.83333 18.3333 11.6667 18.3333Z" android:strokeWidth="3.33333" android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+    <path android:pathData="M13.3333 18.3333V13.3333C13.3333 9.66667 16.3333 6.66667 20 6.66667C23.6667 6.66667 26.6667 9.66667 26.6667 13.3333V18.3333" android:strokeWidth="3.33333" android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+</vector>

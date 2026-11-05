@@ -2,7 +2,7 @@
 # 세이프 카고 S1 시연 — Virtual Console(VC) HTTP API 로 「로비 → 호위 → 언박싱 → 리워드」 를 자동 진행한다.
 #
 # 사용법:  scripts/s1-demo.sh [dest] [--close-reward]
-#   dest            Mock 목적지 id (muni · rest · cafe, 기본 cafe)
+#   dest            Mock 목적지 id (cafe · rest · muni · roast, 기본 cafe)
 #   --close-reward  이전 회차의 리워드 화면이 열려 있으면 [닫기] 를 대신 눌러 준다
 #
 # 전제: 에뮬레이터(emulator-5554) 실행 중, 앱(com.safecargo.app) 설치됨, VC 가 8088 포트에서 대기.
@@ -90,7 +90,7 @@ for d in json.load(open(sys.argv[1], encoding="utf-8"))["destinations"]:
         print(d["lng"], d["lat"])
         break
 ' "$CATALOG" "$DEST")"
-[ -n "$GEO" ] || die "카탈로그에 목적지 '$DEST' 가 없어요 (muni · rest · cafe)"
+[ -n "$GEO" ] || die "카탈로그에 목적지 '$DEST' 가 없어요 (cafe · rest · muni · roast)"
 DEST_NAME="$(python3 -I -c '
 import json, sys
 print(next(d["name"] for d in json.load(open(sys.argv[1], encoding="utf-8"))["destinations"] if d["id"] == sys.argv[2]))
@@ -145,6 +145,9 @@ if ! wait_log "$SEL" 6; then
   tap_text "목적지 고르기" || tap_text "변경" || die "로비의 [목적지 고르기] 를 찾지 못했어요 (앱이 로비인지 확인)"
   sleep 1.5
   tap_text "$DEST_NAME" || die "목적지 「$DEST_NAME」 를 화면에서 찾지 못했어요"
+  sleep 1
+  # 카드를 누르면 미리보기만 바뀐다 — 확정은 [이 목적지로 안내] (11/03 SC-02).
+  tap_text "이 목적지로 안내" || die "[이 목적지로 안내] 버튼을 찾지 못했어요"
   wait_log "$SEL" 8 || die "목적지 선택 로그(SelectDestination($DEST) -> LOADED)가 나오지 않았어요"
 fi
 log "목적지 선택 확인 (LOADED)"
