@@ -7,6 +7,18 @@ Pleos Connect(Android Automotive)용 공모전 앱. 차에 「카고」를 싣�
 - 모듈 `:app` 하나 (`engine/` 은 Android 의존 없는 판정 엔진, `sdk/` 는 Pleos SDK 래퍼, `ui/` 는 Compose 화면)
 - `poc/` 는 SDK 검증용 별도 앱이다. 이 앱의 빌드와 무관하다.
 
+## APK
+
+- 저장소: [`apk/현실도피_세이프카고_release.apk`](apk/현실도피_세이프카고_release.apk) (실행 가능한 release 빌드)
+- GitHub Release: <https://github.com/bucktbox/pleos-contest/releases/tag/v1.1-demo-20261111> — 같은 APK(`safecargo_v1.1_release.apk`)와 시연 영상 2개
+
+## 테스트 환경
+
+- Pleos Connect Emulator **2.1.0** · Virtual Console(VC) 2.1.0 · Android API 34 이미지 · 매 실행 cold boot
+- 화면 규격: 기준 화면 S-17 **가로 1700×1184dp** · 세로 840×1184dp. Pleos Connect 디스플레이 6종 · 앱 창 12개(가장 작은 창 628×800dp)에 맞춰 레이아웃이 바뀐다.
+- SDK: Vehicle 2.3.2 · NaviHelper 3.0.5 · TextToSpeech 3.3.1 · FusedLocation 1.1.3
+- 차량 신호는 VC 로 재현한다. 실차에서는 확인하지 않았다.
+
 ## 빌드
 
 ```bash
@@ -17,7 +29,7 @@ Pleos Connect(Android Automotive)용 공모전 앱. 차에 「카고」를 싣�
 
 Pleos SDK 는 `settings.gradle.kts` 의 Pleos Playground Maven 저장소에서 받는다.
 
-> **release 서명**: 지금은 release 도 debug 키로 서명한다(`app/build.gradle.kts`). **제출 전 정식 키로 교체**해야 한다.
+> **release 서명**: 공모전 제출본 release APK 는 에뮬레이터 설치 · 시연용으로 debug 키로 서명했다(`app/build.gradle.kts`). 앱 마켓 배포 단계에서 정식 키로 교체한다.
 > 키스토어 · 비밀번호는 저장소에 넣지 않는다(`.gitignore` 에 `*.jks` · `keystore.properties`).
 
 ## 설치 (에뮬레이터)
@@ -52,7 +64,7 @@ scripts/s1-demo.sh --close-reward   # 이전 회차 리워드가 열려 있으�
 
 ## 권한
 
-`AndroidManifest.xml` 에 선언한 권한은 아래 9개뿐이다. 위치만 런타임 요청이고, 앱 시작 때 자동으로 묻지 않는다(로비 권한 카드에서만 요청).
+`AndroidManifest.xml` 에 선언한 권한은 아래 10개뿐이다. 위치 · 차속만 런타임 요청이다. 위치는 앱 시작 때 자동으로 묻지 않고 로비 권한 카드에서만 요청하며, 차속은 첫 실행 때 한 번만 묻는다.
 
 | 권한 | 용도 |
 | :--- | :--- |
@@ -65,6 +77,7 @@ scripts/s1-demo.sh --close-reward   # 이전 회차 리워드가 열려 있으�
 | `pleos.car.permission.TTS_SERVICE` | 도착 안내 음성 (정차 후에만) |
 | `pleos.car.permission.FUSED_LOCATION` (런타임) | 정차 시 위치 1회 — 목적지 도착 확인 |
 | `android.car.permission.CAR_DRIVING_STATE` | 주행 중 UX 제한 상태 확인 (주행 중 조작 차단) |
+| `android.car.permission.CAR_SPEED` (런타임) | 차속 — 급가속 · 급정거 모션 감지에만 사용, 저장하지 않음. 거부해도 앱은 동작한다 |
 
 Pleos SDK · AndroidX 라이브러리가 빌드 때 자체 권한(서비스 바인딩 · 인터넷 · 동적 리시버)을 병합한다.
 최종 APK 목록은 `aapt dump permissions app/build/outputs/apk/release/app-release.apk` 로 확인한다.
