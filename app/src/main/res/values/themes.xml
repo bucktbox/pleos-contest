@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 라이트 (시스템 라이트 설정). 다크는 values-night. 색은 피그마 color/bg/base · text/primary. -->
+    <style name="Theme.SafeCargo" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">#F4F5F7</item>
+        <item name="android:colorBackground">#F4F5F7</item>
+        <item name="android:textColorPrimary">#090B0F</item>
+        <item name="android:statusBarColor">#F4F5F7</item>
+        <item name="android:navigationBarColor">#F4F5F7</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

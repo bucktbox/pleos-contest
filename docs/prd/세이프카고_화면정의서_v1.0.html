@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>세이프 카고 — 화면정의서 v1.0 (PRD v1.0 · Pleos Connect 반응형 6종 디스플레이)</title>
+
+<style>
+:root{
+  --paper:#F1F2ED; --sheet:#FBFBF8;
+  --ink:#1B211E; --ink-2:#5C645F; --ink-3:#868D86;
+  --rule:#C7CCC4; --rule-soft:#DFE3DB;
+  --blue:#33566E; --blue-soft:#E2E8EC;
+  --red:#A63B27; --red-soft:#F2E2DE;
+  --amber:#8A6410; --amber-soft:#F0E8D4;
+  --green:#3D6B4A; --green-soft:#E0EAE0;
+  --grid:rgba(27,33,30,.045);
+  --w-bg:#FFFFFF; --w-fill:#E4E6E2; --w-fill-2:#D2D5D0;
+  --w-line:#AEB3AC; --w-dark:#8B918A; --w-text:#6E746D;
+  --f-body:"Segoe UI",ui-sans-serif,system-ui,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  --f-mono:ui-monospace,"Cascadia Mono","SF Mono",Consolas,"Malgun Gothic",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#141816; --sheet:#1B201D;
+    --ink:#E6E9E3; --ink-2:#A2A9A2; --ink-3:#7C837C;
+    --rule:#333B36; --rule-soft:#272E2A;
+    --blue:#8FB4CC; --blue-soft:#1E2A32;
+    --red:#E08670; --red-soft:#33211C;
+    --amber:#D6B25E; --amber-soft:#2E2718;
+    --green:#8FBF9C; --green-soft:#1C2820;
+    --grid:rgba(230,233,227,.05);
+    --w-bg:#232825; --w-fill:#2E3430; --w-fill-2:#394038;
+    --w-line:#525A53; --w-dark:#6C746C; --w-text:#949B94;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141816; --sheet:#1B201D;
+  --ink:#E6E9E3; --ink-2:#A2A9A2; --ink-3:#7C837C;
+  --rule:#333B36; --rule-soft:#272E2A;
+  --blue:#8FB4CC; --blue-soft:#1E2A32;
+  --red:#E08670; --red-soft:#33211C;
+  --amber:#D6B25E; --amber-soft:#2E2718;
+  --green:#8FBF9C; --green-soft:#1C2820;
+  --grid:rgba(230,233,227,.05);
+  --w-bg:#232825; --w-fill:#2E3430; --w-fill-2:#394038;
+  --w-line:#525A53; --w-dark:#6C746C; --w-text:#949B94;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:40px 20px 96px;display:flex;flex-direction:column;gap:28px}
+p{margin:0}
+h1,h2,h3,h4{margin:0;text-wrap:balance;font-family:var(--f-body)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.mono{font-family:var(--f-mono)}
+.eyebrow{font-family:var(--f-mono);font-size:10.5px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.stack{display:flex;flex-direction:column;gap:15px}
+.lead{font-size:14px;line-height:1.65;color:var(--ink-2);max-width:80ch}
+.lead b{color:var(--ink);font-weight:650}
+
+/* ---- doc head ---- */
+.dochead{border:1.5px solid var(--ink);background:var(--sheet)}
+.dochead-top{padding:24px 24px 18px;border-bottom:1.5px solid var(--ink)}
+.dochead-top h1{font-size:clamp(22px,3.2vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.16}
+.dochead-top .sub{margin-top:9px;color:var(--ink-2);font-size:14px;max-width:70ch}
+.dochead-top .sub b{color:var(--ink);font-weight:650}
+.tblock{display:grid;grid-template-columns:repeat(4,1fr)}
+.tblock div{padding:11px 15px;border-right:1px solid var(--rule)}
+.tblock div:last-child{border-right:0}
+.tblock dt{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.tblock dd{margin:5px 0 0;font-size:12.5px;font-weight:650;line-height:1.4}
+@media(max-width:780px){
+  .tblock{grid-template-columns:repeat(2,1fr)}
+  .tblock div{border-bottom:1px solid var(--rule)}
+  .tblock div:nth-child(2n){border-right:0}
+}
+
+/* ---- section sheet ---- */
+.sheet{border:1px solid var(--rule);background:var(--sheet)}
+.sheet-h{display:flex;align-items:flex-start;gap:14px;padding:15px 18px;
+  border-bottom:1px solid var(--rule);
+  background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/100% 9px}
+.sheet-no{flex:none;width:42px;height:42px;display:grid;place-items:center;
+  border:1.5px solid var(--blue);color:var(--blue);
+  font-family:var(--f-mono);font-size:12px;font-weight:700}
+.sheet-h h2{font-size:18px;font-weight:750;letter-spacing:-.01em}
+.sheet-h .what{margin-top:3px;font-size:12.5px;color:var(--ink-2)}
+.sheet-h .what b{color:var(--ink);font-weight:650}
+.sheet-body{padding:20px 18px}
+
+/* ================= SCREEN BLOCK — 공통 레이아웃 ================= */
+.scr{border:1px solid var(--rule);background:var(--sheet);margin-bottom:22px}
+.scr:last-child{margin-bottom:0}
+.scr-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:9px;padding:11px 15px;
+  border-bottom:1.5px solid var(--blue);background:var(--blue-soft)}
+.scr-h .sid{font-family:var(--f-mono);font-size:13.5px;font-weight:700;color:var(--blue)}
+.scr-h .snm{font-size:15px;font-weight:750}
+.scr-h .spath{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-2);margin-left:auto}
+.scr-purpose{padding:10px 15px;border-bottom:1px solid var(--rule-soft);
+  font-size:13px;line-height:1.55;color:var(--ink-2)}
+.scr-purpose b{color:var(--ink);font-weight:650}
+.scr-b{display:grid;grid-template-columns:296px 1fr;gap:0}
+.scr-b.web{grid-template-columns:400px 1fr}
+@media(max-width:900px){.scr-b,.scr-b.web{grid-template-columns:1fr}}
+.scr-wf{padding:16px 14px;border-right:1px solid var(--rule);
+  background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/20px 20px,
+             linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/20px 20px,var(--sheet);
+  display:flex;justify-content:center;align-items:flex-start}
+@media(max-width:900px){.scr-wf{border-right:0;border-bottom:1px solid var(--rule)}}
+.scr-el{padding:6px 0}
+
+/* element rows */
+.el{display:grid;grid-template-columns:38px 1fr;gap:0;border-bottom:1px solid var(--rule-soft)}
+.el:last-child{border-bottom:0}
+.el-n{padding:11px 0 11px 12px;font-family:var(--f-mono);font-size:11.5px;
+  font-weight:700;color:var(--blue)}
+.el-b{padding:11px 15px 12px 4px;min-width:0}
+.el-t{font-size:13.5px;font-weight:700;margin-bottom:3px;display:flex;flex-wrap:wrap;gap:7px;align-items:baseline}
+.el-c{font-family:var(--f-mono);font-size:10px;color:var(--ink-3);font-weight:400}
+.el-d{font-size:13px;line-height:1.55;color:var(--ink-2)}
+.el-d b{color:var(--ink);font-weight:650}
+.el-d code{font-family:var(--f-mono);font-size:11.5px;background:var(--rule-soft);padding:1px 4px}
+.el-l{display:block;margin-top:5px;font-size:12.5px;line-height:1.5}
+.el-l>span:first-child{font-family:var(--f-mono);font-size:9.5px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-right:6px}
+.el-l.act>span:first-child{color:var(--blue)}
+.el-l.exc>span:first-child{color:var(--amber)}
+.el-l.pol>span:first-child{color:var(--green)}
+.el-l.dec>span:first-child{color:var(--red)}
+
+/* tags */
+.tag{display:inline-block;font-family:var(--f-mono);font-size:9px;font-weight:700;
+  letter-spacing:.06em;padding:1px 5px;margin-right:4px;border:1px solid currentColor;vertical-align:1px}
+.tag.p{color:var(--green);background:var(--green-soft)}
+.tag.d{color:var(--red);background:var(--red-soft)}
+.tag.s{color:var(--blue);background:var(--blue-soft)}
+.tag.w{color:var(--amber);background:var(--amber-soft)}
+
+/* ---- wireframe primitives ---- */
+.phone{width:250px;border:1.5px solid var(--w-dark);background:var(--w-bg);display:flex;flex-direction:column}
+.browser{width:100%;max-width:372px;border:1.5px solid var(--w-dark);background:var(--w-bg);display:flex;flex-direction:column}
+.wcap{font-family:var(--f-mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--w-text);padding:5px 7px;border-bottom:1px solid var(--w-line);
+  display:flex;justify-content:space-between;gap:6px}
+.wbody{padding:8px;display:flex;flex-direction:column;gap:6px;min-height:352px}
+.wbody.web{min-height:300px}
+.box{border:1px solid var(--w-line);background:var(--w-fill);color:var(--w-text);
+  font-family:var(--f-mono);font-size:9px;padding:6px 7px;line-height:1.4;min-width:0}
+.box.solid{background:var(--w-fill-2)}
+.box.empty{background:transparent;border-style:dashed}
+.box.tall{min-height:56px}
+.box.xtall{min-height:88px}
+.box.ctr{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.row{display:flex;gap:5px}
+.row>*{flex:1;min-width:0}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.n{display:inline-block;font-family:var(--f-mono);font-size:8.5px;font-weight:700;
+  color:var(--blue);border:1px solid var(--blue);background:var(--paper);
+  padding:0 3px;margin-right:4px;vertical-align:1px}
+.tabbar{margin-top:auto;border-top:1.5px solid var(--w-line);display:grid;grid-template-columns:repeat(5,1fr)}
+.tabbar span{font-family:var(--f-mono);font-size:7.5px;text-align:center;padding:6px 1px;
+  color:var(--w-text);border-right:1px solid var(--w-line);line-height:1.25}
+.tabbar span:last-child{border-right:0}
+.tabbar span.on{background:var(--w-fill-2);color:var(--ink);font-weight:700}
+.cols{display:flex;flex-wrap:wrap;gap:3px}
+.cols span{font-family:var(--f-mono);font-size:7.5px;border:1px solid var(--w-line);
+  background:var(--w-fill);color:var(--w-text);padding:2px 3px}
+.side{display:flex;flex-direction:column;gap:2px}
+.nav{font-family:var(--f-mono);font-size:8px;color:var(--w-text);
+  border:1px solid var(--w-line);background:var(--w-fill);padding:3px 5px}
+.nav.on{background:var(--w-fill-2);color:var(--ink);font-weight:700}
+
+/* ---- tables & callouts ---- */
+.tw{overflow-x:auto;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:660px;font-size:12.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+th{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:700;background:var(--sheet);border-bottom:1.5px solid var(--rule)}
+tr:last-child td{border-bottom:0}
+td.id{font-family:var(--f-mono);font-size:11px;color:var(--blue);font-weight:700;white-space:nowrap}
+td.pid{font-family:var(--f-mono);font-size:10.5px;white-space:nowrap;color:var(--ink-2)}
+tr.grp td{background:var(--blue-soft);font-family:var(--f-mono);font-size:9.5px;
+  letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--blue);padding:6px 10px}
+.note{border-left:3px solid var(--blue);background:var(--blue-soft);padding:12px 15px;font-size:13px;line-height:1.58}
+.warn{border-left:3px solid var(--red);background:var(--red-soft);padding:12px 15px;font-size:13px;line-height:1.58}
+.good{border-left:3px solid var(--green);background:var(--green-soft);padding:12px 15px;font-size:13px;line-height:1.58}
+.note b,.warn b,.good b{font-weight:700}
+.foot{border-top:1px solid var(--rule);padding-top:15px;
+  font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);line-height:1.8}
+.legend{display:flex;flex-wrap:wrap;gap:14px;padding:11px 15px;border:1px solid var(--rule);
+  background:var(--sheet);font-size:12.5px;align-items:center}
+figure{margin:0;border:1px solid var(--rule);background:var(--sheet);padding:16px}
+figure svg{max-width:100%;height:auto;display:block;margin:0 auto;color:var(--ink)}
+figcaption{margin-top:12px;padding-top:11px;border-top:1px solid var(--rule-soft);
+  font-size:12.5px;line-height:1.55;color:var(--ink-2)}
+figcaption b{color:var(--ink);font-weight:650}
+
+/* ================= 세이프 카고 — 차량 디스플레이 확장 ================= */
+:root{--teal:#2C6A6A;--teal-soft:#DCEAE8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--teal:#86C7C3;--teal-soft:#1A2B2A}}
+:root[data-theme="dark"]{--teal:#86C7C3;--teal-soft:#1A2B2A}
+.tag.r{color:var(--teal);background:var(--teal-soft)}
+.el-l.rsp>span:first-child{color:var(--teal)}
+.scr-b.car{grid-template-columns:420px 1fr}
+@media(max-width:900px){.scr-b.car{grid-template-columns:1fr}}
+.wfs{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.wfs .wfcap{font-family:var(--f-mono);font-size:9.5px;color:var(--ink-3);text-align:center;margin-bottom:10px}
+.wfs .wfcap b{color:var(--teal)}
+.disp{border:1.5px solid var(--w-dark);background:var(--w-bg);display:flex;flex-direction:column;overflow:hidden}
+.disp.l{width:min(384px,100%);aspect-ratio:1700/1184}
+.disp.p{width:190px;aspect-ratio:840/1184}
+.disp .wbody{flex:1;min-height:0;padding:6px;gap:4px}
+.disp .box{font-size:8px;padding:4px 5px}
+.col{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fill{flex:1;min-height:0}
+.rail{display:flex;flex-direction:column;gap:3px;width:44px;flex:none}
+.rail .nav{font-size:7.5px;text-align:center;padding:5px 2px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.seg .nav{font-size:7.5px;text-align:center}
+.box.lock{border-color:var(--red);border-style:dashed;background:transparent;color:var(--red)}
+.box.hl{border-color:var(--teal);border-width:1.5px}
+.gauge{height:7px;border:1px solid var(--w-line);background:linear-gradient(90deg,var(--w-dark) var(--v,60%),transparent 0);margin-top:3px}
+.vg{width:16px;border:1px solid var(--w-line);background:linear-gradient(0deg,var(--w-dark) var(--v,60%),transparent 0)}
+.qr{aspect-ratio:1;border:1px solid var(--w-line);background:
+  repeating-linear-gradient(90deg,var(--w-dark) 0 3px,transparent 3px 6px),
+  repeating-linear-gradient(0deg,var(--w-fill-2) 0 3px,transparent 3px 6px)}
+.scr-rsp{border-top:1px solid var(--rule)}
+.scr-rsp table{min-width:620px}
+.scr-rsp td:first-child{white-space:nowrap;font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--teal)}
+.cls{display:inline-block;font-family:var(--f-mono);font-size:10px;font-weight:700;color:var(--teal);
+  border:1px solid var(--teal);background:var(--teal-soft);padding:0 4px;margin-right:3px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px}
+.toc a{display:block;border:1px solid var(--rule);background:var(--sheet);padding:7px 10px;font-size:12.5px;color:var(--ink);text-decoration:none}
+.toc a:hover{border-color:var(--blue)}
+.toc a span{font-family:var(--f-mono);font-size:10.5px;color:var(--blue);font-weight:700;margin-right:6px}
+</style>
+
+<div class="wrap">
+
+<header class="dochead">
+  <div class="dochead-top">
+    <div class="eyebrow">화면정의서 · v1.0 · 2026-10-31 · PRD v1.0 기준 · Pleos Connect Display Layout · 반응형 6종 디스플레이 · 전 9화면 + 공통 셸</div>
+    <h1 style="margin-top:9px">세이프 카고 (Safe Cargo : 해금의 여정)<br>화면정의서</h1>
+    <p class="sub">모든 화면을 <b>좌측 와이어프레임 · 우측 요소별 기능설명</b> 레이아웃으로 통일했습니다. 좌측의 <span class="n">01</span> 번호가 우측 항목 번호와 1:1로 대응하고, 항목마다 <b>UX 설명 · 동작 · 예외 · 정책 · 반응형</b>을 적습니다. 앱은 Pleos Connect 디스플레이 6종에 모두 맞아야 하므로 <b>화면마다 Landscape · Portrait 와이어프레임을 함께 그리고</b>, 창 크기 등급별 배치를 표로 정리했습니다.</p>
+  </div>
+  <dl class="tblock">
+    <div><dt>범위</dt><dd>9화면 + 공통 셸 <span class="mono" style="font-size:10.5px;color:var(--ink-3)">SC-00 ~ SC-08 · CM-01</span></dd></div>
+    <div><dt>대상 디스플레이</dt><dd style="color:var(--teal)">6종 · 앱 창 12개 <span class="mono" style="font-size:10.5px">Connect-S/L/W/WF × L·P</span></dd></div>
+    <div><dt>반응형 등급</dt><dd>6등급 <span class="mono" style="font-size:10.5px;color:var(--ink-3)">L/P × 낮음·보통·높음</span></dd></div>
+    <div><dt>미결</dt><dd style="color:var(--red)">PRD 미결 9건 화면 영향 <span class="mono" style="font-size:10.5px">+ 신규 확인 Q 6건</span></dd></div>
+  </dl>
+</header>
+
+<nav class="toc" aria-label="목차">
+  <a href="#s00"><span>00</span>표기 범례 · 원천 자료</a>
+  <a href="#s01"><span>01</span>Pleos 디스플레이 규격</a>
+  <a href="#s02"><span>02</span>반응형 설계 규칙</a>
+  <a href="#s03"><span>03</span>상태 전이 · 화면 흐름</a>
+  <a href="#s04"><span>04</span>화면 목록</a>
+  <a href="#s05"><span>05</span>화면 보완 제안</a>
+  <a href="#s06"><span>06</span>화면 상세 SC-00 ~ SC-08</a>
+  <a href="#s07"><span>07</span>미결 · 확인 요청</a>
+</nav>
+
+<!-- ============ 00 범례 ============ -->
+<section class="sheet" id="s00">
+  <div class="sheet-h">
+    <div class="sheet-no">00</div>
+    <div><h2>공통 레이아웃 · 표기 범례</h2><p class="what">전 화면 동일 구조 — <b>읽는 방법을 한 번만 익히면 됩니다</b></p></div>
+  </div>
+  <div class="sheet-body stack">
+    <div class="legend">
+      <span><span class="n">01</span> 와이어프레임 영역 번호 = 우측 항목 번호</span>
+      <span><span class="tag p">FR-APP-001</span> PRD 요구사항 (FR · NFR · EX)</span>
+      <span><span class="tag r">RL-01</span> 반응형 규칙 (이 문서 02장)</span>
+      <span><span class="tag s">SD-01</span> 화면 보완 제안 · PM 승인 필요</span>
+      <span><span class="tag d">AG-03</span> 미결 (ISSUE · AG · U · Q) · 결정 전 잠정안으로만 구현</span>
+      <span><span class="cls">L-R</span> 창 크기 등급</span>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:80px">단</th><th>기술 내용</th><th style="width:300px">작성 원칙</th></tr></thead>
+        <tbody>
+          <tr><td><b>UX 설명</b></td><td>이 영역이 사용자에게 <b>무엇을 해주는가</b>. 시스템 구조가 아니라 사용자 관점으로 쓴다.</td><td>"registerTurnSignalState 결과 표시" (×) → "깜빡이를 먼저 켰다는 걸 바로 알려줌" (○)</td></tr>
+          <tr><td><b>동작</b></td><td>조작 → 처리 → 결과. 분기가 있으면 분기까지.</td><td>결과가 화면에 어떻게 나타나는지까지 쓴다</td></tr>
+          <tr><td><b>예외</b></td><td>빈 상태 · 미지원 · 권한 거부 · 실패. 해당 없으면 생략.</td><td><b>빈 상태에는 반드시 다음 행동을 넣는다</b></td></tr>
+          <tr><td><b>정책</b></td><td>적용되는 FR · NFR · EX · SD 코드와 미결 코드.</td><td>미결이 걸린 영역은 PRD 잠정안으로만 만든다</td></tr>
+          <tr><td><b>반응형</b></td><td>창 크기 등급에 따라 <b>이 영역이 어떻게 바뀌는지</b>. 바뀌지 않으면 생략.</td><td>"작게 표시" (×) → "P-S 에서 히어로 높이 40% → 썸네일 + 글자 가로 배치" (○)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><b>전 화면 공통 규칙.</b> ① <b>주행 중에는 터치 입력과 글 읽기를 요구하지 않습니다</b> — 주행 화면은 숫자 · 아이콘 · 게이지 · 소리만 씁니다 (NFR-SAF-001). ② 상태를 <b>색만으로</b> 전달하지 않습니다 — 등급 · 지원 여부 · 버프는 색과 함께 글자나 아이콘 모양을 바꿉니다 (SD-07). ③ 스폰서 · 쿠폰 · 랭킹 · 금액은 Mock 데이터이며 <b>옆에 「예시」를 붙입니다</b> (FR-APP-008 · SD-08). ④ 화면은 <b>dp · sp 로만</b> 그리고, 어떤 화면도 Landscape 를 전제하지 않습니다 (RL-01 · RL-08). ⑤ 사람은 역할명으로만 씁니다 — 실명 · 소속을 화면 예시에도 넣지 않습니다 (FR-SUB-004).</div>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:90px">구분</th><th>문서</th><th style="width:200px">이 문서에서 쓰는 곳</th></tr></thead>
+        <tbody>
+          <tr><td class="pid">PRD</td><td>PRD_세이프카고_v1.0 (2026-10-29 · PM) — 2.2 시나리오 · 5.2 상태 모델 · 6.1 FR-APP · 6.2 FR-VH · 8장 예외 (PRD 11.3 후속 산출물 가이드)</td><td>03 · 04 · 06 전부</td></tr>
+          <tr><td class="pid">Pleos</td><td>Pleos Connect 디자인 가이드 — Getting Started › <b>Display Layout</b> (화면 구성 · 레이어 · 화면 유형 · 해상도 표)</td><td>01 · 02</td></tr>
+          <tr><td class="pid">Pleos</td><td>Pleos Connect 디자인 가이드 — Getting Started › <b>Window Policy</b> (분할 비율 · 앱 실행 시 orientation · 창 크기 변경)</td><td>01 · 02 · SD-06</td></tr>
+          <tr><td class="pid">Pleos</td><td>Pleos Connect 디자인 가이드 — Components › <b>Basic button</b> (Large · Medium · Small, 상태 Pressed · Disabled · Loading)</td><td>SD-03 · Q-01</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 01 Pleos 디스플레이 규격 ============ -->
+<section class="sheet" id="s01">
+  <div class="sheet-h">
+    <div class="sheet-no">01</div>
+    <div><h2>Pleos Connect 디스플레이 규격</h2><p class="what">출처 Pleos 디자인 가이드 Display Layout · Window Policy (2026-10-31 열람) — <b>앱이 쓸 수 있는 것은 Application window 뿐입니다</b></p></div>
+  </div>
+  <div class="sheet-body stack">
+    <figure>
+      <svg viewBox="0 0 1700 560" role="img" aria-label="Connect-S-17 화면 구성도. 왼쪽은 앱 1개가 Landscape 1700×1184dp 로 실행된 모습, 오른쪽은 앱 2개가 Portrait 840×1184dp 로 나란히 실행된 모습. 두 경우 모두 상단 Status bar, 왼쪽 Driving view, 하단 GNB 가 앱 창을 둘러싼다.">
+        <g font-family="ui-monospace,Consolas,monospace" fill="currentColor">
+          <!-- 좌: 앱 1개 Landscape -->
+          <text x="20" y="28" font-size="20" font-weight="700" font-family="Segoe UI,Malgun Gothic,sans-serif">앱 1개 실행 — 2:0 · Landscape</text>
+          <rect x="20" y="46" width="800" height="450" rx="14" fill="none" stroke="currentColor" stroke-width="3"/>
+          <rect x="30" y="54" width="780" height="22" fill="currentColor" opacity=".10"/>
+          <text x="420" y="70" font-size="13" text-anchor="middle" opacity=".75">Status bar (System UI)</text>
+          <rect x="30" y="82" width="235" height="358" fill="currentColor" opacity=".06"/>
+          <text x="147" y="256" font-size="14" text-anchor="middle" opacity=".75">Driving view</text>
+          <text x="147" y="276" font-size="11" text-anchor="middle" opacity=".55">속도 · Telltale</text>
+          <rect x="274" y="80" width="531" height="362" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="2.5"/>
+          <text x="540" y="250" font-size="17" text-anchor="middle" font-weight="700" fill="var(--teal)">Application window</text>
+          <text x="540" y="274" font-size="15" text-anchor="middle" fill="var(--teal)">Landscape 1700 × 1184 dp</text>
+          <rect x="30" y="448" width="780" height="40" fill="currentColor" opacity=".10"/>
+          <text x="420" y="473" font-size="13" text-anchor="middle" opacity=".75">GNB — App library · 즐겨찾는 앱 · 공조</text>
+          <!-- 우: 앱 2개 Portrait -->
+          <text x="880" y="28" font-size="20" font-weight="700" font-family="Segoe UI,Malgun Gothic,sans-serif">앱 2개 실행 — 1:1 · Portrait</text>
+          <rect x="880" y="46" width="800" height="450" rx="14" fill="none" stroke="currentColor" stroke-width="3"/>
+          <rect x="890" y="54" width="780" height="22" fill="currentColor" opacity=".10"/>
+          <text x="1280" y="70" font-size="13" text-anchor="middle" opacity=".75">Status bar (System UI)</text>
+          <rect x="890" y="82" width="235" height="358" fill="currentColor" opacity=".06"/>
+          <text x="1007" y="256" font-size="14" text-anchor="middle" opacity=".75">Driving view</text>
+          <rect x="1134" y="80" width="262" height="362" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="2.5"/>
+          <text x="1265" y="250" font-size="15" text-anchor="middle" font-weight="700" fill="var(--teal)">세이프 카고</text>
+          <text x="1265" y="272" font-size="13" text-anchor="middle" fill="var(--teal)">Portrait 840×1184</text>
+          <rect x="1404" y="80" width="262" height="362" fill="currentColor" opacity=".05" stroke="currentColor" stroke-opacity=".4" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="1535" y="250" font-size="14" text-anchor="middle" opacity=".7">다른 앱 (예: 내비)</text>
+          <text x="1535" y="272" font-size="13" text-anchor="middle" opacity=".55">Portrait 840×1184</text>
+          <line x1="1400" y1="230" x2="1400" y2="292" stroke="currentColor" stroke-width="3" opacity=".5"/>
+          <rect x="890" y="448" width="780" height="40" fill="currentColor" opacity=".10"/>
+          <text x="1280" y="473" font-size="13" text-anchor="middle" opacity=".75">GNB</text>
+          <text x="20" y="536" font-size="13" opacity=".6">Connect-S-17 · 2560 × 1440 dp · 160 DPI. 시스템 UI 의 치수는 개략도 — Pleos 문서는 앱 창 크기만 수치로 준다. 가운데 세로 막대 = 윈도 바 (탭 · 드래그로 위치 교체 · Landscape↔Portrait 전환)</text>
+        </g>
+      </svg>
+      <figcaption><b>앱이 다룰 영역은 Application window 하나입니다.</b> Status bar · Driving view · GNB 는 시스템 UI 이고, 상태 표시줄 · App library · 공조 패널 · 키보드는 <b>앱보다 위 레이어</b>라서 쓰는 동안 앱 창을 <b>잠깐 가릴 수 있습니다</b>. Pleos 는 「가로 전용 게임처럼 한 모드로만 도는 앱을 빼고는 <b>모든 앱이 Landscape · Portrait 두 레이아웃에 맞게 조절되도록</b> 설계해야 한다」고 정합니다.</figcaption>
+    </figure>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>유형</th><th>디스플레이</th><th>비율</th><th>인치</th><th>DPI</th><th>해상도 (dp)</th><th>Landscape 창 (dp)</th><th>Portrait 창 (dp)</th><th>등급 (02장)</th></tr></thead>
+        <tbody>
+          <tr class="grp"><td colspan="9">Connect Standard — OS 기본 크기 · 앱 2개면 1:1, 1개면 2:0</td></tr>
+          <tr><td class="id">S-17</td><td><b>Connect-S-17 (기본)</b></td><td>16:9</td><td>17</td><td>160</td><td class="pid">2560 × 1440</td><td class="pid"><b>1700 × 1184</b></td><td class="pid"><b>840 × 1184</b></td><td><span class="cls">L-R</span><span class="cls">P-R</span></td></tr>
+          <tr><td class="id">S-14.6</td><td>Connect-S-14.6</td><td>16:9</td><td>14.6</td><td>200</td><td class="pid">2048 × 1152</td><td class="pid">1360 × 948</td><td class="pid">672 × 948</td><td><span class="cls">L-R</span><span class="cls">P-R</span></td></tr>
+          <tr><td class="id">L-12.9</td><td>Connect-L-12.9 (Connect-S 로 재분류)</td><td>16:9</td><td>12.9</td><td>160</td><td class="pid">1920 × 1080</td><td class="pid">1274 × 855</td><td class="pid"><b>628</b> × 855</td><td><span class="cls">L-S</span><span class="cls">P-S</span></td></tr>
+          <tr class="grp"><td colspan="9">Connect Wide — 가로로 긴 고급 차종용 · 2:1 또는 1:2 (기본 2:1) · 최대 2개 앱</td></tr>
+          <tr><td class="id">W-Std</td><td>Connect-W-Standard</td><td>9:2</td><td>24.6</td><td>160</td><td class="pid">3840 × 850</td><td class="pid">1640 × 810</td><td class="pid">800 × 810</td><td><span class="cls">L-S</span><span class="cls">P-S</span></td></tr>
+          <tr><td class="id">W-Ext</td><td>Connect-W-Extended (차량 상태에 따라 세로 확장)</td><td>24:9</td><td>24.6</td><td>160</td><td class="pid">3840 × 1440</td><td class="pid">1640 × <b>1400</b></td><td class="pid">800 × 1400</td><td><span class="cls">L-T</span><span class="cls">P-T</span></td></tr>
+          <tr><td class="id">WF</td><td>Connect-WF (Waterfall)</td><td>32:9</td><td>18.5</td><td>200</td><td class="pid">3072 × 816</td><td class="pid">1256 × <b>800</b></td><td class="pid">648 × <b>800</b></td><td><span class="cls">L-S</span><span class="cls">P-S</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:170px">Window Policy</th><th>내용 (Pleos)</th><th style="width:260px">세이프 카고에 주는 뜻</th></tr></thead>
+        <tbody>
+          <tr><td><b>앱 실행 시 방향</b></td><td>Connect-S: 신규 앱은 <b>이전 앱의 orientation 을 따른다</b> — Portrait 앱 2개가 떠 있으면 신규 앱도 Portrait. Connect-W: 신규 앱은 항상 Landscape 로 primary window 에 뜨고, 기존 primary 는 secondary 로, secondary 는 사라진다.</td><td>앱이 <b>Portrait 로 시작할 수 있다</b> → 첫 화면도 두 레이아웃 필수 (<span class="tag r">RL-08</span>)</td></tr>
+          <tr><td><b>창 크기 · 위치 변경</b></td><td>3 핑거 스와이프 · 윈도 바 드래그 · 앱 윈도 버튼으로 <b>실행 중에 Landscape ↔ Portrait 전환</b>, 두 앱 위치 교체.</td><td>호위 · 언박싱 중에도 창이 바뀐다 → 상태 보존 (<span class="tag r">RL-06</span>)</td></tr>
+          <tr><td><b>사라진 앱</b></td><td>화면에서 사라진 앱은 <b>종료되지 않는다</b>. 표시된 앱이 끝나면 최근 앱 순으로 다시 표시.</td><td>목적지 도착 때 앱이 안 보일 수 있다 (<span class="tag s">SD-06</span>)</td></tr>
+          <tr><td><b>기본 화면</b></td><td>IVI 첫 실행 · 재탑승 시 primary 는 <b>Navigation 앱</b> (W 는 secondary 에 Media 앱). 내비 앱은 종료할 수 없다.</td><td>세이프 카고는 대부분 <b>내비 옆 창</b>에서 쓰인다 → Portrait 가 주 사용 형태일 가능성 (추정)</td></tr>
+          <tr><td><b>Deep link</b></td><td>App A 에서 App B 실행 시 B 가 A 를 덮고, B 기능이 끝나면 A 로 돌아온다.</td><td>requestRoute 후 화면 전환은 Q-02 와 함께 확인</td></tr>
+          <tr><td><b>Connect-W</b></td><td>최대 앱 2개. App library 는 운전석 · 조수석 모두 표시, 조수석 쪽에서 실행한 앱은 조수석 창에서만 실행.</td><td>동승자가 조수석 창에서 랭킹 · 기록을 볼 수 있다 (정차 시)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 반응형 설계 규칙 ============ -->
+<section class="sheet" id="s02">
+  <div class="sheet-h">
+    <div class="sheet-no">02</div>
+    <div><h2>반응형 설계 규칙 — 창 크기 등급 6개</h2><p class="what">디스플레이 이름이 아니라 <b>앱 창의 dp 크기</b>로 배치를 정합니다 — 새 디스플레이가 나와도 규칙은 그대로입니다</p></div>
+  </div>
+  <div class="sheet-body stack">
+    <figure>
+      <svg viewBox="0 0 880 430" role="img" aria-label="12개 앱 창을 가로 폭과 세로 높이로 찍은 산점도. 폭 960dp 를 기준으로 Portrait 와 Landscape 가 나뉘고, 높이 900dp 와 1200dp 를 기준으로 낮음, 보통, 높음으로 나뉜다.">
+        <g font-family="ui-monospace,Consolas,monospace" fill="currentColor">
+          <rect x="60" y="40" width="780" height="340" fill="none" stroke="currentColor" stroke-opacity=".3"/>
+          <rect x="60" y="295" width="276" height="85" fill="var(--teal-soft)"/>
+          <rect x="336" y="295" width="504" height="85" fill="var(--teal-soft)"/>
+          <line x1="336" y1="40" x2="336" y2="380" stroke="var(--teal)" stroke-width="1.6" stroke-dasharray="6 4"/>
+          <line x1="60" y1="295" x2="840" y2="295" stroke="var(--teal)" stroke-width="1.6" stroke-dasharray="6 4"/>
+          <line x1="60" y1="167.5" x2="840" y2="167.5" stroke="var(--teal)" stroke-width="1.6" stroke-dasharray="6 4"/>
+          <text x="340" y="34" font-size="11" fill="var(--teal)">폭 960dp</text>
+          <text x="846" y="299" font-size="11" fill="var(--teal)">900</text>
+          <text x="846" y="171" font-size="11" fill="var(--teal)">1200</text>
+          <text x="70" y="62" font-size="13" font-weight="700" fill="var(--teal)">P-T</text>
+          <text x="70" y="190" font-size="13" font-weight="700" fill="var(--teal)">P-R</text>
+          <text x="70" y="372" font-size="13" font-weight="700" fill="var(--teal)">P-S</text>
+          <text x="806" y="62" font-size="13" font-weight="700" fill="var(--teal)">L-T</text>
+          <text x="806" y="190" font-size="13" font-weight="700" fill="var(--teal)">L-R</text>
+          <text x="806" y="372" font-size="13" font-weight="700" fill="var(--teal)">L-S</text>
+          <!-- Portrait -->
+          <circle cx="264" cy="174.3" r="5"/><text x="272" y="196" font-size="10">S-17 840×1184</text>
+          <circle cx="163.2" cy="274.6" r="5"/><text x="172" y="270" font-size="10">S-14.6 672×948</text>
+          <circle cx="136.8" cy="314.1" r="5"/><text x="96" y="331" font-size="10">L-12.9 628×855</text>
+          <circle cx="240" cy="333.25" r="5"/><text x="232" y="318" font-size="10">W 800×810</text>
+          <circle cx="148.8" cy="337.5" r="5"/><text x="140" y="357" font-size="10">WF 648×800</text>
+          <circle cx="240" cy="82.5" r="5"/><text x="250" y="86" font-size="10">W-Ext 800×1400</text>
+          <!-- Landscape -->
+          <circle cx="780" cy="174.3" r="5"/><text x="660" y="196" font-size="10">S-17 1700×1184</text>
+          <circle cx="576" cy="274.6" r="5"/><text x="586" y="270" font-size="10">S-14.6 1360×948</text>
+          <circle cx="524.4" cy="314.1" r="5"/><text x="534" y="312" font-size="10">L-12.9 1274×855</text>
+          <circle cx="744" cy="333.25" r="5"/><text x="640" y="353" font-size="10">W-Std 1640×810</text>
+          <circle cx="513.6" cy="337.5" r="5"/><text x="440" y="357" font-size="10">WF 1256×800</text>
+          <circle cx="744" cy="82.5" r="5"/><text x="626" y="86" font-size="10">W-Ext 1640×1400</text>
+          <path d="M744 325 L744 92" stroke="currentColor" stroke-width="1.3" stroke-dasharray="3 3" fill="none" opacity=".6"/>
+          <text x="752" y="240" font-size="10" opacity=".75">차량 상태로</text>
+          <text x="752" y="254" font-size="10" opacity=".75">실행 중 확장</text>
+          <text x="60" y="404" font-size="11" opacity=".7">가로: 앱 창 폭 500 → 1800 dp</text>
+          <text x="560" y="404" font-size="11" opacity=".7">세로: 앱 창 높이 700 → 1500 dp</text>
+          <text x="60" y="422" font-size="10.5" opacity=".6">음영 = 낮음(S) 등급. 12개 창 중 6개가 높이 900dp 미만이라 「낮은 창」이 예외가 아니라 절반이다.</text>
+        </g>
+      </svg>
+      <figcaption><b>폭으로 방향, 높이로 밀도를 정합니다.</b> Landscape 창(1256~1700dp)과 Portrait 창(628~840dp)은 폭이 겹치지 않아 <b>960dp 한 줄</b>로 나뉩니다. 높이는 800~1400dp 로 넓게 퍼져 있어 <b>900 · 1200dp</b> 두 줄로 낮음 · 보통 · 높음을 나눕니다. 기준 캔버스는 <b>Connect-S-17 Landscape 1700×1184dp</b>, 최소 검증 창은 <b>628×800dp</b>(가장 좁은 폭 × 가장 낮은 높이)입니다.</figcaption>
+    </figure>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:70px">등급</th><th style="width:180px">조건 (앱 창 dp)</th><th style="width:200px">해당 창</th><th>배치 원칙</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cls">L-R</span></td><td>폭 ≥ 960 · 높이 900~1199</td><td class="pid">S-17 1700×1184 · S-14.6 1360×948</td><td><b>2단</b> — 주 영역 60% + 보조 패널 40%. 기준 디자인.</td></tr>
+          <tr><td><span class="cls">L-S</span></td><td>폭 ≥ 960 · 높이 &lt; 900</td><td class="pid">L-12.9 · W-Std · WF</td><td>2단 유지. 히어로 · 연출 높이를 줄이고 보조 문구를 1줄로. <b>세로 스크롤 대신 가로로 펼친다</b>.</td></tr>
+          <tr><td><span class="cls">L-T</span></td><td>폭 ≥ 960 · 높이 ≥ 1200</td><td class="pid">W-Ext 1640×1400</td><td>2단 유지. 늘어난 높이는 <b>보조 정보 1줄(최근 기록 등)</b>로 채우고, 핵심 요소는 늘리지 않는다.</td></tr>
+          <tr><td><span class="cls">P-R</span></td><td>폭 &lt; 960 · 높이 900~1199</td><td class="pid">S-17 840×1184 · S-14.6 672×948</td><td><b>1단</b> — 보조 패널은 주 영역 아래로 내리거나 탭으로 분리. 주 버튼은 하단 고정.</td></tr>
+          <tr><td><span class="cls">P-S</span></td><td>폭 &lt; 960 · 높이 &lt; 900</td><td class="pid">L-12.9 628×855 · W 800×810 · WF 648×800</td><td>1단. 히어로는 썸네일 + 글자 가로 배치로 줄인다. 정차 화면만 스크롤 허용, <b>주행 화면은 스크롤 없이 한 화면</b>.</td></tr>
+          <tr><td><span class="cls">P-T</span></td><td>폭 &lt; 960 · 높이 ≥ 1200</td><td class="pid">W-Ext 800×1400</td><td>1단. P-R 배치 + 보조 정보 1줄. 주 버튼 하단 고정.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:70px">규칙</th><th>내용</th><th style="width:230px">근거</th></tr></thead>
+        <tbody>
+          <tr><td class="id"><span class="tag r">RL-01</span></td><td><b>dp · sp 만 쓴다.</b> 고정 px · 절대 좌표 금지. 기준 캔버스는 Connect-S-17 Landscape 1700×1184dp.</td><td>Pleos 해상도 표가 dp 기준 · DPI 160/200 혼재</td></tr>
+          <tr><td class="id"><span class="tag r">RL-02</span></td><td>배치는 디스플레이 이름이 아니라 <b>창 크기 등급 6개</b>(L/P × S/R/T)로 정한다. 등급 경계: 폭 960 · 높이 900 · 1200dp.</td><td>Display Layout 해상도 표 · 위 산점도</td></tr>
+          <tr><td class="id"><span class="tag r">RL-03</span></td><td><b>Landscape 는 2단, Portrait 는 1단.</b> 2단의 보조 패널은 Portrait 에서 주 영역 아래로 가거나 탭 · 다음 화면으로 나뉜다. 주 버튼은 Portrait 에서 하단 고정.</td><td>Display Layout 「두 레이아웃에 맞게 조절」</td></tr>
+          <tr><td class="id"><span class="tag r">RL-04</span></td><td><b>낮은 창(S)</b>에서는 장식 요소부터 줄인다: 히어로 이미지 → 설명 문구 → 여백 순. 핵심 정보(카고 · 게이지 · 주 버튼)는 줄이지 않는다. 주행 화면은 어떤 창에서도 스크롤하지 않는다.</td><td>12개 창 중 6개가 높이 900dp 미만</td></tr>
+          <tr><td class="id"><span class="tag r">RL-05</span></td><td><b>높은 창(T)</b>에서 핵심 요소를 키우지 않는다 — 늘어난 높이는 보조 정보 1줄로 채우고 나머지는 위아래 여백으로 둔다 (내용 최대 높이 1184dp 기준).</td><td>W-Ext 1400dp · 시선 이동 거리</td></tr>
+          <tr><td class="id"><span class="tag r">RL-06</span></td><td><b>실행 중 창 변경에서 상태를 잃지 않는다.</b> 분할 · 윈도 바 드래그 · W-Extended 확장으로 창이 바뀌어도 카고 HP · Key · 버프 · 언박싱 진행이 유지되고, 애니메이션은 처음부터 다시 틀지 않는다. 상태 원천은 판정 엔진(SD-05).</td><td>Window Policy 「실행 중 Landscape ↔ Portrait 전환」</td></tr>
+          <tr><td class="id"><span class="tag r">RL-07</span></td><td><b>최소 창 628×800dp 에서 잘림 · 겹침 없음</b>을 검증한다. 12개 창 전부를 출시 전 점검 표(07장)로 확인한다.</td><td>가장 좁은 폭(L-12.9) × 가장 낮은 높이(WF)</td></tr>
+          <tr><td class="id"><span class="tag r">RL-08</span></td><td><b>어떤 화면도 Landscape 를 전제하지 않는다.</b> 앱은 Portrait 로 시작할 수 있다. 화면 방향을 고정(screenOrientation)하지 않는다.</td><td>Window Policy 「신규 앱은 이전 앱의 orientation 과 동일」</td></tr>
+          <tr><td class="id"><span class="tag r">RL-09</span></td><td><b>벡터 · Lottie 우선.</b> 카고 · 등급 연출은 벡터로, 불가피한 비트맵은 200 DPI 디스플레이에서 흐려지지 않는 해상도로 넣는다.</td><td>DPI 160 (S-17 · L-12.9 · W) / 200 (S-14.6 · WF)</td></tr>
+          <tr><td class="id"><span class="tag r">RL-10</span></td><td><b>시스템 UI 가 앱을 덮을 수 있다.</b> 상태 표시줄 · App library · 공조 패널이 잠깐 가려도 판정은 계속되고, 판정 피드백은 소리로도 나간다 — 화면에만 의존하지 않는다.</td><td>Display Layout 「화면 레이어」</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 상태 전이 · 화면 흐름 ============ -->
+<section class="sheet" id="s03">
+  <div class="sheet-h">
+    <div class="sheet-no">03</div>
+    <div><h2>상태 전이 · 화면 흐름</h2><p class="what">PRD 5.2 상태 모델 6개를 화면에 연결 — <b>화면 전환의 주인은 사용자가 아니라 차량 상태입니다</b></p></div>
+  </div>
+  <div class="sheet-body stack">
+    <figure>
+      <svg viewBox="0 0 900 320" role="img" aria-label="화면 흐름도. 시작 SC-00 에서 대기·적재됨 SC-01·SC-02 로 가고, 주행 전환 시 호위 중 SC-03, 정차 시 일시 정차 SC-04, 도착 확인 시 개봉 SC-05, 리워드 SC-06, 완료 후 다시 대기로 돌아온다. 랭킹 SC-07 과 기록 SC-08 은 정차 중에만 열린다.">
+        <defs>
+          <marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+          <marker id="fr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--red)"/></marker>
+        </defs>
+        <g fill="currentColor" font-family="Segoe UI,Malgun Gothic,sans-serif">
+          <rect x="16" y="112" width="96" height="56" fill="none" stroke="currentColor" stroke-width="1.3" stroke-dasharray="4 3"/>
+          <text x="64" y="136" font-size="12.5" text-anchor="middle">시작</text>
+          <text x="64" y="154" font-size="10" text-anchor="middle" font-family="monospace" opacity=".65">SC-00</text>
+
+          <rect x="146" y="112" width="140" height="56" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <text x="216" y="136" font-size="12.5" text-anchor="middle">대기 · 적재됨</text>
+          <text x="216" y="154" font-size="10" text-anchor="middle" font-family="monospace" opacity=".65">SC-01 · SC-02</text>
+
+          <rect x="340" y="112" width="120" height="56" fill="none" stroke="var(--red)" stroke-width="2"/>
+          <text x="400" y="136" font-size="12.5" text-anchor="middle" font-weight="700" fill="var(--red)">호위 중</text>
+          <text x="400" y="154" font-size="10" text-anchor="middle" font-family="monospace" fill="var(--red)">SC-03 · 터치 잠금</text>
+
+          <rect x="504" y="112" width="110" height="56" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <text x="559" y="136" font-size="12.5" text-anchor="middle">일시 정차</text>
+          <text x="559" y="154" font-size="10" text-anchor="middle" font-family="monospace" opacity=".65">SC-04</text>
+
+          <rect x="660" y="112" width="96" height="56" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <text x="708" y="136" font-size="12.5" text-anchor="middle" font-weight="700">개봉</text>
+          <text x="708" y="154" font-size="10" text-anchor="middle" font-family="monospace" opacity=".65">SC-05</text>
+
+          <rect x="790" y="112" width="96" height="56" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <text x="838" y="136" font-size="12.5" text-anchor="middle">리워드</text>
+          <text x="838" y="154" font-size="10" text-anchor="middle" font-family="monospace" opacity=".65">SC-06</text>
+
+          <rect x="146" y="236" width="140" height="50" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <text x="216" y="258" font-size="12" text-anchor="middle">정차 전용</text>
+          <text x="216" y="275" font-size="10" text-anchor="middle" font-family="monospace" opacity=".65">SC-07 랭킹 · SC-08 기록</text>
+        </g>
+        <g font-family="ui-monospace,Consolas,monospace" font-size="10" fill="currentColor">
+          <line x1="112" y1="140" x2="141" y2="140" stroke="currentColor" stroke-width="1.4" marker-end="url(#fa)"/>
+          <line x1="286" y1="140" x2="335" y2="140" stroke="var(--red)" stroke-width="1.6" marker-end="url(#fr)"/>
+          <text x="310" y="104" text-anchor="middle" fill="var(--red)">주행 전환</text>
+          <text x="310" y="92" text-anchor="middle" fill="var(--red)" opacity=".8">AG-03</text>
+          <line x1="460" y1="132" x2="499" y2="132" stroke="currentColor" stroke-width="1.4" marker-end="url(#fa)"/>
+          <text x="480" y="104" text-anchor="middle" opacity=".75">정차</text>
+          <path d="M504 156 L480 176 L462 156" fill="none" stroke="var(--red)" stroke-width="1.4" marker-end="url(#fr)"/>
+          <text x="482" y="190" text-anchor="middle" fill="var(--red)">재출발</text>
+          <line x1="614" y1="140" x2="655" y2="140" stroke="currentColor" stroke-width="1.6" marker-end="url(#fa)"/>
+          <text x="636" y="98" text-anchor="middle" opacity=".8">도착 확인</text>
+          <text x="636" y="110" text-anchor="middle" opacity=".6">LOC-001 · SD-04</text>
+          <line x1="756" y1="140" x2="785" y2="140" stroke="currentColor" stroke-width="1.4" marker-end="url(#fa)"/>
+          <path d="M838 112 L838 50 L216 50 L216 107" fill="none" stroke="currentColor" stroke-width="1.3" marker-end="url(#fa)"/>
+          <text x="530" y="44" text-anchor="middle" opacity=".75">완료 — 결과 저장 (FR-DATA-003) → 대기</text>
+          <path d="M200 168 L200 231" fill="none" stroke="currentColor" stroke-width="1.3" marker-start="url(#fa)" marker-end="url(#fa)"/>
+          <text x="140" y="206" text-anchor="end" opacity=".75">내비 레일 · 탭</text>
+          <path d="M286 260 L400 260 L400 173" fill="none" stroke="var(--red)" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#fr)"/>
+          <text x="410" y="236" fill="var(--red)">어느 정차 화면이든 주행 전환 시 자동 이동</text>
+        </g>
+      </svg>
+      <figcaption><b>주행 전환은 어느 정차 화면에서든 SC-03 으로 강제 이동합니다</b> (SC-01 · 02 · 06 · 07 · 08). 일시 정차(SC-04)는 개봉하지 않으며(EX-06), 목적지 카고는 정차할 때마다 위치 1회로 도착을 확인하고(FR-LOC-001), 데일리 카고는 사용자가 <b>[도착 · 개봉]</b>을 눌러 엽니다(SD-04). 주행 · 정차 판정 수단 자체가 미결(<span class="tag d">AG-03</span>)이라 화살표의 트리거는 잠정입니다.</figcaption>
+    </figure>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:90px">상태 (PRD 5.2)</th><th style="width:110px">화면</th><th>진입 조건</th><th style="width:250px">화면 규칙</th></tr></thead>
+        <tbody>
+          <tr><td><b>대기</b></td><td class="pid">SC-01 · SC-02</td><td>앱 시작 · 정차 · 카고 없음 / 개봉 완료 후 확인</td><td>목적지 선택 가능. 목적지 없이 출발하면 데일리 카고 (FR-APP-004)</td></tr>
+          <tr><td><b>적재됨</b></td><td class="pid">SC-01</td><td>목적지 선택 · 순정 내비 목적지 수신 · 데일리 자동 할당</td><td>카고 · 버프 표시, 터치 가능</td></tr>
+          <tr><td><b>호위 중</b></td><td class="pid">SC-03</td><td>주행 상태 전환 (AG-03)</td><td>터치 잠금 · 게이지 · 소리만 (U-01)</td></tr>
+          <tr><td><b>일시 정차</b></td><td class="pid">SC-04</td><td>정차 전환 + 목적지 미도착</td><td>게이지 유지 · 개봉하지 않음 (EX-06)</td></tr>
+          <tr><td><b>개봉</b></td><td class="pid">SC-05 → SC-06</td><td>정차 전환 + 도착 확인 (또는 데일리 카고 [도착 · 개봉])</td><td>언박싱 자동 표시 · 앰비언트 · 리워드</td></tr>
+          <tr><td><b>완료</b></td><td class="pid">→ SC-01</td><td>리워드 화면 닫기</td><td>결과만 저장, 원시 신호 · 좌표 저장 없음</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 화면 목록 ============ -->
+<section class="sheet" id="s04">
+  <div class="sheet-h">
+    <div class="sheet-no">04</div>
+    <div><h2>화면 목록 — 9화면 + 공통 셸</h2><p class="what">PRD 6.1 FR-APP 11건을 화면에 배정 — <b>FR 이 빠진 화면 없음 · 화면이 없는 FR 없음</b></p></div>
+  </div>
+  <div class="sheet-body">
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:80px">ID</th><th style="width:150px">화면</th><th style="width:80px">상태</th><th>주요 요구사항</th><th style="width:70px">우선순위</th><th style="width:150px">걸린 미결</th></tr></thead>
+        <tbody>
+          <tr><td class="id">CM-01</td><td>공통 셸</td><td>정차</td><td class="pid">SD-01 · FR-VH-010 · EX-01</td><td>—</td><td class="pid">—</td></tr>
+          <tr><td class="id">SC-00</td><td>시작 · 지원 확인</td><td>최초 실행</td><td class="pid">FR-VH-010 · FR-LOC-002 · EX-01 · EX-03</td><td>Must</td><td class="pid">—</td></tr>
+          <tr><td class="id">SC-01</td><td>카고 적재 로비</td><td>대기 · 적재됨</td><td class="pid">FR-APP-001 · 003 · 004 · 011 · FR-VH-007</td><td>Must</td><td class="pid">U-09 · U-04</td></tr>
+          <tr><td class="id">SC-02</td><td>목적지 선택</td><td>대기</td><td class="pid">FR-APP-002 · FR-DATA-001</td><td>Must</td><td class="pid">U-09 · Q-02</td></tr>
+          <tr><td class="id">SC-03</td><td>호위 중 (주행)</td><td>호위 중</td><td class="pid">FR-APP-005 · FR-VH-001~008 · FR-TTS-001 · NFR-SAF-001</td><td>Must</td><td class="pid">U-01 · AG-03 · AG-04 · ISSUE-05</td></tr>
+          <tr><td class="id">SC-04</td><td>일시 정차</td><td>일시 정차</td><td class="pid">FR-VH-001 · EX-06</td><td>Must</td><td class="pid">AG-03 · Q-03</td></tr>
+          <tr><td class="id">SC-05</td><td>언박싱</td><td>개봉</td><td class="pid">FR-APP-006 · 007 · FR-VH-009 · 011 · 012 · FR-LOC-001</td><td>Must</td><td class="pid">AG-02 · AG-05 · U-04 · Q-02</td></tr>
+          <tr><td class="id">SC-06</td><td>리워드 카드</td><td>개봉</td><td class="pid">FR-APP-008 · EX-03</td><td>Must</td><td class="pid">—</td></tr>
+          <tr><td class="id">SC-07</td><td>랭킹 보드</td><td>정차</td><td class="pid">FR-APP-009</td><td>Should</td><td class="pid">ISSUE-01</td></tr>
+          <tr><td class="id">SC-08</td><td>기록 — 뱃지 · 스트릭</td><td>정차</td><td class="pid">FR-APP-010 · 011 · FR-DATA-003</td><td>Could</td><td class="pid">U-04</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 화면 보완 제안 ============ -->
+<section class="sheet" id="s05">
+  <div class="sheet-h">
+    <div class="sheet-no">05</div>
+    <div><h2>화면 보완 제안 — 9건</h2><p class="what">화면을 그리며 <b>필요하다고 판단한 규칙</b> · PRD 확정 사항이 아님 · PM 승인 후 PRD v1.1 에 반영</p></div>
+  </div>
+  <div class="sheet-body">
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:70px">ID</th><th style="width:170px">제안</th><th>내용</th><th style="width:150px">근거</th></tr></thead>
+        <tbody>
+          <tr><td class="id"><span class="tag s">SD-01</span></td><td>앱 안 내비게이션</td><td>정차 화면 3개(<b>로비 · 랭킹 · 기록</b>)를 Landscape 는 <b>좌측 레일</b>, Portrait 는 <b>상단 세그먼트</b>로 전환한다. 주행 중에는 숨긴다. 하단 탭은 쓰지 않는다 — GNB 바로 위라 오조작 위험.</td><td>RL-03 · Display Layout GNB 위치</td></tr>
+          <tr><td class="id"><span class="tag s">SD-02</span></td><td>주행 화면 표현</td><td>주행 화면에는 <b>문장을 두지 않는다</b> — 숫자(HP · Key · km) · 아이콘 · 게이지만. 판정 피드백은 차임 · 효과음 · TTS 와 게이지 애니메이션으로만 준다.</td><td>NFR-SAF-001 · FR-APP-005</td></tr>
+          <tr><td class="id"><span class="tag s">SD-03</span></td><td>터치 최소 크기</td><td>모든 터치 대상 <b>최소 64×64dp (잠정)</b>, 주 버튼은 Pleos Basic button <b>Large</b>. Pleos 문서에 수치가 없어 Q-01 회신 시 교체.</td><td>Basic button 문서 · Q-01</td></tr>
+          <tr><td class="id"><span class="tag s">SD-04</span></td><td>데일리 카고 개봉</td><td>목적지 없는 데일리 카고는 위치로 도착을 판정할 수 없으므로, <b>일시 정차 화면(SC-04)에만 [도착 · 개봉] 버튼</b>을 두고, 누르면 확인 1단계 후 개봉한다. 목적지 카고에는 이 버튼이 없다.</td><td>EX-06 [PM 의견] 구체화 · Q-03</td></tr>
+          <tr><td class="id"><span class="tag s">SD-05</span></td><td>상태 원천 = 엔진</td><td>카고 HP · Key · 버프 · 개봉 진행 단계는 <b>판정 엔진이 들고, 화면은 구독만</b> 한다. 창 크기 변경 · 화면 재생성 · 앱 재시작(EX-08) 모두 같은 값으로 다시 그린다.</td><td>RL-06 · EX-08</td></tr>
+          <tr><td class="id"><span class="tag s">SD-06</span></td><td>앱이 안 보일 때 도착</td><td>도착 시 세이프 카고 창이 화면에 없으면(내비 전체 창 등) <b>TTS 로 「카고가 도착했어요. 세이프 카고를 열어 개봉하세요」</b>를 알리고 개봉 대기 상태를 유지한다. 앱을 열면 SC-05 부터 재생. 앱을 앞으로 강제로 올리지 않는다.</td><td>Window Policy 「사라진 앱은 종료되지 않음」 · Q-02</td></tr>
+          <tr><td class="id"><span class="tag s">SD-07</span></td><td>등급 3중 표기</td><td>등급은 <b>색 + 이름(레전더리 · 에픽 · 레어) + 상자 모양</b>으로 함께 표시한다. AG-02 색 결정과 상관없이 판별 가능해야 한다.</td><td>공통 규칙 ② · AG-02</td></tr>
+          <tr><td class="id"><span class="tag s">SD-08</span></td><td>「예시」 배지 위치</td><td>금액 · 제휴명 · 스폰서명 <b>바로 오른쪽 같은 줄</b>에 「예시」 배지. 카드 구석에 한 번만 두지 않는다.</td><td>FR-APP-008</td></tr>
+          <tr><td class="id"><span class="tag s">SD-09</span></td><td>주행 중 첫 실행</td><td>카고 없이 주행 중 앱을 열면 <b>데일리 카고를 자동 적재하고 바로 SC-03</b>. 버프는 그 시점 좌석 값으로 정한다.</td><td>FR-APP-004 확장</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 화면 상세 ============ -->
+<section class="sheet" id="s06">
+  <div class="sheet-h">
+    <div class="sheet-no">06</div>
+    <div><h2>화면 상세 — CM-01 · SC-00 ~ SC-08</h2><p class="what">좌측 위 <b>Landscape</b>(기준 S-17 1700×1184dp), 아래 <b>Portrait</b>(S-17 840×1184dp) · 와이어프레임 비율은 실제 창 비율 그대로 · 화면 아래 표는 <b>창 크기 등급별 배치</b></p></div>
+  </div>
+  <div class="sheet-body">
+
+    <!-- CM-01 -->
+    <div class="scr" id="cm-01">
+      <div class="scr-h"><span class="sid">CM-01</span><span class="snm">공통 셸 (정차 화면 틀)</span><span class="spath">SC-01 · 02 · 07 · 08 이 공유 · 주행 화면은 01 만 유지</span></div>
+      <div class="scr-purpose"><b>목적</b> 정차 화면 3개를 오가는 틀과 차량 상태(정차 · 주행 · 버프)를 한 자리에서 보여준다. &nbsp;<b>주 사용자</b> 운전자 · 동승자 (정차 시). &nbsp;각 화면 상세에서는 이 틀을 다시 설명하지 않고 <b>본문(03)만</b> 기술한다.</div>
+      <div class="scr-b car">
+        <div class="scr-wf"><div class="wfs">
+          <div class="disp l"><div class="wcap"><span>CM-01 · Landscape</span><span>L-R 1700×1184dp</span></div>
+            <div class="wbody">
+              <div class="box solid"><span class="n">01</span>앱 바 · 세이프 카고 · [정차] · ×1.5 버프 · 🔥3일</div>
+              <div class="row fill">
+                <div class="rail"><div class="nav on"><span class="n">02</span><br>로비</div><div class="nav">랭킹</div><div class="nav">기록</div></div>
+                <div class="col fill">
+                  <div class="box empty"><span class="n">04</span>지원 상태 배너 (미지원 기능 있을 때만)</div>
+                  <div class="box fill ctr"><span><span class="n">03</span>본문 — 각 화면</span></div>
+                </div>
+              </div>
+            </div></div>
+          <div class="wfcap"><b>L-*</b> 좌측 레일 44dp 폭 대응 · 본문 2단</div>
+          <div class="disp p"><div class="wcap"><span>CM-01 · Portrait</span><span>P-R</span></div>
+            <div class="wbody">
+              <div class="box solid"><span class="n">01</span>앱 바 · [정차] · ×1.5</div>
+              <div class="seg"><div class="nav on"><span class="n">02</span>로비</div><div class="nav">랭킹</div><div class="nav">기록</div></div>
+              <div class="box empty"><span class="n">04</span>배너</div>
+              <div class="box fill ctr"><span><span class="n">03</span>본문 1단</span></div>
+            </div></div>
+          <div class="wfcap"><b>P-*</b> 상단 세그먼트 · 본문 1단</div>
+        </div></div>
+        <div class="scr-el">
+          <div class="el"><div class="el-n">01</div><div class="el-b">
+            <div class="el-t">앱 바 <span class="el-c">organisms › Top App Bar</span></div>
+            <div class="el-d">지금 차가 <b>정차인지 주행인지</b>, 패밀리 버프가 켜졌는지, 무결점 스트릭이 며칠째인지 늘 같은 자리에서 알려준다.
+            <span class="el-l act"><span>동작</span>상태 칩은 엔진의 주행 · 정차 판정을 따라 바뀐다 — <b>[정차] ↔ [주행] ↔ [일시 정차]</b>. 칩은 아이콘 모양과 글자를 함께 바꾼다(색만으로 구분 X).</span>
+            <span class="el-l exc"><span>예외</span>스트릭 0일이면 숫자 대신 불꽃 아이콘만 흐리게. 버프 미지원 차량(좌석 센서 없음)이면 버프 자리를 비운다(EX-01).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-001</span><span class="tag p">FR-VH-007</span><span class="tag d">AG-03</span> 주행 · 정차 판정 수단 미결 — 칩 문구는 「정차 · 주행」으로 쓰고 「P단 · D단」을 쓰지 않는다(PRD 용어 정의)</span>
+            <span class="el-l rsp"><span>반응형</span>Portrait 에서는 앱 이름을 아이콘으로 줄이고 칩 · 버프 · 스트릭만 남긴다. 주행 화면에서도 앱 바는 유지하되 버튼은 없다.</span></div></div></div>
+          <div class="el"><div class="el-n">02</div><div class="el-b">
+            <div class="el-t">앱 안 내비게이션 <span class="el-c">navigation › Rail / Segmented</span></div>
+            <div class="el-d">정차 중 볼 수 있는 화면 3개 — <b>로비 · 랭킹 · 기록</b> — 사이를 오간다.
+            <span class="el-l act"><span>동작</span>선택 → 본문(03)만 바뀐다. 주행 전환 시 <b>어느 탭에 있든</b> SC-03 으로 자동 이동하고 내비게이션은 숨는다. 정차 후에는 로비로 돌아온다.</span>
+            <span class="el-l pol"><span>제안</span><span class="tag s">SD-01</span> 하단 탭을 쓰지 않는다 — 앱 창 바로 아래가 GNB 라 오조작 위험. <span class="tag s">SD-03</span> 항목 최소 64×64dp (잠정)</span>
+            <span class="el-l rsp"><span>반응형</span><span class="tag r">RL-03</span> Landscape = 좌측 레일(아이콘 + 짧은 글자), Portrait = 앱 바 아래 세그먼트 3칸.</span></div></div></div>
+          <div class="el"><div class="el-n">03</div><div class="el-b">
+            <div class="el-t">본문 영역 <span class="el-c">layout › Content</span></div>
+            <div class="el-d">각 화면이 그려지는 자리. Landscape 는 주 영역 60% + 보조 패널 40% 2단, Portrait 는 1단.
+            <span class="el-l rsp"><span>반응형</span><span class="tag r">RL-05</span> 높은 창(L-T · P-T)에서는 내용 높이를 1184dp 까지만 쓰고 나머지는 위아래 여백 · 보조 정보 1줄. <span class="tag r">RL-04</span> 낮은 창은 정차 화면에 한해 세로 스크롤 허용.</span></div></div></div>
+          <div class="el"><div class="el-n">04</div><div class="el-b">
+            <div class="el-t">지원 상태 배너 <span class="el-c">feedback › Inline Banner</span></div>
+            <div class="el-d">이 차량에서 <b>꺼진 기능이 있다는 것</b>과 그 결과를 한 줄로 알린다. 예: 「이 차량은 2열 벨트를 감지하지 못해요 — 버프는 1열 기준」.
+            <span class="el-l act"><span>동작</span>닫기 → 이번 실행 동안 숨김. 지원 결과가 바뀌면 다시 표시.</span>
+            <span class="el-l exc"><span>예외</span>미지원 항목이 없으면 영역 자체를 그리지 않는다(빈 자리 X).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-010</span><span class="tag p">EX-01</span> 해당 열쇠 · 연출만 끄고 루프는 계속</span></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SC-00 -->
+    <div class="scr" id="sc-00">
+      <div class="scr-h"><span class="sid">SC-00</span><span class="snm">시작 · 차량 지원 확인</span><span class="spath">최초 실행 · 지원 결과가 바뀐 실행</span></div>
+      <div class="scr-purpose"><b>목적</b> 앱이 무엇을 하는지 한 번 보여주고, 이 차량에서 쓸 수 있는 신호를 확인하고, 위치 권한을 받는다. &nbsp;<b>주 사용자</b> 운전자 (정차 시). &nbsp;두 번째 실행부터는 확인을 뒤에서 하고 바로 SC-01 로 간다.</div>
+      <div class="scr-b car">
+        <div class="scr-wf"><div class="wfs">
+          <div class="disp l"><div class="wcap"><span>SC-00 · Landscape</span><span>L-R</span></div>
+            <div class="wbody"><div class="row fill">
+              <div class="col fill" style="flex:1.2">
+                <div class="box fill ctr"><span><span class="n">01</span>로고 · 한 줄 소개<br>「깜빡이 먼저 · 부드럽게 · 모두 벨트」</span></div>
+                <div class="g3"><div class="box ctr"><span class="n">02</span>깜빡이</div><div class="box ctr">부드럽게</div><div class="box ctr">벨트</div></div>
+              </div>
+              <div class="col fill">
+                <div class="box fill"><span class="n">03</span>차량 지원 확인<br>✓ 방향지시등<br>✓ 조향각<br>✓ 브레이크<br>✓ 착석 · 벨트<br>– 트립 거리 (미지원)<br>✓ 실내 조명</div>
+                <div class="box"><span class="n">04</span>위치 권한 — 도착 확인용 1회</div>
+                <div class="box solid ctr"><span class="n">05</span>[시작하기]</div>
+              </div>
+            </div></div></div>
+          <div class="wfcap"><b>L-R</b> 왼쪽 소개 · 오른쪽 확인</div>
+          <div class="disp p"><div class="wcap"><span>SC-00 · Portrait</span><span>P-R</span></div>
+            <div class="wbody">
+              <div class="box tall ctr"><span><span class="n">01</span>로고 · 소개</span></div>
+              <div class="g3"><div class="box ctr"><span class="n">02</span></div><div class="box ctr">🔑</div><div class="box ctr">🔑</div></div>
+              <div class="box fill"><span class="n">03</span>지원 확인 7항목</div>
+              <div class="box"><span class="n">04</span>위치 권한</div>
+              <div class="box solid ctr"><span class="n">05</span>[시작하기]</div>
+            </div></div>
+          <div class="wfcap"><b>P-R</b> 위아래로 쌓기 · 버튼 하단 고정</div>
+        </div></div>
+        <div class="scr-el">
+          <div class="el"><div class="el-n">01</div><div class="el-b">
+            <div class="el-t">앱 소개 <span class="el-c">molecules › Hero</span></div>
+            <div class="el-d">「매너 운전으로 카고를 무사히 배달하면 도착한 곳에서 상자가 열린다」를 한 문장으로 전한다.</div></div></div>
+          <div class="el"><div class="el-n">02</div><div class="el-b">
+            <div class="el-t">3대 열쇠 소개 <span class="el-c">molecules › Icon Card ×3</span></div>
+            <div class="el-d">선행 깜빡이 · 부드러운 조향(감속) · 패밀리 버프를 아이콘과 두 단어로 보여준다.
+            <span class="el-l exc"><span>예외</span>03 에서 꺼진 열쇠는 회색 + 사선 + 「미지원」 글자.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag d">ISSUE-05</span> 감속 판정을 빼기로(C) 하면 둘째 열쇠 이름은 「부드러운 조향」만</span></div></div></div>
+          <div class="el"><div class="el-n">03</div><div class="el-b">
+            <div class="el-t">차량 지원 확인 <span class="el-c">molecules › Checklist</span></div>
+            <div class="el-d">이 차량에서 <b>어떤 판정이 가능한지</b> 미리 알려 「왜 열쇠가 안 오르지?」를 막는다.
+            <span class="el-l act"><span>동작</span>방향지시등 · 조향각 · 브레이크 · 착석 · 벨트 · 트립 거리 · 실내 조명 · 위치를 차례로 확인 → 항목마다 ✓ 지원 / – 미지원(아이콘 모양 + 글자). 확인 중에는 항목별 로딩.</span>
+            <span class="el-l exc"><span>예외</span>미지원 항목이 있어도 [시작하기]는 막지 않는다. 결과는 CM-01 04 배너로 이어진다.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-010</span><span class="tag p">EX-01</span> checkXxxCapabilities 결과대로 해당 열쇠 · 연출만 끈다 <span class="tag d">AG-05</span> 실내 조명은 퍼미션 승인 여부도 함께 반영</span></div></div></div>
+          <div class="el"><div class="el-n">04</div><div class="el-b">
+            <div class="el-t">위치 권한 카드 <span class="el-c">molecules › Permission Card</span></div>
+            <div class="el-d">「도착했는지 <b>정차할 때 한 번만</b> 확인하고 바로 지워요. 저장 · 전송하지 않아요」로 왜 필요한지와 얼마나 쓰는지를 함께 말한다.
+            <span class="el-l act"><span>동작</span>선택 → 시스템 권한 창(FUSED_LOCATION) → 허용 시 ✓.</span>
+            <span class="el-l exc"><span>예외</span>거부 → 「도착 확인 없이 열려요 · 스폰서 쿠폰 대신 일반 리워드」 안내 후 진행. 나중에 SC-01 에서 다시 요청 가능.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-LOC-002</span><span class="tag p">EX-03</span><span class="tag p">NFR-PRI-001</span></span></div></div></div>
+          <div class="el"><div class="el-n">05</div><div class="el-b">
+            <div class="el-t">시작하기 <span class="el-c">actions › Basic button (Large)</span></div>
+            <div class="el-d">로비(SC-01)로 들어간다.
+            <span class="el-l act"><span>동작</span>정차 중 → SC-01. 이 화면을 보는 중 주행이 시작되면 → 데일리 카고 자동 적재 후 SC-03.</span>
+            <span class="el-l pol"><span>제안</span><span class="tag s">SD-09</span> 주행 중 첫 실행 처리</span></div></div></div>
+        </div>
+      </div>
+      <div class="scr-rsp"><table>
+        <thead><tr><th style="width:110px">등급</th><th>배치</th></tr></thead>
+        <tbody>
+          <tr><td>L-R · L-T</td><td>왼쪽(55%) 소개 01 · 02, 오른쪽(45%) 03 · 04 · 05. L-T 는 내용 높이 1184dp 로 묶고 가운데 정렬.</td></tr>
+          <tr><td>L-S</td><td>01 히어로 높이를 줄이고 02 를 01 안 아래쪽 한 줄로. 03 은 2열 체크리스트(4+4)로 펼쳐 스크롤 없이.</td></tr>
+          <tr><td>P-R · P-T</td><td>01 → 02 → 03 → 04 순 1단, 05 하단 고정.</td></tr>
+          <tr><td>P-S</td><td>01 을 로고 + 한 줄로 줄이고 02 는 숨긴다(03 에 같은 정보가 있다). 03 은 스크롤, 05 하단 고정.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- SC-01 -->
+    <div class="scr" id="sc-01">
+      <div class="scr-h"><span class="sid">SC-01</span><span class="snm">카고 적재 로비</span><span class="spath">CM-01 로비 · 앱 기본 화면 · 상태 대기 / 적재됨</span></div>
+      <div class="scr-purpose"><b>목적</b> 오늘 싣고 갈 카고와 목적지, 버프를 출발 전에 한눈에 보여준다. 출발하면 이 화면이 SC-03 으로 바뀐다. &nbsp;<b>주 사용자</b> 운전자 · 동승자 (정차 시). &nbsp;<b>시나리오</b> S1-1~3 · S2-1</div>
+      <div class="scr-b car">
+        <div class="scr-wf"><div class="wfs">
+          <div class="disp l"><div class="wcap"><span>SC-01 · Landscape</span><span>L-R · 적재됨</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px">앱 바 · [정차] · ×1.5 · 🔥3일</div>
+              <div class="row fill">
+                <div class="rail"><div class="nav on">로비</div><div class="nav">랭킹</div><div class="nav">기록</div></div>
+                <div class="col fill" style="flex:1.5">
+                  <div class="box fill ctr"><span><span class="n">01</span>오늘의 카고<br>바리스타의 수제 타르트 상자 <u>예시</u><br>(Lottie)</span></div>
+                  <div class="box"><span class="n">02</span>목적지 · 파주 베이커리 카페 <u>예시</u> · [변경]</div>
+                  <div class="g3"><div class="box ctr"><span class="n">03</span>깜빡이</div><div class="box ctr">부드럽게</div><div class="box ctr">벨트</div></div>
+                </div>
+                <div class="col fill">
+                  <div class="box fill ctr"><span><span class="n">04</span>좌석 맵<br>●✓ ●✓<br>●✓ ○<br>패밀리 버프 ×1.5</span></div>
+                  <div class="box"><span class="n">05</span>스트릭 3일 · 황금 카고 3/5</div>
+                  <div class="box solid ctr"><span class="n">06</span>출발하면 호위 시작</div>
+                </div>
+              </div>
+            </div></div>
+          <div class="wfcap"><b>L-R</b> 주 영역 60% (카고) · 보조 40% (탑승 · 스트릭)</div>
+          <div class="disp p"><div class="wcap"><span>SC-01 · Portrait</span><span>P-R</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px">앱 바</div>
+              <div class="seg"><div class="nav on">로비</div><div class="nav">랭킹</div><div class="nav">기록</div></div>
+              <div class="box fill ctr"><span><span class="n">01</span>오늘의 카고</span></div>
+              <div class="box"><span class="n">02</span>목적지 · [변경]</div>
+              <div class="row"><div class="box"><span class="n">04</span>좌석 ×1.5</div><div class="box"><span class="n">05</span>🔥3/5</div></div>
+              <div class="g3"><div class="box ctr"><span class="n">03</span></div><div class="box ctr">🔑</div><div class="box ctr">🔑</div></div>
+              <div class="box solid ctr"><span class="n">06</span>출발하면 호위</div>
+            </div></div>
+          <div class="wfcap"><b>P-R</b> 보조 패널 → 카고 아래 한 줄</div>
+        </div></div>
+        <div class="scr-el">
+          <div class="el"><div class="el-n">01</div><div class="el-b">
+            <div class="el-t">오늘의 카고 <span class="el-c">organisms › Cargo Hero (Lottie)</span></div>
+            <div class="el-d">무엇을 싣고 가는지 — 카고 이름 · 위트 있는 설명 · 스폰서 — 를 보여주고 <b>「잘 배달하고 싶다」</b>는 마음이 들게 한다.
+            <span class="el-l act"><span>동작</span>적재되는 순간 트렁크에 실리는 연출 1회 → 이후 대기 애니메이션 반복.</span>
+            <span class="el-l exc"><span>예외</span>대기(카고 없음): 빈 트렁크 + 「목적지를 고르면 카고가 실려요. 그냥 출발하면 데일리 카고가 실려요」.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-001</span><span class="tag p">FR-APP-004</span><span class="tag s">SD-08</span> 카고 이름 · 스폰서 옆 「예시」</span>
+            <span class="el-l rsp"><span>반응형</span>L-S · P-S 에서는 히어로를 썸네일(정사각) + 오른쪽 글자로 바꾼다 — <span class="tag r">RL-04</span></span></div></div></div>
+          <div class="el"><div class="el-n">02</div><div class="el-b">
+            <div class="el-t">목적지 <span class="el-c">molecules › List Item + Button</span></div>
+            <div class="el-d">카고가 어디로 가는지 알려주고 바꿀 수 있게 한다.
+            <span class="el-l act"><span>동작</span>[변경] → SC-02. 순정 내비에서 목적지를 정하면 그 목적지가 Mock 스폰서 반경 안일 때 해당 카고를 <b>자동 적재</b>하고 배너 「내비 목적지에 맞는 카고를 실었어요」.</span>
+            <span class="el-l exc"><span>예외</span>목적지 없음 → 「목적지 없이 출발하면 데일리 출퇴근 카고」 + [목적지 고르기]. 내비 목적지가 반경 밖 → 데일리 유지.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-003</span><span class="tag d">U-09</span> 에뮬레이터에서 onDestinationInfo 가 안 오면 자동 적재 배너 없이 시연</span></div></div></div>
+          <div class="el"><div class="el-n">03</div><div class="el-b">
+            <div class="el-t">3대 열쇠 <span class="el-c">molecules › Icon Card ×3</span></div>
+            <div class="el-d">이번 호위에서 열쇠를 얻는 방법을 출발 전에 다시 상기시킨다.
+            <span class="el-l exc"><span>예외</span>미지원 열쇠는 회색 + 사선 + 「미지원」(EX-01).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag d">ISSUE-05</span> 감속 판정 방식에 따라 둘째 열쇠 설명이 바뀐다</span></div></div></div>
+          <div class="el"><div class="el-n">04</div><div class="el-b">
+            <div class="el-t">좌석 맵 · 패밀리 버프 <span class="el-c">organisms › Seat Map + Badge</span></div>
+            <div class="el-d">누가 탔고 <b>벨트를 맸는지</b> 좌석별로 보여주고, 모두 매면 버프가 켜진다는 걸 바로 보이게 한다.
+            <span class="el-l act"><span>동작</span>좌석 값이 바뀔 때마다 갱신. 좌석 모양 3가지 — 빈 좌석(테두리) / 착석 · 벨트 안 맴(느낌표) / 착석 · 벨트 맴(체크). 착석한 좌석 전부 체결 → 버프 배지 ×1.5 + TTS 「전 좌석 안전벨트 확인! 패밀리 버프 1.5배…」(예시 문구).</span>
+            <span class="el-l exc"><span>예외</span>센서가 없는 좌석은 「감지 안 됨」 무늬 — 버프는 지원 좌석 기준. TTS 실패 시 효과음만(EX-07).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-007</span><span class="tag p">FR-TTS-001</span><span class="tag d">Q-06</span> 운전자 혼자여도 조건이 충족되는지(의도 확인)</span>
+            <span class="el-l rsp"><span>반응형</span>Portrait 에서는 좌석 맵을 축소 아이콘(2×2)으로 줄여 스트릭과 한 줄. 좌석 3열 차량은 맵 행 수만 늘린다.</span></div></div></div>
+          <div class="el"><div class="el-n">05</div><div class="el-b">
+            <div class="el-t">스트릭 <span class="el-c">molecules › Progress</span></div>
+            <div class="el-d">무결점 호위가 며칠째인지, 황금 카고까지 얼마 남았는지 보여 <b>내일도 오게</b> 한다.
+            <span class="el-l exc"><span>예외</span>0일 → 「오늘 무결점이면 1일째」.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-011</span><span class="tag d">U-04</span> 「5일 → 황금 카고」는 잠정값</span></div></div></div>
+          <div class="el"><div class="el-n">06</div><div class="el-b">
+            <div class="el-t">상태 안내 · 주 버튼 <span class="el-c">actions › Basic button (Large)</span></div>
+            <div class="el-d">지금 해야 할 일 하나만 보여준다.
+            <span class="el-l act"><span>동작</span>대기 → <b>[목적지 고르기]</b> → SC-02. 적재됨 → 버튼 대신 안내 「출발하면 호위가 시작돼요」(누를 것 없음) + 보조 [목적지 바꾸기]. 주행 전환 → SC-03 자동.</span>
+            <span class="el-l rsp"><span>반응형</span>Landscape 보조 패널 맨 아래, Portrait 하단 고정.</span></div></div></div>
+        </div>
+      </div>
+      <div class="scr-rsp"><table>
+        <thead><tr><th style="width:110px">등급</th><th>배치</th></tr></thead>
+        <tbody>
+          <tr><td>L-R</td><td>레일 · 주 영역 60%(01 → 02 → 03) · 보조 40%(04 → 05 → 06). 기준 디자인.</td></tr>
+          <tr><td>L-T</td><td>L-R 과 같고, 늘어난 높이에 보조 패널 아래 「최근 카고 1건」(SC-08 04 요약) 한 줄 추가.</td></tr>
+          <tr><td>L-S</td><td>01 을 썸네일 + 글자 가로형으로. 03 은 02 오른쪽 아이콘 3개로 붙여 한 줄 줄인다. 스크롤 없음.</td></tr>
+          <tr><td>P-R · P-T</td><td>세그먼트 → 01 → 02 → [04 | 05] → 03 → 06(하단 고정).</td></tr>
+          <tr><td>P-S</td><td>01 썸네일형, 03 은 아이콘만(글자 숨김). 04 · 05 한 줄. 넘치면 01~05 스크롤, 06 고정.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- SC-02 -->
+    <div class="scr" id="sc-02">
+      <div class="scr-h"><span class="sid">SC-02</span><span class="snm">목적지 선택</span><span class="spath">SC-01 [목적지 고르기] · [변경] · 상태 대기</span></div>
+      <div class="scr-purpose"><b>목적</b> 오늘 갈 곳을 고르면 그곳의 카고가 실리고 순정 내비로 안내가 넘어간다. &nbsp;<b>주 사용자</b> 운전자 · 동승자 (정차 시). &nbsp;<b>시나리오</b> S1-1</div>
+      <div class="scr-b car">
+        <div class="scr-wf"><div class="wfs">
+          <div class="disp l"><div class="wcap"><span>SC-02 · Landscape</span><span>L-R · 목록 + 상세</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px">앱 바 · ← 목적지 고르기</div>
+              <div class="row fill">
+                <div class="col fill" style="flex:1.2">
+                  <div class="cols"><span><span class="n">01</span>전체</span><span>지자체</span><span>휴게소</span><span>카페</span></div>
+                  <div class="box fill"><span class="n">02</span>스폰서 목록<br>▸ 파주 베이커리 카페 <u>예시</u><br>&nbsp;&nbsp;카페 · 수제 타르트 상자<br>▸ ○○ 휴게소 <u>예시</u><br>▸ ○○군 관광지 <u>예시</u><br>▸ …</div>
+                </div>
+                <div class="col fill">
+                  <div class="box fill ctr"><span><span class="n">03</span>선택 미리보기<br>카고 · 설명 · 리워드 <u>예시</u></span></div>
+                  <div class="box solid ctr"><span class="n">04</span>[이 목적지로 안내]</div>
+                </div>
+              </div>
+            </div></div>
+          <div class="wfcap"><b>L-*</b> 목록-상세 2단 · 고르면 오른쪽만 바뀜</div>
+          <div class="disp p"><div class="wcap"><span>SC-02 · Portrait</span><span>P-R · 목록</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px"><span class="n">05</span>← 목적지 고르기</div>
+              <div class="cols"><span><span class="n">01</span>전체</span><span>지자체</span><span>휴게소</span></div>
+              <div class="box fill"><span class="n">02</span>스폰서 목록<br>▸ 카드<br>▸ 카드<br>▸ 카드</div>
+              <div class="box empty ctr">선택 → 03 · 04 다음 화면</div>
+            </div></div>
+          <div class="wfcap"><b>P-*</b> 목록 → 상세 두 단계</div>
+        </div></div>
+        <div class="scr-el">
+          <div class="el"><div class="el-n">01</div><div class="el-b">
+            <div class="el-t">유형 필터 <span class="el-c">actions › Chip Group</span></div>
+            <div class="el-d">지자체 · 휴게소 · 카페 중 가고 싶은 종류만 추린다.
+            <span class="el-l act"><span>동작</span>칩 선택 → 02 즉시 갱신. 기본 「전체」. 단일 선택.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-DATA-001</span> Sponsor 유형 기준(데일리 유형은 목록에 없음)</span></div></div></div>
+          <div class="el"><div class="el-n">02</div><div class="el-b">
+            <div class="el-t">스폰서 목록 <span class="el-c">organisms › Card List</span></div>
+            <div class="el-d">목적지마다 <b>어떤 카고와 리워드</b>가 걸려 있는지 비교해 고르게 한다. 카드: 스폰서명 · 유형 · 카고 이름 · 리워드 요약.
+            <span class="el-l act"><span>동작</span>Landscape: 카드 선택 → 03 갱신(선택 카드 강조 — 테두리 + 체크). Portrait: 카드 선택 → 03 · 04 상세 화면으로 이동.</span>
+            <span class="el-l exc"><span>예외</span>목록이 비면 「고를 수 있는 목적지가 없어요 — 그냥 출발하면 데일리 카고가 실려요」 + [로비로].</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">NFR-PRI-001</span> <b>거리순 정렬을 하지 않는다</b> — 현재 위치를 읽지 않기 위해. Mock 순서 그대로. <span class="tag s">SD-08</span> 이름 · 금액 옆 「예시」</span>
+            <span class="el-l rsp"><span>반응형</span>Landscape 1열 리스트, Portrait 1열 카드. L-S · P-S 는 카드에서 리워드 요약을 숨기고 03 에서만 보여준다.</span></div></div></div>
+          <div class="el"><div class="el-n">03</div><div class="el-b">
+            <div class="el-t">선택 미리보기 <span class="el-c">organisms › Detail Panel</span></div>
+            <div class="el-d">고른 곳의 카고 그림 · 설명 · 리워드(예시)를 보여 결정을 돕는다. 「도착 후 정차하면 상자가 열려요」 안내 포함.
+            <span class="el-l exc"><span>예외</span>아무것도 고르지 않았으면 「왼쪽에서 목적지를 고르세요」(Landscape 만).</span></div></div></div>
+          <div class="el"><div class="el-n">04</div><div class="el-b">
+            <div class="el-t">이 목적지로 안내 <span class="el-c">actions › Basic button (Large)</span></div>
+            <div class="el-d">카고를 싣고 순정 내비에 길 안내를 넘긴다 — 앱에서 길 안내를 직접 하지 않는다.
+            <span class="el-l act"><span>동작</span>선택 → requestRoute → 성공: 카고 적재(상태 적재됨) · SC-01 로 돌아감 · 내비 안내 시작. 진행 중 버튼 Loading.</span>
+            <span class="el-l exc"><span>예외</span>실패 → 「내비로 안내를 넘기지 못했어요」 + [다시 시도]. <b>이때 카고는 싣지 않는다</b>.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-002</span><span class="tag d">Q-02</span> 안내 시작 후 내비 창이 세이프 카고 창을 덮는지 · 옆에 뜨는지 확인</span>
+            <span class="el-l rsp"><span>반응형</span>Landscape 상세 패널 아래, Portrait 상세 화면 하단 고정.</span></div></div></div>
+          <div class="el"><div class="el-n">05</div><div class="el-b">
+            <div class="el-t">뒤로 <span class="el-c">navigation › Back</span></div>
+            <div class="el-d">고르지 않고 로비로 돌아간다. 이미 적재된 카고는 그대로.
+            <span class="el-l rsp"><span>반응형</span>Portrait 상세 → 목록 → 로비 2단계. Landscape 는 로비로 바로.</span></div></div></div>
+        </div>
+      </div>
+      <div class="scr-rsp"><table>
+        <thead><tr><th style="width:110px">등급</th><th>배치</th></tr></thead>
+        <tbody>
+          <tr><td>L-R · L-T</td><td>목록 55% · 상세 45% 2단. L-T 는 목록 행이 늘어날 뿐 상세는 그대로.</td></tr>
+          <tr><td>L-S</td><td>2단 유지. 상세의 카고 그림을 썸네일로, 01 칩을 앱 바 오른쪽으로 올려 한 줄 확보.</td></tr>
+          <tr><td>P-R · P-T</td><td>목록 화면 → (선택) → 상세 화면(03 + 04 하단 고정).</td></tr>
+          <tr><td>P-S</td><td>P-R 과 같고 카드 높이를 줄여 한 화면에 3장 이상.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- SC-03 -->
+    <div class="scr" id="sc-03">
+      <div class="scr-h"><span class="sid">SC-03</span><span class="snm">호위 중 (주행 게이지 모드)</span><span class="spath">주행 전환 시 자동 · 상태 호위 중 · <span style="color:var(--red)">터치 잠금</span></span></div>
+      <div class="scr-purpose"><b>목적</b> 운전에 방해되지 않게 카고가 무사한지와 열쇠가 쌓이는지만 보여주고, 판정 결과는 <b>소리로</b> 알린다. &nbsp;<b>주 사용자</b> 운전자 (곁눈질 1초 이내) · 동승자. &nbsp;<b>시나리오</b> S1-4 · 5 · S2-2</div>
+      <div class="scr-b car">
+        <div class="scr-wf"><div class="wfs">
+          <div class="disp l"><div class="wcap"><span>SC-03 · Landscape</span><span>L-R · 잠금</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px">앱 바 · [주행] · ×1.5 &nbsp;— 내비게이션 숨김</div>
+              <div class="row fill">
+                <div class="box fill ctr hl" style="flex:1.3"><span><span class="n">01</span>카고 상태 (크게)<br>금 간 정도 3단계<br><span class="n">06</span>판정 피드백 연출</span></div>
+                <div class="col fill">
+                  <div class="box"><span class="n">02</span>HP 82<div class="gauge" style="--v:82%"></div></div>
+                  <div class="box"><span class="n">03</span>Key 120<div class="gauge" style="--v:55%"></div></div>
+                  <div class="row"><div class="box ctr"><span class="n">04</span>×1.5</div><div class="box ctr"><span class="n">05</span>12.4 km</div></div>
+                  <div class="box lock ctr fill"><span><span class="n">07</span>🔒 (버튼 없음)</span></div>
+                </div>
+              </div>
+            </div></div>
+          <div class="wfcap"><b>L-R</b> 카고 55% · 게이지 45% · 글자 없음</div>
+          <div class="disp p"><div class="wcap"><span>SC-03 · Portrait</span><span>P-R · 잠금</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px">[주행] · ×1.5</div>
+              <div class="box fill ctr hl"><span><span class="n">01</span>카고<br><span class="n">06</span>피드백</span></div>
+              <div class="box"><span class="n">02</span>HP<div class="gauge" style="--v:82%"></div></div>
+              <div class="box"><span class="n">03</span>Key<div class="gauge" style="--v:55%"></div></div>
+              <div class="row"><div class="box ctr"><span class="n">04</span>×1.5</div><div class="box ctr"><span class="n">05</span>km</div></div>
+              <div class="box lock ctr"><span class="n">07</span>🔒</div>
+            </div></div>
+          <div class="wfcap"><b>P-*</b> 위 카고 · 아래 게이지 · 스크롤 없음</div>
+        </div></div>
+        <div class="scr-el">
+          <div class="el"><div class="el-n">01</div><div class="el-b">
+            <div class="el-t">카고 상태 <span class="el-c">organisms › Cargo Visual (Lottie)</span></div>
+            <div class="el-d">숫자를 읽지 않아도 <b>카고가 멀쩡한지</b> 그림으로 안다 — HP 구간에 따라 상자 모양이 멀쩡함 → 금 → 크게 금 3단계로 바뀐다.
+            <span class="el-l pol"><span>제안</span><span class="tag s">SD-02</span> 문장 없음 · 모양 변화로 전달</span>
+            <span class="el-l rsp"><span>반응형</span>어느 창에서도 01 이 가장 크다. P-S 에서도 창 높이의 40% 이상 유지 — 줄이는 것은 여백이다(<span class="tag r">RL-04</span>).</span></div></div></div>
+          <div class="el"><div class="el-n">02</div><div class="el-b">
+            <div class="el-t">카고 무결성 HP <span class="el-c">feedback › Gauge</span></div>
+            <div class="el-d">급조향 · 깜빡이 없는 조향 때 깎이는 값. 게이지 + 숫자.
+            <span class="el-l act"><span>동작</span>감소 시 게이지가 짧게 흔들리고 <b>금 가는 효과음</b>.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-004</span><span class="tag p">FR-VH-005</span><span class="tag d">AG-04</span> 조향 판정은 앞바퀴 각 기준 — 임계값 POC 후 <span class="tag d">U-04</span></span></div></div></div>
+          <div class="el"><div class="el-n">03</div><div class="el-b">
+            <div class="el-t">열쇠 게이지 Key <span class="el-c">feedback › Gauge</span></div>
+            <div class="el-d">매너 운전으로 쌓이는 값. 깜빡이를 먼저 켜고 차선을 바꾸면 오른다.
+            <span class="el-l act"><span>동작</span>성공 → 게이지 상승 애니메이션 + <b>차임</b>(+30 잠정).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-004</span><span class="tag d">U-04</span> +30 · 1.5초는 잠정값</span></div></div></div>
+          <div class="el"><div class="el-n">04</div><div class="el-b">
+            <div class="el-t">패밀리 버프 <span class="el-c">feedback › Badge</span></div>
+            <div class="el-d">버프가 켜져 있는지 아이콘 + ×1.5 로 표시.
+            <span class="el-l exc"><span>예외</span>주행 중 벨트가 풀려 조건이 깨지면 배지가 꺼진 모양(사선)으로 바뀌고 TTS 1회 — 처리 방식은 PRD 미정이라 <span class="tag d">Q-06</span> 에서 함께 확인.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-007</span></span></div></div></div>
+          <div class="el"><div class="el-n">05</div><div class="el-b">
+            <div class="el-t">호위 거리 <span class="el-c">atoms › Stat</span></div>
+            <div class="el-d">이번 호위로 달린 거리(km).
+            <span class="el-l exc"><span>예외</span>트립 거리 미지원이면 영역을 숨기고 04 가 그 자리를 채운다(EX-01).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-008</span></span></div></div></div>
+          <div class="el"><div class="el-n">06</div><div class="el-b">
+            <div class="el-t">판정 피드백 <span class="el-c">feedback › Event Animation + Sound</span></div>
+            <div class="el-d">판정이 날 때마다 <b>소리 + 카고 위 짧은 연출</b>로 알린다. 화면을 보지 않아도 소리로 안다.
+            <span class="el-l act"><span>동작</span>선행 깜빡이 성공 → 열쇠 아이콘 튀어오름 + 차임 / 퍼펙트 시그널(켠 뒤 1.5초 이상) → 더 큰 연출 + 다른 차임 / 깜빡이 없는 조향 → 카고에 금 + 효과음 / 감속 판정 → <span class="tag d">ISSUE-05</span> 결정 후. 콤보 · 경고는 TTS 로도 코칭.</span>
+            <span class="el-l exc"><span>예외</span>TTS 실패 → 효과음만(EX-07). 신호 리스너 오류 → 해당 판정만 빼고 계속, <b>주행 중에는 오류를 알리지 않는다</b>(EX-04).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-TTS-001</span><span class="tag d">ISSUE-06</span> TTS 모드 <span class="tag r">RL-10</span> 시스템 UI 가 화면을 덮어도 소리는 나간다</span></div></div></div>
+          <div class="el"><div class="el-n">07</div><div class="el-b">
+            <div class="el-t">터치 잠금 <span class="el-c">feedback › Lock Indicator</span></div>
+            <div class="el-d">주행 중에는 <b>어떤 버튼도 없다</b>. 자물쇠 아이콘으로 「지금은 조작할 것이 없다」를 알린다.
+            <span class="el-l act"><span>동작</span>화면 어디를 눌러도 반응 없음. 정차 전환 → SC-04 또는 SC-05.</span>
+            <span class="el-l exc"><span>예외</span>앱이 강제 종료되었다가 다시 열리면 저장된 HP · Key 로 이 화면을 바로 복구(EX-08 · <span class="tag s">SD-05</span>).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-005</span><span class="tag p">NFR-SAF-001</span><span class="tag d">U-01</span> DO 선언 · 주행 중 효과음 · TTS 허용 여부 <span class="tag d">AG-03</span> 이 화면으로 오는 트리거</span></div></div></div>
+        </div>
+      </div>
+      <div class="scr-rsp"><table>
+        <thead><tr><th style="width:110px">등급</th><th>배치 — 주행 화면은 모든 등급에서 스크롤 없음 · 글자 없음</th></tr></thead>
+        <tbody>
+          <tr><td>L-R</td><td>01 카고 55% · 오른쪽 열 02 → 03 → [04 | 05] → 07.</td></tr>
+          <tr><td>L-T</td><td>L-R 과 같음. <b>늘어난 높이에 정보를 추가하지 않는다</b> — 주행 중 볼거리를 늘리지 않기 위해 위아래 여백으로 둔다(<span class="tag r">RL-05</span> 예외).</td></tr>
+          <tr><td>L-S</td><td>2단 유지. 02 · 03 게이지를 가로 막대에서 <b>세로 막대 2개</b>로 바꿔 오른쪽 열 높이를 줄인다.</td></tr>
+          <tr><td>P-R · P-T</td><td>01 → 02 → 03 → [04 | 05] → 07. P-T 는 01 만 커지지 않게 상한(창 높이 50%).</td></tr>
+          <tr><td>P-S</td><td>01(40%) → [02 | 03 세로 막대 2개] → [04 | 05 | 07] 한 줄.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- SC-04 -->
+    <div class="scr" id="sc-04">
+      <div class="scr-h"><span class="sid">SC-04</span><span class="snm">일시 정차</span><span class="spath">호위 중 정차 + 목적지 미도착 · 상태 일시 정차</span></div>
+      <div class="scr-purpose"><b>목적</b> 신호 대기처럼 잠깐 멈춘 것인지, 도착한 것인지 구분한다. 목적지 카고는 열지 않고, 데일리 카고는 여기서 사용자가 연다. &nbsp;<b>주 사용자</b> 운전자. &nbsp;<b>시나리오</b> S2-3</div>
+      <div class="scr-b car">
+        <div class="scr-wf"><div class="wfs">
+          <div class="disp l"><div class="wcap"><span>SC-04 · Landscape</span><span>L-R · 데일리 카고</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px"><span class="n">01</span>앱 바 · [일시 정차] · ×1.5</div>
+              <div class="row fill">
+                <div class="box fill ctr" style="flex:1.3"><span>카고 상태 (SC-03 01 그대로)</span></div>
+                <div class="col fill">
+                  <div class="box"><span class="n">02</span>HP 82 · Key 120 (유지)</div>
+                  <div class="box fill"><span class="n">03</span>데일리: 「도착했으면 열어요」<br>목적지 카고: 「파주 베이커리 카페 <u>예시</u> 도착 시 자동 개봉」</div>
+                  <div class="box solid ctr"><span class="n">04</span>[도착 · 개봉] (데일리만)</div>
+                </div>
+              </div>
+            </div></div>
+          <div class="wfcap"><b>L-*</b> SC-03 틀 그대로 · 오른쪽 열만 바뀜</div>
+          <div class="disp p"><div class="wcap"><span>SC-04 · Portrait</span><span>P-R</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px"><span class="n">01</span>[일시 정차]</div>
+              <div class="box fill ctr"><span>카고 상태</span></div>
+              <div class="box"><span class="n">02</span>HP · Key</div>
+              <div class="box"><span class="n">03</span>안내 1줄</div>
+              <div class="box solid ctr"><span class="n">04</span>[도착 · 개봉]</div>
+            </div></div>
+          <div class="wfcap"><b>P-*</b> 04 하단 고정</div>
+        </div></div>
+        <div class="scr-el">
+          <div class="el"><div class="el-n">01</div><div class="el-b">
+            <div class="el-t">일시 정차 표시 <span class="el-c">CM-01 01 상태 칩</span></div>
+            <div class="el-d">「잠깐 멈췄을 뿐 호위는 이어진다」를 알린다. 칩이 [일시 정차] 로 바뀐다.</div></div></div>
+          <div class="el"><div class="el-n">02</div><div class="el-b">
+            <div class="el-t">게이지 유지 <span class="el-c">feedback › Gauge (read-only)</span></div>
+            <div class="el-d">정차 중에도 HP · Key 는 그대로이고 사라지지 않는다.
+            <span class="el-l pol"><span>정책</span><span class="tag p">EX-06</span> 게이지 유지 · 개봉하지 않음</span></div></div></div>
+          <div class="el"><div class="el-n">03</div><div class="el-b">
+            <div class="el-t">목적지 안내 <span class="el-c">molecules › Info Text</span></div>
+            <div class="el-d">왜 상자가 안 열렸는지 한 줄로 알린다. 목적지 카고: 「○○ 도착 시 자동으로 열려요」. 데일리 카고: 「도착했으면 열 수 있어요」.
+            <span class="el-l act"><span>동작</span>목적지 카고는 정차할 때마다 위치를 1회 읽어 반경 안이면 이 화면을 건너뛰고 SC-05 로 간다.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-LOC-001</span></span></div></div></div>
+          <div class="el"><div class="el-n">04</div><div class="el-b">
+            <div class="el-t">도착 · 개봉 <span class="el-c">actions › Basic button (Large)</span></div>
+            <div class="el-d">목적지가 없는 데일리 카고를 <b>사용자가 직접</b> 연다.
+            <span class="el-l act"><span>동작</span>선택 → 확인 「여기서 카고를 열까요?」 [개봉] / [계속 호위] → 개봉 시 SC-05. 확인 중 재출발 → 다이얼로그 닫고 SC-03.</span>
+            <span class="el-l exc"><span>예외</span>목적지 카고에는 이 버튼이 없다.</span>
+            <span class="el-l pol"><span>제안</span><span class="tag s">SD-04</span><span class="tag d">Q-03</span> 신호 대기 정차가 DO 상 「Parking」 으로 바뀌지 않으면 터치 불가 — 그 경우 버튼을 숨기고 다음 Parking 에서 보인다</span></div></div></div>
+          <div class="el"><div class="el-n">05</div><div class="el-b">
+            <div class="el-t">재출발 <span class="el-c">system › State transition</span></div>
+            <div class="el-d">다시 출발하면 아무것도 누르지 않아도 SC-03 으로 돌아간다.
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-001</span><span class="tag d">AG-03</span></span></div></div></div>
+        </div>
+      </div>
+      <div class="scr-rsp"><table>
+        <thead><tr><th style="width:110px">등급</th><th>배치</th></tr></thead>
+        <tbody>
+          <tr><td>L-*</td><td>SC-03 과 같은 2단. 오른쪽 열에서 04 · 05 · 07 자리를 03 · 04 가 대신한다 — 카고 위치가 움직이지 않아 화면이 「바뀌었다」기보다 「풀렸다」로 느껴지게.</td></tr>
+          <tr><td>P-*</td><td>SC-03 과 같은 1단. 04 하단 고정. P-S 에서 03 은 한 줄로 자른다.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- SC-05 -->
+    <div class="scr" id="sc-05">
+      <div class="scr-h"><span class="sid">SC-05</span><span class="snm">언박싱 (개봉)</span><span class="spath">도착 정차 시 자동 · SC-04 [도착 · 개봉] · 상태 개봉</span></div>
+      <div class="scr-purpose"><b>목적</b> 도착한 그 자리에서 상자가 열리고 실내 조명이 등급 색으로 빛나 <b>「잘 배달했다」</b>는 보상을 즉시 준다. 상자는 항상 열리고 등급만 다르다. &nbsp;<b>주 사용자</b> 운전자 · 동승자 (아이 포함). &nbsp;<b>시나리오</b> S1-6 · 시연 영상 핵심 장면</div>
+      <div class="scr-b car">
+        <div class="scr-wf"><div class="wfs">
+          <div class="disp l" style="outline:3px dashed var(--teal);outline-offset:-5px"><div class="wcap"><span>SC-05 · Landscape</span><span>L-R</span></div>
+            <div class="wbody">
+              <div class="row fill">
+                <div class="box fill ctr solid" style="flex:1.4"><span><span class="n">01</span>등급 연출 (Lottie)<br>상자가 열린다</span></div>
+                <div class="col fill">
+                  <div class="box ctr"><span class="n">02</span>◆ 레전더리</div>
+                  <div class="box"><span class="n">03</span>Key 180 · HP 95<br>버프 ✓ · 18.2 km</div>
+                  <div class="box"><span class="n">04</span>실내 조명이 보라색으로</div>
+                  <div class="box"><span class="n">05</span>도착 확인됨 · 쿠폰</div>
+                  <div class="box solid ctr fill"><span class="n">06</span>[리워드 받기]</div>
+                </div>
+              </div>
+            </div></div>
+          <div class="wfcap"><b>L-R</b> 연출 60% · 결과 40% · 점선 = <span class="n">07</span> 테두리 라이트</div>
+          <div class="disp p" style="outline:3px dashed var(--teal);outline-offset:-5px"><div class="wcap"><span>SC-05 · Portrait</span><span>P-R</span></div>
+            <div class="wbody">
+              <div class="box fill ctr solid"><span><span class="n">01</span>등급 연출</span></div>
+              <div class="box ctr"><span class="n">02</span>◆ 레전더리</div>
+              <div class="g4" style="grid-template-columns:repeat(2,1fr)"><div class="box"><span class="n">03</span>Key</div><div class="box">HP</div><div class="box">버프</div><div class="box">km</div></div>
+              <div class="box"><span class="n">04</span>·<span class="n">05</span></div>
+              <div class="box solid ctr"><span class="n">06</span>[리워드 받기]</div>
+            </div></div>
+          <div class="wfcap"><b>P-*</b> 연출 위 · 결과 아래</div>
+        </div></div>
+        <div class="scr-el">
+          <div class="el"><div class="el-n">01</div><div class="el-b">
+            <div class="el-t">등급 연출 <span class="el-c">organisms › Unboxing (Lottie)</span></div>
+            <div class="el-d">상자가 열리는 순간 자체가 보상이다. 등급별로 다른 Lottie 를 재생한다.
+            <span class="el-l act"><span>동작</span>정차 + 도착 확인 → <b>1초 안에</b> 화면이 자동으로 뜨고 재생. 끝나면 마지막 프레임 유지.</span>
+            <span class="el-l exc"><span>예외</span>세이프 카고 창이 화면에 없을 때 도착 → TTS 안내 후 개봉 대기, 앱을 열면 여기서부터 재생(<span class="tag s">SD-06</span>). 재생 중 다시 주행 → 연출 중단 · 결과 저장 · 완료 처리 후 SC-03(데일리 카고 적재).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-006</span><span class="tag p">FR-APP-007</span><span class="tag p">NFR-PER-001</span><span class="tag d">AG-03</span><span class="tag d">Q-02</span></span>
+            <span class="el-l rsp"><span>반응형</span><span class="tag r">RL-06</span> 재생 중 창이 바뀌면 <b>같은 프레임에서 이어서</b> 재생. <span class="tag r">RL-09</span> 벡터 Lottie 라 200 DPI 에서도 선명.</span></div></div></div>
+          <div class="el"><div class="el-n">02</div><div class="el-b">
+            <div class="el-t">등급 표기 <span class="el-c">atoms › Grade Label</span></div>
+            <div class="el-d">이번 상자가 무슨 등급인지 <b>색 · 이름 · 상자 모양</b> 세 가지로 동시에 알린다.
+            <span class="el-l pol"><span>정책</span><span class="tag s">SD-07</span><span class="tag d">AG-02</span> 잠정 색: 레전더리 Purple · 에픽 Blue · 레어 Cyan</span></div></div></div>
+          <div class="el"><div class="el-n">03</div><div class="el-b">
+            <div class="el-t">결과 요약 <span class="el-c">molecules › Stat Grid</span></div>
+            <div class="el-d">이번 호위의 Key · HP · 버프 여부 · 거리. 「왜 이 등급인가」를 보여준다.
+            <span class="el-l exc"><span>예외</span>미지원으로 꺼진 값은 칸을 빼고 남은 칸으로 채운다(빈 칸 X).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-009</span><span class="tag d">U-04</span> 등급 구간 잠정</span>
+            <span class="el-l rsp"><span>반응형</span>Landscape 세로 목록, Portrait 2×2, L-S 가로 4칸 한 줄.</span></div></div></div>
+          <div class="el"><div class="el-n">04</div><div class="el-b">
+            <div class="el-t">실내 조명 상태 <span class="el-c">feedback › Inline Status</span></div>
+            <div class="el-d">차 안 조명이 등급 색으로 빛나는 중임을 화면에서도 확인시킨다.
+            <span class="el-l act"><span>동작</span>적재 때 저장해 둔 조명 색 · 밝기 → 개봉 시 등급 색 3초 점등 → 저장값으로 원복. 앱이 닫히거나 창이 사라져도 원복은 반드시 한다.</span>
+            <span class="el-l exc"><span>예외</span>미지원 · 퍼미션 실패 → 07 테두리 라이트로 대체하고 원복은 생략(EX-02).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-011</span><span class="tag d">AG-05</span> 퍼미션 CAR_LIGHTS / CONTROL_CAR_LIGHTS</span></div></div></div>
+          <div class="el"><div class="el-n">05</div><div class="el-b">
+            <div class="el-t">도착 확인 결과 <span class="el-c">molecules › Info Text</span></div>
+            <div class="el-d">스폰서 쿠폰을 받을 수 있는지 알린다. 「도착 확인됨 — 스폰서 쿠폰」 / 「위치를 확인하지 못해 일반 리워드로 열렸어요」.
+            <span class="el-l exc"><span>예외</span>데일리 카고는 이 줄을 그리지 않는다.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-LOC-001</span><span class="tag p">EX-03</span></span></div></div></div>
+          <div class="el"><div class="el-n">06</div><div class="el-b">
+            <div class="el-t">리워드 받기 <span class="el-c">actions › Basic button (Large)</span></div>
+            <div class="el-d">리워드 카드(SC-06)로 넘어간다.
+            <span class="el-l act"><span>동작</span>연출이 끝날 때까지 Loading 상태 → 끝나면 활성.</span>
+            <span class="el-l rsp"><span>반응형</span>Landscape 결과 열 맨 아래, Portrait 하단 고정.</span></div></div></div>
+          <div class="el"><div class="el-n">07</div><div class="el-b">
+            <div class="el-t">화면 테두리 라이트 <span class="el-c">feedback › Edge Glow</span></div>
+            <div class="el-d">실내 조명을 쓸 수 없는 차에서 <b>앱 창 가장자리</b>를 등급 색으로 3초 빛나게 해 같은 순간을 만든다.
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-VH-012</span><span class="tag p">EX-02</span></span>
+            <span class="el-l rsp"><span>반응형</span>창 테두리 기준이라 크기와 무관. 분할 화면에서는 <b>세이프 카고 창만</b> 빛난다.</span></div></div></div>
+        </div>
+      </div>
+      <div class="scr-rsp"><table>
+        <thead><tr><th style="width:110px">등급</th><th>배치</th></tr></thead>
+        <tbody>
+          <tr><td>L-R · L-T</td><td>01 연출 60% · 오른쪽 02 → 03 → 04 → 05 → 06. L-T 는 01 만 높이 상한 1184dp.</td></tr>
+          <tr><td>L-S</td><td>01 55% · 오른쪽 02 → 03(가로 4칸) → 04 · 05 한 줄 → 06.</td></tr>
+          <tr><td>P-R · P-T</td><td>01(창 높이 45%) → 02 → 03(2×2) → 04 · 05 → 06 고정.</td></tr>
+          <tr><td>P-S</td><td>01(35%) → 02 · 03 한 줄(가로 4칸) → 05 → 06 고정. 04 는 07 과 같이 화면 효과로만 전달하고 글자는 숨긴다.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- SC-06 -->
+    <div class="scr" id="sc-06">
+      <div class="scr-h"><span class="sid">SC-06</span><span class="snm">리워드 카드</span><span class="spath">SC-05 [리워드 받기] · 상태 개봉 → 완료</span></div>
+      <div class="scr-purpose"><b>목적</b> 지금 도착한 곳에서 쓸 수 있는 혜택(예시)을 바로 보여준다. &nbsp;<b>주 사용자</b> 운전자 · 동승자 (정차 · 하차 직전). &nbsp;<b>시나리오</b> S1-7</div>
+      <div class="scr-b car">
+        <div class="scr-wf"><div class="wfs">
+          <div class="disp l"><div class="wcap"><span>SC-06 · Landscape</span><span>L-R</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px">앱 바 · [정차]</div>
+              <div class="row fill">
+                <div class="box fill" style="display:flex;gap:6px"><div style="flex:1"><span class="n">01</span>쿠폰<br>파주 베이커리 카페 <u>예시</u><br>타르트 1,000원 할인 <u>예시</u></div><div class="qr" style="width:42%;align-self:center"></div></div>
+                <div class="col fill">
+                  <div class="box"><span class="n">02</span>포인트 +300P <u>예시</u></div>
+                  <div class="box fill"><span class="n">03</span>새 칭호 · 깜빡이 성기사</div>
+                  <div class="row"><div class="box ctr"><span class="n">04</span>[랭킹 보기]</div><div class="box solid ctr"><span class="n">05</span>[확인]</div></div>
+                </div>
+              </div>
+            </div></div>
+          <div class="wfcap"><b>L-*</b> 쿠폰 · QR 50% · 나머지 50%</div>
+          <div class="disp p"><div class="wcap"><span>SC-06 · Portrait</span><span>P-R · 스크롤</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px">앱 바</div>
+              <div class="box fill"><span class="n">01</span>쿠폰 <u>예시</u><div class="qr" style="width:55%;margin:5px auto 0"></div></div>
+              <div class="box"><span class="n">02</span>포인트 <u>예시</u></div>
+              <div class="box"><span class="n">03</span>새 칭호</div>
+              <div class="row"><div class="box ctr"><span class="n">04</span>랭킹</div><div class="box solid ctr"><span class="n">05</span>확인</div></div>
+            </div></div>
+          <div class="wfcap"><b>P-*</b> 위아래 쌓기 · 버튼 하단 고정</div>
+        </div></div>
+        <div class="scr-el">
+          <div class="el"><div class="el-n">01</div><div class="el-b">
+            <div class="el-t">쿠폰 카드 <span class="el-c">organisms › Coupon Card + QR</span></div>
+            <div class="el-d">스폰서 · 혜택 · 금액 · QR. 매장에서 바로 보여줄 수 있게 한다.
+            <span class="el-l exc"><span>예외</span>도착 확인 실패(EX-03) 또는 데일리 카고 → 스폰서 쿠폰 대신 <b>일반 리워드 카드</b>(QR 없음).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-008</span><span class="tag s">SD-08</span> 금액 · 제휴명 바로 옆 「예시」 — 확인된 제휴 없음(PRD 1.5.2)</span>
+            <span class="el-l rsp"><span>반응형</span>QR 은 어느 창에서도 정사각형을 유지하고 잘리지 않는다. P-S 에서는 QR 을 먼저 보여주고 글자를 아래로.</span></div></div></div>
+          <div class="el"><div class="el-n">02</div><div class="el-b">
+            <div class="el-t">포인트 카드 <span class="el-c">molecules › Reward Card</span></div>
+            <div class="el-d">이번 배달로 쌓인 포인트(예시).
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-008</span><span class="tag s">SD-08</span></span></div></div></div>
+          <div class="el"><div class="el-n">03</div><div class="el-b">
+            <div class="el-t">새 칭호 <span class="el-c">molecules › Badge Card</span></div>
+            <div class="el-d">이번 배달로 얻은 칭호(예: 깜빡이 성기사 · 무진동 쇼퍼).
+            <span class="el-l exc"><span>예외</span>새 칭호가 없으면 영역을 그리지 않는다.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-010</span></span></div></div></div>
+          <div class="el"><div class="el-n">04</div><div class="el-b">
+            <div class="el-t">랭킹 보기 <span class="el-c">actions › Basic button (Medium)</span></div>
+            <div class="el-d">결과를 저장하고 SC-07 로 간다.
+            <span class="el-l pol"><span>정책</span><span class="tag d">ISSUE-01</span> 랭킹을 빼기로(C) 하면 버튼 삭제</span></div></div></div>
+          <div class="el"><div class="el-n">05</div><div class="el-b">
+            <div class="el-t">확인 <span class="el-c">actions › Basic button (Large)</span></div>
+            <div class="el-d">카고 결과를 저장하고 로비(대기)로 돌아간다.
+            <span class="el-l act"><span>동작</span>저장: 등급 · Key · HP · 버프 · 일자 · 목적지 이름 → SC-01 대기.</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-DATA-003</span> 원시 주행 신호 · 좌표 저장 없음</span></div></div></div>
+        </div>
+      </div>
+      <div class="scr-rsp"><table>
+        <thead><tr><th style="width:110px">등급</th><th>배치</th></tr></thead>
+        <tbody>
+          <tr><td>L-R · L-T</td><td>01 50% · 오른쪽 02 → 03 → [04 | 05].</td></tr>
+          <tr><td>L-S</td><td>2단 유지. 01 안에서 QR 을 왼쪽, 글자를 오른쪽으로.</td></tr>
+          <tr><td>P-R · P-T</td><td>01 → 02 → 03, [04 | 05] 하단 고정. 넘치면 스크롤.</td></tr>
+          <tr><td>P-S</td><td>01(QR 우선) → 02 · 03 한 줄씩, 스크롤. [04 | 05] 하단 고정.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- SC-07 -->
+    <div class="scr" id="sc-07">
+      <div class="scr-h"><span class="sid">SC-07</span><span class="snm">랭킹 보드</span><span class="spath">CM-01 랭킹 · SC-06 [랭킹 보기] · 정차 전용</span></div>
+      <div class="scr-purpose"><b>목적</b> 운전 점수가 아니라 <b>무사히 배달한 카고 수</b>로 크루 · 동네 안에서 순위를 보여 다시 오게 한다. &nbsp;<b>주 사용자</b> 운전자 · 동승자 (정차 시). &nbsp;<span style="color:var(--red)"><b>ISSUE-01</b> 랭킹 방식 미결 — 잠정안 B(크루 → 동네 대항전, 누적 카고 수)로 그림</span></div>
+      <div class="scr-b car">
+        <div class="scr-wf"><div class="wfs">
+          <div class="disp l"><div class="wcap"><span>SC-07 · Landscape</span><span>L-R</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px">앱 바 · [정차]</div>
+              <div class="row fill">
+                <div class="rail"><div class="nav">로비</div><div class="nav on">랭킹</div><div class="nav">기록</div></div>
+                <div class="col fill">
+                  <div class="seg" style="grid-template-columns:1fr 1fr"><div class="nav on"><span class="n">01</span>크루</div><div class="nav">동네</div></div>
+                  <div class="box fill ctr"><span><span class="n">02</span>내 순위 3위<br>배달 카고 27<br>◆4 ◇11 ○12</span></div>
+                  <div class="box"><span class="n">04</span>기준: 배달한 카고 수</div>
+                </div>
+                <div class="box fill" style="flex:1.4"><span class="n">03</span>TOP 10 <u>예시</u><br>1 ○○크루원 41<br>2 ○○크루원 33<br><b>3 나 27</b><br>4 …<br>5 …</div>
+              </div>
+            </div></div>
+          <div class="wfcap"><b>L-*</b> 내 순위 40% · 리스트 60%</div>
+          <div class="disp p"><div class="wcap"><span>SC-07 · Portrait</span><span>P-R</span></div>
+            <div class="wbody">
+              <div class="seg"><div class="nav">로비</div><div class="nav on">랭킹</div><div class="nav">기록</div></div>
+              <div class="seg" style="grid-template-columns:1fr 1fr"><div class="nav on"><span class="n">01</span>크루</div><div class="nav">동네</div></div>
+              <div class="box"><span class="n">02</span>내 순위 3위 · 27</div>
+              <div class="box fill"><span class="n">03</span>TOP 10 <u>예시</u><br>1 …<br>2 …<br><b>3 나</b></div>
+              <div class="box"><span class="n">04</span>기준 안내</div>
+            </div></div>
+          <div class="wfcap"><b>P-*</b> 내 순위 한 줄 · 리스트 스크롤</div>
+        </div></div>
+        <div class="scr-el">
+          <div class="el"><div class="el-n">01</div><div class="el-b">
+            <div class="el-t">범위 탭 <span class="el-c">navigation › Tabs</span></div>
+            <div class="el-d">크루 안 순위와 동네 대항전을 오간다. 동네는 사용자가 직접 고른 곳.
+            <span class="el-l pol"><span>정책</span><span class="tag d">ISSUE-01</span> A(목적지 · 동네 TOP 10)면 탭 = 목적지 · 동네 / C(랭킹 제외)면 이 화면 삭제 · CM-01 내비 2칸</span></div></div></div>
+          <div class="el"><div class="el-n">02</div><div class="el-b">
+            <div class="el-t">내 순위 <span class="el-c">molecules › Summary Card</span></div>
+            <div class="el-d">내 순위 · 누적 배달 카고 수 · 등급별 개수(모양 다른 아이콘).
+            <span class="el-l exc"><span>예외</span>배달 0건 → 「아직 배달 기록이 없어요 — 오늘 첫 카고를 실어보세요」 + [로비로].</span></div></div></div>
+          <div class="el"><div class="el-n">03</div><div class="el-b">
+            <div class="el-t">랭킹 리스트 <span class="el-c">organisms › Ranked List</span></div>
+            <div class="el-d">TOP 10 표시명 · 카고 수. 내 행은 굵게 + 「나」 표시 + 배경(색만으로 구분 X).
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-009</span> 정차 시에만 · Mock <span class="tag p">FR-SUB-004</span> 표시명 예시에 실명 금지</span>
+            <span class="el-l rsp"><span>반응형</span>L-T · P-T 는 TOP 10 이 스크롤 없이 다 보인다. 나머지는 리스트만 스크롤.</span></div></div></div>
+          <div class="el"><div class="el-n">04</div><div class="el-b">
+            <div class="el-t">순위 기준 안내 <span class="el-c">molecules › Info Text</span></div>
+            <div class="el-d">「운전 점수가 아니라 무사히 배달한 카고 수예요」 — 블루링크 안전운전 점수와 다르다는 것을 화면에서도 말한다.
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-009</span> PRD R-01 차별성 대응</span></div></div></div>
+        </div>
+      </div>
+      <div class="scr-rsp"><table>
+        <thead><tr><th style="width:110px">등급</th><th>배치</th></tr></thead>
+        <tbody>
+          <tr><td>L-R · L-T</td><td>레일 · 왼쪽 01 → 02 → 04 (40%) · 오른쪽 03 (60%).</td></tr>
+          <tr><td>L-S</td><td>같은 2단. 02 의 등급별 개수를 한 줄로 접는다.</td></tr>
+          <tr><td>P-*</td><td>세그먼트 → 01 → 02(한 줄) → 03(스크롤) → 04 한 줄.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- SC-08 -->
+    <div class="scr" id="sc-08">
+      <div class="scr-h"><span class="sid">SC-08</span><span class="snm">기록 — 뱃지 · 스트릭</span><span class="spath">CM-01 기록 · 정차 전용</span></div>
+      <div class="scr-purpose"><b>목적</b> 모은 칭호와 무결점 연속 기록, 최근 배달 내역을 보여 꾸준히 쓸 이유를 만든다. &nbsp;<b>주 사용자</b> 운전자 · 동승자 (정차 시).</div>
+      <div class="scr-b car">
+        <div class="scr-wf"><div class="wfs">
+          <div class="disp l"><div class="wcap"><span>SC-08 · Landscape</span><span>L-R</span></div>
+            <div class="wbody">
+              <div class="box solid" style="font-size:7.5px">앱 바 · [정차]</div>
+              <div class="row fill">
+                <div class="rail"><div class="nav">로비</div><div class="nav">랭킹</div><div class="nav on">기록</div></div>
+                <div class="col fill">
+                  <div class="box"><span class="n">01</span>스트릭 ■■■□□□□<br>황금 카고 3/5</div>
+                  <div class="box fill"><span class="n">04</span>최근 카고<br>10/30 회사 · 데일리 ○<br>10/29 카페 <u>예시</u> ◆<br>…</div>
+                </div>
+                <div class="col fill" style="flex:1.4">
+                  <div class="box fill"><span class="n">02</span>뱃지
+                    <div class="g4" style="margin-top:4px;grid-template-columns:repeat(5,1fr)"><div class="box ctr">★</div><div class="box ctr">★</div><div class="box ctr empty">🔒</div><div class="box ctr empty">🔒</div><div class="box ctr empty">🔒</div></div></div>
+                  <div class="box"><span class="n">03</span>깜빡이 성기사 · 조건 · 획득일</div>
+                </div>
+              </div>
+            </div></div>
+          <div class="wfcap"><b>L-*</b> 스트릭 · 기록 40% · 뱃지 60%</div>
+          <div class="disp p"><div class="wcap"><span>SC-08 · Portrait</span><span>P-R · 스크롤</span></div>
+            <div class="wbody">
+              <div class="seg"><div class="nav">로비</div><div class="nav">랭킹</div><div class="nav on">기록</div></div>
+              <div class="box"><span class="n">01</span>스트릭 3/5</div>
+              <div class="box"><span class="n">02</span>뱃지<div class="g3" style="margin-top:4px"><div class="box ctr">★</div><div class="box ctr">★</div><div class="box ctr empty">🔒</div></div></div>
+              <div class="box fill"><span class="n">04</span>최근 카고</div>
+              <div class="box empty"><span class="n">03</span>상세 = 아래 시트</div>
+            </div></div>
+          <div class="wfcap"><b>P-*</b> 스트릭 → 뱃지 3열 → 기록</div>
+        </div></div>
+        <div class="scr-el">
+          <div class="el"><div class="el-n">01</div><div class="el-b">
+            <div class="el-t">스트릭 <span class="el-c">molecules › Streak Strip</span></div>
+            <div class="el-d">최근 7일 무결점 여부(칸 채움 + 체크 모양)와 황금 카고까지 남은 일수.
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-011</span><span class="tag d">U-04</span> 「무결점」 판정 기준 · 5일 잠정</span></div></div></div>
+          <div class="el"><div class="el-n">02</div><div class="el-b">
+            <div class="el-t">뱃지 그리드 <span class="el-c">organisms › Badge Grid</span></div>
+            <div class="el-d">얻은 칭호는 아이콘, 못 얻은 칭호는 실루엣 + 자물쇠.
+            <span class="el-l act"><span>동작</span>뱃지 선택 → 03 갱신(Landscape) / 아래 시트(Portrait).</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-APP-010</span></span>
+            <span class="el-l rsp"><span>반응형</span>열 수 — L-R 5 · L-S 6 · L-T 5 · P-R 3 · P-S 3 · P-T 3. 아이콘 크기는 고정, 열 수로 맞춘다.</span></div></div></div>
+          <div class="el"><div class="el-n">03</div><div class="el-b">
+            <div class="el-t">뱃지 상세 <span class="el-c">molecules › Detail / Bottom Sheet</span></div>
+            <div class="el-d">칭호 이름 · 얻는 조건 · 획득일. 못 얻은 칭호는 조건만.</div></div></div>
+          <div class="el"><div class="el-n">04</div><div class="el-b">
+            <div class="el-t">최근 카고 기록 <span class="el-c">organisms › List</span></div>
+            <div class="el-d">날짜 · 목적지 이름 · 등급(모양 아이콘). 지난 배달을 돌아본다.
+            <span class="el-l exc"><span>예외</span>0건 → 「첫 카고를 배달하면 여기에 쌓여요」 + [로비로].</span>
+            <span class="el-l pol"><span>정책</span><span class="tag p">FR-DATA-003</span> 좌표 · 경로 없음, 목적지 이름만</span></div></div></div>
+        </div>
+      </div>
+      <div class="scr-rsp"><table>
+        <thead><tr><th style="width:110px">등급</th><th>배치</th></tr></thead>
+        <tbody>
+          <tr><td>L-R · L-T</td><td>레일 · 왼쪽 01 → 04 (40%) · 오른쪽 02 → 03 (60%).</td></tr>
+          <tr><td>L-S</td><td>같은 2단. 02 를 6열로 늘려 행 수를 줄인다.</td></tr>
+          <tr><td>P-*</td><td>세그먼트 → 01 → 02(3열) → 04, 전체 스크롤. 03 은 아래 시트.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 07 미결 · 확인 요청 ============ -->
+<section class="sheet" id="s07">
+  <div class="sheet-h">
+    <div class="sheet-no">07</div>
+    <div><h2>미결 · 확인 요청 · 반응형 검증</h2><p class="what">PRD 미결 중 <b>화면을 바꾸는 9건</b> + 이 문서에서 새로 생긴 확인 <b>Q 6건</b> + 12개 창 점검표</p></div>
+  </div>
+  <div class="sheet-body stack">
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:80px">코드</th><th style="width:150px">쟁점</th><th>화면에 주는 영향</th><th style="width:150px">영향 화면</th><th style="width:110px">기한 (PRD)</th></tr></thead>
+        <tbody>
+          <tr class="grp"><td colspan="5">PRD v1.0 미결 — 화면 영향 9건</td></tr>
+          <tr><td class="id"><span class="tag d">AG-03</span></td><td>주행 · 정차 판정 소스</td><td>모든 자동 화면 전환(SC-03 · 04 · 05)의 트리거. 칩 문구는 「정차 · 주행」.</td><td class="pid">CM-01 · SC-03~05</td><td class="pid">11.01</td></tr>
+          <tr><td class="id"><span class="tag d">U-01</span></td><td>DO 선언 · 주행 중 TTS · 효과음</td><td>안 되면 SC-03 의 피드백이 화면뿐 → SD-02 재검토.</td><td class="pid">SC-03</td><td class="pid">11.01</td></tr>
+          <tr><td class="id"><span class="tag d">AG-04</span></td><td>조향 판정 기준</td><td>HP 감소 연출 빈도 · 문구.</td><td class="pid">SC-03</td><td class="pid">11.01</td></tr>
+          <tr><td class="id"><span class="tag d">ISSUE-05</span></td><td>감속 판정 수단</td><td>C 면 둘째 열쇠 이름이 「부드러운 조향」만.</td><td class="pid">SC-00 · 01 · 03</td><td class="pid">11.01</td></tr>
+          <tr><td class="id"><span class="tag d">AG-02</span></td><td>등급 색</td><td>SC-05 등급 색 · 07 테두리 색 · 실내 조명. SD-07 로 색 없이도 판별.</td><td class="pid">SC-05 · 07 · 08</td><td class="pid">11.01</td></tr>
+          <tr><td class="id"><span class="tag d">AG-05</span></td><td>앰비언트 퍼미션</td><td>실패 시 SC-05 07 테두리 라이트가 기본 연출이 된다.</td><td class="pid">SC-00 · 05</td><td class="pid">11.05</td></tr>
+          <tr><td class="id"><span class="tag d">ISSUE-01</span></td><td>랭킹 방식</td><td>SC-07 탭 구성 · 존폐, CM-01 내비 칸 수.</td><td class="pid">SC-06 · 07 · CM-01</td><td class="pid">11.01</td></tr>
+          <tr><td class="id"><span class="tag d">U-04</span></td><td>판정 수치</td><td>게이지 최대값 · 등급 구간 · 스트릭 일수 표기.</td><td class="pid">SC-01 · 03 · 05 · 08</td><td class="pid">11.05</td></tr>
+          <tr><td class="id"><span class="tag d">U-09</span></td><td>onDestinationInfo 수신</td><td>안 오면 SC-01 02 의 자동 적재 배너 없음.</td><td class="pid">SC-01 · 02</td><td class="pid">11.01</td></tr>
+          <tr class="grp"><td colspan="5">이 문서 신규 확인 — Q 6건 (제안 기한)</td></tr>
+          <tr><td class="id"><span class="tag d">Q-01</span></td><td>터치 최소 크기</td><td>Pleos Basic button 문서는 Large · Medium · Small 만 있고 수치가 없다. 회신 전까지 SD-03(64×64dp 잠정). 확인 주체 디자이너 → 공모전 운영.</td><td class="pid">전 화면</td><td class="pid">11.05</td></tr>
+          <tr><td class="id"><span class="tag d">Q-02</span></td><td>창 밖 도착 · 내비 전환</td><td>requestRoute 후 내비 창이 세이프 카고를 덮는지 · 옆에 뜨는지, 앱이 안 보일 때 도착하면 앞으로 올릴 수 있는지(알림 센터 사용 정책 포함). 회신 전 SD-06. 확인 주체 앱 개발자(POC) · 공모전 운영.</td><td class="pid">SC-02 · 05</td><td class="pid">11.01</td></tr>
+          <tr><td class="id"><span class="tag d">Q-03</span></td><td>신호 대기 정차의 DO 상태</td><td>D 단 정지가 터치 허용 상태로 바뀌는지. 안 바뀌면 SC-04 [도착 · 개봉]은 다음 주차 때만. AG-03 · U-01 과 묶어 문의.</td><td class="pid">SC-04</td><td class="pid">11.01</td></tr>
+          <tr><td class="id"><span class="tag d">Q-04</span></td><td>에뮬레이터 디스플레이 프로파일</td><td>Emulator 2.1.0 에 Connect-W · WF 프로파일이 있는지. 없으면 창 크기를 강제로 바꿔(freeform · 크기 지정) 12개 창을 검증. 확인 주체 앱 개발자.</td><td class="pid">검증 전체</td><td class="pid">11.05</td></tr>
+          <tr><td class="id"><span class="tag d">Q-05</span></td><td>W-Extended 확장 전달</td><td>W-Std ↔ W-Ext 세로 확장이 앱에 창 크기 변경(configuration change)으로 오는지. RL-06 구현 방식이 달라진다.</td><td class="pid">SC-03 · 05</td><td class="pid">11.05</td></tr>
+          <tr><td class="id"><span class="tag d">Q-06</span></td><td>패밀리 버프 조건 해석</td><td>「착석한 좌석 전부 벨트」라 <b>운전자 혼자</b>여도 충족된다 — 의도인지. 주행 중 벨트가 풀리면 버프를 즉시 끄는지. 확인 주체 PM.</td><td class="pid">SC-01 · 03</td><td class="pid">11.01</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:120px">디스플레이</th><th style="width:70px">방향</th><th style="width:110px">창 (dp)</th><th style="width:60px">등급</th><th>중점 확인</th></tr></thead>
+        <tbody>
+          <tr class="grp"><td colspan="5">반응형 점검표 — 12개 창 · 제출 전 리허설(11.13~15)에서 전 화면 확인 · RL-07</td></tr>
+          <tr><td>S-17</td><td>L</td><td class="pid">1700 × 1184</td><td><span class="cls">L-R</span></td><td>기준 디자인 · 시연 영상 화면</td></tr>
+          <tr><td>S-17</td><td>P</td><td class="pid">840 × 1184</td><td><span class="cls">P-R</span></td><td>내비 옆 1:1 — 실사용 기본형 (추정)</td></tr>
+          <tr><td>S-14.6</td><td>L</td><td class="pid">1360 × 948</td><td><span class="cls">L-R</span></td><td>200 DPI 선명도(RL-09)</td></tr>
+          <tr><td>S-14.6</td><td>P</td><td class="pid">672 × 948</td><td><span class="cls">P-R</span></td><td>200 DPI · 좁은 폭에서 앱 바 줄바꿈</td></tr>
+          <tr><td>L-12.9</td><td>L</td><td class="pid">1274 × 855</td><td><span class="cls">L-S</span></td><td>SC-03 게이지 세로 막대 전환</td></tr>
+          <tr><td>L-12.9</td><td>P</td><td class="pid"><b>628</b> × 855</td><td><span class="cls">P-S</span></td><td><b>가장 좁은 폭</b> — 세그먼트 3칸 · 쿠폰 QR 잘림</td></tr>
+          <tr><td>W-Std</td><td>L</td><td class="pid">1640 × 810</td><td><span class="cls">L-S</span></td><td>매우 납작한 창 — SC-05 연출 높이</td></tr>
+          <tr><td>W-Std</td><td>P</td><td class="pid">800 × 810</td><td><span class="cls">P-S</span></td><td>정사각에 가까운 Portrait — 1단이 어색하지 않은지</td></tr>
+          <tr><td>W-Ext</td><td>L</td><td class="pid">1640 × 1400</td><td><span class="cls">L-T</span></td><td>W-Std 에서 실행 중 확장 → 상태 보존(RL-06 · Q-05)</td></tr>
+          <tr><td>W-Ext</td><td>P</td><td class="pid">800 × 1400</td><td><span class="cls">P-T</span></td><td>핵심 요소가 과하게 커지지 않는지(RL-05)</td></tr>
+          <tr><td>WF</td><td>L</td><td class="pid">1256 × <b>800</b></td><td><span class="cls">L-S</span></td><td><b>가장 낮은 높이</b> · 200 DPI — 주행 화면 스크롤 없음</td></tr>
+          <tr><td>WF</td><td>P</td><td class="pid">648 × <b>800</b></td><td><span class="cls">P-S</span></td><td><b>최소 창에 가장 가까움</b> — 전 화면 잘림 · 겹침</td></tr>
+          <tr class="grp"><td colspan="5">전환 시나리오 — 창이 바뀌어도 값 · 진행이 그대로인지</td></tr>
+          <tr><td colspan="2">호위 중 분할</td><td colspan="3">S-17 Landscape 로 SC-03 → 다른 앱 실행해 1:1 Portrait → HP · Key · 버프 동일, 연출 끊김 없음</td></tr>
+          <tr><td colspan="2">언박싱 중 방향 전환</td><td colspan="3">SC-05 재생 중 윈도 바로 Landscape ↔ Portrait → 같은 프레임에서 이어 재생, 조명 원복 1회만</td></tr>
+          <tr><td colspan="2">창 밖 도착</td><td colspan="3">내비만 보이는 상태에서 도착 → TTS 안내 → 앱 열면 SC-05 부터 (SD-06)</td></tr>
+          <tr><td colspan="2">Portrait 시작</td><td colspan="3">Portrait 앱 2개가 떠 있는 상태에서 세이프 카고 실행 → SC-00 / SC-01 Portrait 로 정상 시작 (RL-08)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:70px">버전</th><th style="width:100px">일자</th><th style="width:110px">작성</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td class="id">v1.0</td><td class="pid">2026-10-31</td><td>PM · 디자이너</td><td>초안 — PRD v1.0 기반 9화면 + 공통 셸, Pleos Display Layout · Window Policy 반영 반응형 규칙 RL-01~10, 보완 제안 SD-01~09, 신규 확인 Q-01~06</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="foot">
+  세이프 카고 화면정의서 v1.0 · 2026-10-31 · <b>9화면 + 공통 셸</b> — SC-00 시작 · SC-01 로비 · SC-02 목적지 · SC-03 호위 · SC-04 일시 정차 · SC-05 언박싱 · SC-06 리워드 · SC-07 랭킹 · SC-08 기록<br>
+  <b>반응형</b> — Pleos Connect 6종 디스플레이 · 앱 창 12개 · 창 크기 등급 6개(L/P × S/R/T) · 기준 캔버스 S-17 Landscape 1700×1184dp · 최소 검증 창 628×800dp<br>
+  반응형 규칙 <b>RL-01~10</b> · 보완 제안 <b>SD-01~09</b>(PM 승인 필요) · PRD 미결 화면 영향 <b>9건</b> · 신규 확인 <b>Q-01~06</b><br>
+  입력 PRD_세이프카고_v1.0 (2026-10-29) · Pleos Connect 디자인 가이드 Display Layout · Window Policy · Basic button (2026-10-31 열람)<br>
+  표기 — 스폰서 · 카고 · 쿠폰 · 랭킹 · 금액은 Mock 화면 예시 · 판정 수치는 잠정값(U-04) · 사람은 역할명으로만 표기(FR-SUB-004)
+</div>
+
+</div>
+
+</html>

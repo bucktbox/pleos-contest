@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>DG-03 인터페이스 구성도</title>
+<style>html,body{margin:0;background:#fff}body{width:1400px;height:900px;overflow:hidden;font-family:"Malgun Gothic",sans-serif}</style></head>
+<body>
+<svg width="1400" height="900" viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg" font-family="Malgun Gothic, sans-serif">
+<defs>
+<marker id="in" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0L10,5L0,10z" fill="#2E7D32"/></marker>
+<marker id="out" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0L10,5L0,10z" fill="#1565C0"/></marker>
+</defs>
+<text x="40" y="52" font-size="30" font-weight="700" fill="#212121">DG-03 인터페이스 구성도</text>
+<text x="40" y="88" font-size="20" fill="#455A64">앱 하나에 연결 10개 · 대부분은 차에서 앱으로 들어오는 신호</text>
+
+<!-- 중앙 앱 -->
+<rect x="560" y="370" width="280" height="140" rx="22" fill="#E3F2FD" stroke="#1565C0" stroke-width="3"/>
+<text x="700" y="433" font-size="26" font-weight="700" text-anchor="middle">세이프 카고 앱</text>
+<text x="700" y="470" font-size="17" text-anchor="middle" fill="#455A64">판정 엔진</text>
+
+<!-- 왼쪽: Vehicle -->
+<g font-size="18">
+<rect x="40" y="120" width="440" height="80" rx="12" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+<text x="60" y="153" font-weight="700">IF-01 Vehicle.TurnSignal</text><text x="60" y="183" fill="#455A64" font-size="16">LEFT · RIGHT · OFF · CAR_LIGHTS</text>
+<rect x="380" y="110" width="70" height="24" rx="12" fill="#B71C1C"/><text x="415" y="128" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">U-02</text>
+
+<rect x="40" y="220" width="440" height="80" rx="12" fill="#E8F5E9" stroke="#B71C1C" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="60" y="253" font-weight="700">IF-02 Vehicle.SteeringWheel</text><text x="60" y="283" fill="#455A64" font-size="16">앞바퀴 조향각 ° · CAR_DRIVE</text>
+<rect x="302" y="210" width="70" height="24" rx="12" fill="#B71C1C"/><text x="337" y="228" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">AG-04</text>
+<rect x="380" y="210" width="70" height="24" rx="12" fill="#B71C1C"/><text x="415" y="228" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">U-02</text>
+
+<rect x="40" y="320" width="440" height="80" rx="12" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+<text x="60" y="353" font-weight="700">IF-03 Vehicle.Brake</text><text x="60" y="383" fill="#455A64" font-size="16">페달 Boolean · CAR_DRIVE</text>
+
+<rect x="40" y="420" width="440" height="80" rx="12" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+<text x="60" y="453" font-weight="700">IF-04 Vehicle.Seat</text><text x="60" y="483" fill="#455A64" font-size="16">착석 · 벨트 Boolean · CAR_SEATS</text>
+
+<rect x="40" y="520" width="440" height="80" rx="12" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+<text x="60" y="553" font-weight="700">IF-05 Vehicle.Odometer</text><text x="60" y="583" fill="#455A64" font-size="16">주행 세션 거리 m · CAR_DRIVE</text>
+<rect x="380" y="510" width="70" height="24" rx="12" fill="#B71C1C"/><text x="415" y="528" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">U-02</text>
+
+<rect x="40" y="620" width="440" height="80" rx="12" fill="#FFF8E1" stroke="#B71C1C" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="60" y="653" font-weight="700">IF-06 Vehicle.Light</text><text x="60" y="683" fill="#455A64" font-size="16">앰비언트 ARGB · 밝기 (양방향)</text>
+<rect x="380" y="610" width="70" height="24" rx="12" fill="#B71C1C"/><text x="415" y="628" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">AG-05</text>
+</g>
+
+<!-- 오른쪽 -->
+<g font-size="18">
+<rect x="920" y="170" width="440" height="80" rx="12" fill="#F5F5F5" stroke="#B71C1C" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="940" y="203" font-weight="700">IF-07 주행 상태 소스</text><text x="940" y="233" fill="#455A64" font-size="16">AAOS CarUxRestrictionsManager</text>
+<rect x="1270" y="160" width="70" height="24" rx="12" fill="#B71C1C"/><text x="1305" y="178" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">AG-03</text>
+
+<rect x="920" y="300" width="440" height="80" rx="12" fill="#FFF8E1" stroke="#2E7D32" stroke-width="2"/>
+<text x="940" y="333" font-weight="700">IF-08 NaviHelper</text><text x="940" y="363" fill="#455A64" font-size="16">requestRoute · onDestinationInfo (양방향)</text>
+<rect x="1270" y="290" width="70" height="24" rx="12" fill="#B71C1C"/><text x="1305" y="308" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">U-09</text>
+
+<rect x="920" y="430" width="440" height="80" rx="12" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+<text x="940" y="463" font-weight="700">IF-09 FusedLocation</text><text x="940" y="493" fill="#455A64" font-size="16">위치 1회 · 정차 시 · 속도 없음</text>
+
+<rect x="920" y="560" width="440" height="80" rx="12" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+<text x="940" y="593" font-weight="700">IF-10 TextToSpeech</text><text x="940" y="623" fill="#455A64" font-size="16">코칭 문장 ko-KR</text>
+<rect x="1252" y="550" width="88" height="24" rx="12" fill="#B71C1C"/><text x="1296" y="568" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">ISSUE-06</text>
+</g>
+
+<!-- 선 -->
+<g stroke-width="2.5" fill="none">
+<path d="M480,160 C540,160 520,400 558,410" stroke="#2E7D32" marker-end="url(#in)"/>
+<path d="M480,260 C530,260 520,420 558,420" stroke="#2E7D32" marker-end="url(#in)"/>
+<path d="M480,360 C520,360 520,430 558,430" stroke="#2E7D32" marker-end="url(#in)"/>
+<path d="M480,460 C520,460 520,445 558,445" stroke="#2E7D32" marker-end="url(#in)"/>
+<path d="M480,560 C520,560 520,460 558,460" stroke="#2E7D32" marker-end="url(#in)"/>
+<path d="M558,480 C520,490 530,660 482,660" stroke="#1565C0" marker-end="url(#out)"/>
+<path d="M920,210 C870,210 880,400 842,410" stroke="#2E7D32" marker-end="url(#in)"/>
+<path d="M842,425 C880,425 880,340 918,340" stroke="#1565C0" marker-end="url(#out)"/>
+<path d="M920,470 C880,470 880,455 842,455" stroke="#2E7D32" marker-end="url(#in)"/>
+<path d="M842,480 C880,490 880,600 918,600" stroke="#1565C0" marker-end="url(#out)"/>
+</g>
+
+<g font-size="17" fill="#37474F">
+<line x1="40" y1="812" x2="90" y2="812" stroke="#2E7D32" stroke-width="3" marker-end="url(#in)"/><text x="100" y="819">차 → 앱 (읽기)</text>
+<line x1="270" y1="812" x2="320" y2="812" stroke="#1565C0" stroke-width="3" marker-end="url(#out)"/><text x="330" y="819">앱 → 차 (쓰기 · 요청)</text>
+<rect x="540" y="800" width="34" height="24" rx="6" fill="#FFF8E1" stroke="#2E7D32" stroke-width="2"/><text x="584" y="819">양방향</text>
+<rect x="680" y="800" width="34" height="24" rx="6" fill="#fff" stroke="#B71C1C" stroke-width="2" stroke-dasharray="6 4"/><text x="724" y="819">미정 (잠정안)</text>
+<rect x="870" y="800" width="64" height="24" rx="12" fill="#B71C1C"/><text x="902" y="818" fill="#fff" text-anchor="middle" font-size="14" font-weight="700">ID</text><text x="944" y="819">미결 항목</text>
+<text x="1090" y="819">주기: 모두 「값이 바뀔 때」</text>
+</g>
+</svg>
+</body></html>

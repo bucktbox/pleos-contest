@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>DG-05 사용자 시나리오 흐름</title>
+<style>html,body{margin:0;background:#fff}body{width:1400px;height:900px;overflow:hidden;font-family:"Malgun Gothic",sans-serif}</style></head>
+<body>
+<svg width="1400" height="900" viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg" font-family="Malgun Gothic, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0L10,5L0,10z" fill="#455A64"/></marker></defs>
+<text x="40" y="52" font-size="30" font-weight="700" fill="#212121">DG-05 사용자 시나리오 흐름 — [S1] 주말 카페 나들이</text>
+<text x="40" y="88" font-size="20" fill="#455A64">싣고 → 매너 있게 달리고 → 도착해서 연다</text>
+
+<!-- 구간 띠 -->
+<g font-size="22" font-weight="700">
+<rect x="40" y="120" width="560" height="54" rx="12" fill="#E3F2FD"/><text x="320" y="156" text-anchor="middle" fill="#0D47A1">정차 · 적재</text>
+<rect x="620" y="120" width="360" height="54" rx="12" fill="#FFF3E0"/><text x="800" y="156" text-anchor="middle" fill="#E65100">주행 · 호위</text>
+<rect x="1000" y="120" width="360" height="54" rx="12" fill="#E8F5E9"/><text x="1180" y="156" text-anchor="middle" fill="#1B5E20">목적지 정차 · 개봉</text>
+</g>
+
+<g font-size="19" text-anchor="middle">
+<!-- 1 2 3 -->
+<rect x="40" y="210" width="170" height="380" rx="18" fill="#fff" stroke="#1565C0" stroke-width="2.5"/>
+<text x="125" y="300" font-size="60">📍</text><text x="125" y="370" font-size="34" font-weight="700" fill="#1565C0">1</text>
+<text x="125" y="420" font-weight="700">목적지 선택</text><text x="125" y="450" fill="#455A64" font-size="16">→ 순정 내비</text><text x="125" y="560" fill="#455A64" font-size="15">FR-APP-002</text>
+
+<rect x="235" y="210" width="170" height="380" rx="18" fill="#fff" stroke="#1565C0" stroke-width="2.5"/>
+<text x="320" y="300" font-size="60">👨‍👩‍👧</text><text x="320" y="370" font-size="34" font-weight="700" fill="#1565C0">2</text>
+<text x="320" y="420" font-weight="700">벨트 전원 체결</text><text x="320" y="450" fill="#455A64" font-size="16">패밀리 버프</text><text x="320" y="535" fill="#455A64" font-size="15">FR-VH-007</text><text x="320" y="560" fill="#455A64" font-size="15">FR-TTS-001</text>
+
+<rect x="430" y="210" width="170" height="380" rx="18" fill="#fff" stroke="#1565C0" stroke-width="2.5"/>
+<text x="515" y="300" font-size="60">📦</text><text x="515" y="370" font-size="34" font-weight="700" fill="#1565C0">3</text>
+<text x="515" y="420" font-weight="700">카고 적재</text><text x="515" y="450" fill="#455A64" font-size="16">스폰서 카고 (예시)</text><text x="515" y="560" fill="#455A64" font-size="15">FR-APP-001</text>
+
+<!-- 4 5 -->
+<rect x="620" y="210" width="170" height="380" rx="18" fill="#fff" stroke="#E65100" stroke-width="2.5" stroke-dasharray="10 6"/>
+<text x="705" y="300" font-size="60">🔒</text><text x="705" y="370" font-size="34" font-weight="700" fill="#E65100">4</text>
+<text x="705" y="420" font-weight="700">주행 시작</text><text x="705" y="450" fill="#455A64" font-size="16">터치 잠금 · 게이지</text><text x="705" y="535" fill="#455A64" font-size="15">FR-APP-005</text><text x="705" y="560" fill="#455A64" font-size="15">FR-VH-001</text>
+<rect x="636" y="198" width="66" height="26" rx="13" fill="#B71C1C"/><text x="669" y="217" font-size="14" font-weight="700" fill="#fff">AG-03</text>
+<rect x="710" y="198" width="66" height="26" rx="13" fill="#B71C1C"/><text x="743" y="217" font-size="14" font-weight="700" fill="#fff">U-01</text>
+
+<rect x="810" y="210" width="170" height="380" rx="18" fill="#fff" stroke="#E65100" stroke-width="2.5"/>
+<text x="895" y="300" font-size="60">↪️</text><text x="895" y="370" font-size="34" font-weight="700" fill="#E65100">5</text>
+<text x="895" y="420" font-weight="700">깜빡이 먼저</text><text x="895" y="450" fill="#455A64" font-size="16">→ 차선 변경</text><text x="895" y="480" fill="#455A64" font-size="16">열쇠 게이지 ↑</text><text x="895" y="560" fill="#455A64" font-size="15">FR-VH-004</text>
+<rect x="862" y="198" width="66" height="26" rx="13" fill="#B71C1C"/><text x="895" y="217" font-size="14" font-weight="700" fill="#fff">AG-04</text>
+
+<!-- 6 7 -->
+<rect x="1000" y="210" width="170" height="380" rx="18" fill="#fff" stroke="#2E7D32" stroke-width="2.5"/>
+<text x="1085" y="300" font-size="60">✨</text><text x="1085" y="370" font-size="34" font-weight="700" fill="#2E7D32">6</text>
+<text x="1085" y="420" font-weight="700">정차 → 언박싱</text><text x="1085" y="450" fill="#455A64" font-size="16">앰비언트 등급 색</text><text x="1085" y="535" fill="#455A64" font-size="15">FR-APP-006</text><text x="1085" y="560" fill="#455A64" font-size="15">FR-VH-011</text>
+<rect x="1052" y="198" width="66" height="26" rx="13" fill="#B71C1C"/><text x="1085" y="217" font-size="14" font-weight="700" fill="#fff">AG-05</text>
+
+<rect x="1190" y="210" width="170" height="380" rx="18" fill="#fff" stroke="#2E7D32" stroke-width="2.5"/>
+<text x="1275" y="300" font-size="60">🎟️</text><text x="1275" y="370" font-size="34" font-weight="700" fill="#2E7D32">7</text>
+<text x="1275" y="420" font-weight="700">쿠폰 · 랭킹</text><text x="1275" y="450" fill="#455A64" font-size="16">뱃지 (예시)</text><text x="1275" y="535" fill="#455A64" font-size="15">FR-APP-008</text><text x="1275" y="560" fill="#455A64" font-size="15">~ 010</text>
+<rect x="1230" y="198" width="90" height="26" rx="13" fill="#B71C1C"/><text x="1275" y="217" font-size="14" font-weight="700" fill="#fff">ISSUE-01</text>
+</g>
+
+<g stroke="#455A64" stroke-width="3" marker-end="url(#a)">
+<line x1="211" y1="400" x2="233" y2="400"/><line x1="406" y1="400" x2="428" y2="400"/><line x1="601" y1="400" x2="618" y2="400"/>
+<line x1="791" y1="400" x2="808" y2="400"/><line x1="981" y1="400" x2="998" y2="400"/><line x1="1171" y1="400" x2="1188" y2="400"/>
+</g>
+
+<text x="40" y="660" font-size="19" fill="#37474F"><tspan font-weight="700">[S2] 평일 출퇴근</tspan> — 목적지가 없으면 1 대신 데일리 카고 자동 할당 (FR-APP-004) · 4 ~ 5 동일 · 정차 시 개봉 + 스트릭 (FR-APP-011)</text>
+
+<g font-size="17" fill="#37474F">
+<rect x="40" y="800" width="34" height="24" rx="6" fill="#fff" stroke="#1565C0" stroke-width="2"/><text x="84" y="819">정차</text>
+<rect x="160" y="800" width="34" height="24" rx="6" fill="#fff" stroke="#E65100" stroke-width="2"/><text x="204" y="819">주행</text>
+<rect x="280" y="800" width="34" height="24" rx="6" fill="#fff" stroke="#2E7D32" stroke-width="2"/><text x="324" y="819">보상</text>
+<rect x="400" y="800" width="34" height="24" rx="6" fill="#fff" stroke="#E65100" stroke-width="2" stroke-dasharray="6 4"/><text x="444" y="819">미정 (잠정안)</text>
+<rect x="590" y="800" width="64" height="24" rx="12" fill="#B71C1C"/><text x="622" y="818" fill="#fff" text-anchor="middle" font-size="14" font-weight="700">ID</text><text x="664" y="819">미결 항목</text>
+</g>
+</svg>
+</body></html>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 피그마 「02 SC-01 로비」 _Icons icon/check 에서 변환. 흰색 선 — Icon(tint) 로 색을 입힌다. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp" android:height="36dp" android:viewportWidth="36" android:viewportHeight="36">
+    <group android:translateX="6.499" android:translateY="10.25">
+        <path android:pathData="M1 8.5L7.75 15.25L22 1" android:strokeWidth="2" android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+    </group>
+</vector>

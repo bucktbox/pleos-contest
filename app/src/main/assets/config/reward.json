@@ -1,0 +1,39 @@
+{
+    "odds": {
+        "LEGENDARY": {
+            "coupon": 80,
+            "point": 20,
+            "empty": 0
+        },
+        "EPIC": {
+            "coupon": 50,
+            "point": 35,
+            "empty": 15
+        },
+        "RARE": {
+            "coupon": 20,
+            "point": 45,
+            "empty": 35
+        }
+    },
+    "bonusOdds": {
+        "coupon": 50,
+        "point": 35,
+        "empty": 15
+    },
+    "tokenEmpty": 3,
+    "tokenPoint": 1,
+    "tokenPayback": 2,
+    "bonusCost": 10,
+    "bonusPerDay": 3,
+    "couponValidDays": 14,
+    "guideExpandedTimes": 3,
+    "demoMode": false,
+    "demoTokens": 7,
+    "demoForce": {
+        "RARE": "EMPTY",
+        "EPIC": "COUPON",
+        "LEGENDARY": "COUPON"
+    },
+    "demoBonus": "COUPON"
+}

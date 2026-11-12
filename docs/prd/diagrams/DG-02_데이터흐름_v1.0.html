@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>DG-02 데이터 흐름도</title>
+<style>html,body{margin:0;background:#fff}body{width:1400px;height:900px;overflow:hidden;font-family:"Malgun Gothic",sans-serif}</style></head>
+<body>
+<svg width="1400" height="900" viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg" font-family="Malgun Gothic, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0L10,5L0,10z" fill="#455A64"/></marker>
+<g id="n"><circle r="20" fill="#1565C0"/></g></defs>
+<text x="40" y="52" font-size="30" font-weight="700" fill="#212121">DG-02 데이터 흐름도</text>
+<text x="40" y="88" font-size="20" fill="#455A64">준비 → 실행 → 결과 · 좌표와 원시 신호는 남기지 않는다</text>
+
+<!-- 단계 열 -->
+<g font-size="26" font-weight="700">
+<rect x="40" y="115" width="420" height="640" rx="24" fill="#E3F2FD"/><text x="250" y="160" text-anchor="middle" fill="#0D47A1">준비 · 정차</text>
+<rect x="490" y="115" width="420" height="640" rx="24" fill="#FFF3E0"/><text x="700" y="160" text-anchor="middle" fill="#E65100">실행 · 주행</text>
+<rect x="940" y="115" width="420" height="640" rx="24" fill="#E8F5E9"/><text x="1150" y="160" text-anchor="middle" fill="#1B5E20">결과 · 목적지 정차</text>
+</g>
+<line x1="462" y1="440" x2="488" y2="440" stroke="#455A64" stroke-width="4" marker-end="url(#a)"/>
+<line x1="912" y1="440" x2="938" y2="440" stroke="#455A64" stroke-width="4" marker-end="url(#a)"/>
+
+<g font-size="20">
+<!-- 준비 -->
+<rect x="70" y="190" width="360" height="150" rx="14" fill="#fff" stroke="#1565C0" stroke-width="2"/>
+<use href="#n" x="105" y="230"/><text x="105" y="237" fill="#fff" text-anchor="middle" font-weight="700">1</text>
+<text x="140" y="238" font-weight="700">사용자 → 앱 → NaviHelper</text><text x="105" y="295" fill="#455A64">목적지 (RouteInfo)</text>
+<rect x="70" y="370" width="360" height="150" rx="14" fill="#fff" stroke="#1565C0" stroke-width="2"/>
+<use href="#n" x="105" y="410"/><text x="105" y="417" fill="#fff" text-anchor="middle" font-weight="700">2</text>
+<text x="140" y="418" font-weight="700">Vehicle SDK (Seat) → 앱</text><text x="105" y="475" fill="#455A64">좌석별 착석 · 벨트</text>
+<rect x="70" y="550" width="360" height="150" rx="14" fill="#fff" stroke="#1565C0" stroke-width="2"/>
+<use href="#n" x="105" y="590"/><text x="105" y="597" fill="#fff" text-anchor="middle" font-weight="700">3</text>
+<text x="140" y="598" font-weight="700">로컬 데이터 → 앱</text><text x="105" y="655" fill="#455A64">목적지 카고 (Mock)</text>
+
+<!-- 실행 -->
+<rect x="520" y="190" width="360" height="150" rx="14" fill="#fff" stroke="#B71C1C" stroke-width="2.5" stroke-dasharray="10 7"/>
+<use href="#n" x="555" y="230"/><text x="555" y="237" fill="#fff" text-anchor="middle" font-weight="700">4</text>
+<text x="590" y="238" font-weight="700">주행 상태 소스 → 엔진</text><text x="555" y="295" fill="#455A64">주행 / 정차</text>
+<rect x="795" y="180" width="70" height="26" rx="13" fill="#B71C1C"/><text x="830" y="199" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">AG-03</text>
+<rect x="520" y="370" width="360" height="150" rx="14" fill="#fff" stroke="#E65100" stroke-width="2"/>
+<use href="#n" x="555" y="410"/><text x="555" y="417" fill="#fff" text-anchor="middle" font-weight="700">5</text>
+<text x="590" y="418" font-weight="700">Vehicle SDK → 엔진</text><text x="555" y="465" fill="#455A64">방향지시등 · 조향각</text><text x="555" y="495" fill="#455A64">브레이크 · 트립거리</text>
+<rect x="795" y="360" width="70" height="26" rx="13" fill="#B71C1C"/><text x="830" y="379" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">U-02</text>
+<rect x="520" y="550" width="360" height="150" rx="14" fill="#fff" stroke="#E65100" stroke-width="2"/>
+<use href="#n" x="555" y="590"/><text x="555" y="597" fill="#fff" text-anchor="middle" font-weight="700">6</text>
+<text x="590" y="598" font-weight="700">엔진 → TTS</text><text x="555" y="655" fill="#455A64">코칭 문장</text>
+<rect x="777" y="540" width="88" height="26" rx="13" fill="#B71C1C"/><text x="821" y="559" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">ISSUE-06</text>
+
+<!-- 결과 -->
+<rect x="970" y="190" width="360" height="150" rx="14" fill="#fff" stroke="#2E7D32" stroke-width="2"/>
+<use href="#n" x="1005" y="230"/><text x="1005" y="237" fill="#fff" text-anchor="middle" font-weight="700">7</text>
+<text x="1040" y="238" font-weight="700">FusedLocation → 엔진</text><text x="1005" y="285" fill="#455A64">위치 1회</text><text x="1005" y="315" fill="#B71C1C" font-weight="700">비교 후 폐기</text>
+<rect x="970" y="370" width="360" height="150" rx="14" fill="#fff" stroke="#2E7D32" stroke-width="2"/>
+<use href="#n" x="1005" y="410"/><text x="1005" y="417" fill="#fff" text-anchor="middle" font-weight="700">8</text>
+<text x="1040" y="418" font-weight="700" font-size="18">엔진 → 앱 → Vehicle SDK (Light)</text><text x="1005" y="475" fill="#455A64">등급 · 앰비언트 색</text>
+<rect x="1245" y="360" width="70" height="26" rx="13" fill="#B71C1C"/><text x="1280" y="379" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">AG-05</text>
+<rect x="970" y="550" width="360" height="150" rx="14" fill="#fff" stroke="#2E7D32" stroke-width="2"/>
+<use href="#n" x="1005" y="590"/><text x="1005" y="597" fill="#fff" text-anchor="middle" font-weight="700">9</text>
+<text x="1040" y="598" font-weight="700">엔진 → 로컬 데이터</text><text x="1005" y="645" fill="#455A64">카고 결과 · 뱃지 · 스트릭</text><text x="1005" y="675" fill="#B71C1C" font-size="17">좌표 · 원시 신호 없음</text>
+</g>
+
+<g font-size="17" fill="#37474F">
+<circle cx="57" cy="812" r="14" fill="#1565C0"/><text x="57" y="818" fill="#fff" text-anchor="middle" font-size="14" font-weight="700">N</text><text x="82" y="819">단계 번호 (PRD 3.2)</text>
+<rect x="300" y="800" width="34" height="24" rx="6" fill="#fff" stroke="#B71C1C" stroke-width="2" stroke-dasharray="6 4"/><text x="344" y="819">미정 (잠정안)</text>
+<rect x="500" y="800" width="64" height="24" rx="12" fill="#B71C1C"/><text x="532" y="818" fill="#fff" text-anchor="middle" font-size="14" font-weight="700">ID</text><text x="574" y="819">미결 항목</text>
+<text x="760" y="819" fill="#B71C1C" font-weight="700">빨간 글자</text><text x="850" y="819">= 개인정보 원칙 (NFR-PRI-001)</text>
+</g>
+</svg>
+</body></html>
